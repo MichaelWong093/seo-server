@@ -190,25 +190,16 @@ public class SolrUtils {
      * @param query
      */
     public static void queryCategorys(SeoRequest request, SolrQuery query) {
-
         query.clear();
-
         query.set("q", "*:*");
-
-//        query.set("q", getQueryQ(request));
-
-        if (!StringUtils.isEmpty(request.getCategory())) {
-
-            query.set("fq", getQueryQ("parentid", request.getCategory()));
-        }
-        setStartAndRows(query);
-
+        query.set("start", "0");
+        query.set("rows", "30000");
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
     private static void setStartAndRows(SolrQuery query) {
         query.set("start", "0");
-        query.set("rows", "10000");
+        query.set("rows", "30");
     }
 
     /**

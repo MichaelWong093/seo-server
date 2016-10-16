@@ -48,20 +48,16 @@ public class CateUtils {
 
                 values.add(var);
             });
-            if (!StringUtils.isEmpty(key))
-            {
+            if (!StringUtils.isEmpty(key)) {
                 seoCates.put("key", key);
             }
-            if (!StringUtils.isEmpty(value))
-            {
+            if (!StringUtils.isEmpty(value)) {
                 seoCates.put("value", value);
             }
-            if (!StringUtils.isEmpty(values) && values.size() > 0)
-            {
+            if (!StringUtils.isEmpty(values) && values.size() > 0) {
                 seoCates.put("childs", values);
             }
-            if (!StringUtils.isEmpty(seoCates))
-            {
+            if (!StringUtils.isEmpty(seoCates)) {
                 categorys.add(seoCates);
             }
         }
@@ -87,14 +83,13 @@ public class CateUtils {
 
             LinkedList<SeoCateGory> lists = setCategoryTree(var.getKey(), documentList);
 
-            if (!StringUtils.isEmpty(lists) && lists.size() > 0){
+            if (!StringUtils.isEmpty(lists) && lists.size() > 0) {
 
                 map.put(var.getKey(), lists);
 
                 var.setChilds(map.get(var.getKey()));
             }
         }
-        LOGGER.info(" [ 类目创建 ] , {}", JSON.toJSONString(list));
         return list;
     }
 

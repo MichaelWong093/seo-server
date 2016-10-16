@@ -43,14 +43,14 @@ public class CategoryTest {
 
     @Before
     public void init() {
-        categorys = new HttpSolrClient.Builder("http://127.0.0.1:8983/solr/categorys").build();
-        caterv = new HttpSolrClient.Builder("http://127.0.0.1:8983/solr/caterev").build();
-        category = new HttpSolrClient.Builder("http://127.0.0.1:8983/solr/category").build();
-        goods = new HttpSolrClient.Builder("http://127.0.0.1:8983/solr/goods").build();
+        categorys = new HttpSolrClient.Builder("http://127.0.0.1:8080/solr/categorys").build();
+        caterv = new HttpSolrClient.Builder("http://127.0.0.1:8080/solr/caterev").build();
+        category = new HttpSolrClient.Builder("http://127.0.0.1:8080/solr/category").build();
+        goods = new HttpSolrClient.Builder("http://127.0.0.1:8080/solr/goods").build();
     }
 
 
-    @Test
+
     public void page() throws IOException, SolrServerException {
 
         query = new SolrQuery();
@@ -65,7 +65,7 @@ public class CategoryTest {
         // 页面显示条数
         request.setRows("10");
 
-//        querys.add("2299");
+//        request.setCategory("4922");
 
         SolrUtils.query(querys, query, request);
 
@@ -86,44 +86,54 @@ public class CategoryTest {
     }
 
 
+    @Test
     public void category() throws IOException, SolrServerException {
 
         query = new SolrQuery();
 
         SeoRequest request = new SeoRequest();
 
-        request.setCategory("56");
+        request.setCategory("5186");
 
-//        SolrUtils.queryCategory(request, query);
+        SolrUtils.queryCategorys(request, query);
 
         /**
          * 展示类目
          */
-        SolrDocumentList documentList = categorys.query(query).getResults();
+        SolrDocumentList allCategories = categorys.query(query).getResults();
 
-        LinkedList<SeoCateGory> goryLinkedList = CateUtils.getSeoCateGories(request.getCategory(), documentList);
+//        System.out.println( "类目条数 "+  allCategories.getNumFound() +" 所有类目信息 " +JSON.toJSON(allCategories));
 
-        SolrUtils.query(request, query);
+
+        LinkedList<SeoCateGory> goryLinkedList = CateUtils.getSeoCateGories(request.getCategory(), allCategories);
+
+        System.out.println("展示类目："+ JSON.toJSONString(goryLinkedList));
+
+
+
+//        System.out.println(JSON.toJSON(goryLinkedList));
+
+//        SolrUtils.query(request, query);
 
         /**
          * 展示类目与系统类目关联关系
          */
-        SolrDocumentList revDoc = caterv.query(query).getResults();
-
-        List<String> catList = Lists.newArrayList();
-
-        catList.addAll(
-                revDoc.stream().map(doc ->
-                        SolrUtils.getSolrDocumentFiled(doc, "catid"))
-                        .collect(Collectors.toList()));
-        /**
-         * 系统类目
-         */
-        SolrUtils.query(catList, query, request);
-
-        SolrDocumentList goryList = goods.query(query).getResults();
-
-        System.out.println(JSON.toJSONString(goryList));
+//        SolrDocumentList revDoc = caterv.query(query).getResults();
+//
+//        List<String> catList = Lists.newArrayList();
+//
+//        catList.addAll(
+//                revDoc.stream().map(doc ->
+//                        SolrUtils.getSolrDocumentFiled(doc, "catid"))
+//                        .collect(Collectors.toList()));
+//        /**
+//         * 系统类目
+//         */
+//        SolrUtils.query(catList, query, request);
+//
+//        SolrDocumentList goryList = goods.query(query).getResults();
+//
+//        System.out.println(JSON.toJSONString(goryList));
 
     }
 
