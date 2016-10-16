@@ -54,15 +54,6 @@ public class TestSolrConnect {
 
         /** 获取店铺集合 */
 
-        Map maps = setShopCollection(seoRequest, shops);
-
-
-        System.out.println(JSON.toJSON(maps));
-
-
-    }
-
-    private Map setShopCollection(SeoRequest seoRequest, List<SeoShop> shops) throws SolrServerException, IOException {
         StringBuilder builder = new StringBuilder();
 
         SolrUtils.setShopSolrQuery(shops, query, builder, "shopid");
@@ -81,7 +72,11 @@ public class TestSolrConnect {
 
         maps.put("shop",shops);
         maps.put("goods",vars);
-        return maps;
+
+
+        System.out.println(JSON.toJSON(maps));
+
+
     }
 
     private void getShopCollection(SeoRequest request, SolrQuery query, List<SeoShop> shops) throws SolrServerException, IOException {
