@@ -1,10 +1,7 @@
 package com.berchina.esb.server.provider.server.crud;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 import com.berchina.esb.server.provider.client.SeoResponse;
 import com.google.common.collect.Lists;
@@ -30,14 +27,6 @@ public class SeoShopRepository {
     @Autowired
     private SolrServerFactoryBean factoryBean;
 
-    /**
-     * 搜索服务处理
-     *
-     * @param seoRequest 请求 SeoRequest 对象
-     * @return
-     * @throws SolrServerException
-     * @throws IOException
-     */
     public QueryResponse querySolrDocuments( SeoRequest seoRequest) throws SolrServerException, IOException {
         //获取 店铺solr 请求连接
         HttpSolrClient solrClient = factoryBean.httpSolrServer().get(seoRequest.getChannel());
@@ -47,15 +36,6 @@ public class SeoShopRepository {
     }
 
 
-    /**
-     * 搜索商品服务处理
-     *
-     * @param objects     请求 SeoRequest 对象
-     * @param channelName 渠道名称
-     * @return
-     * @throws SolrServerException
-     * @throws IOException
-     */
     public SolrDocumentList querySolrDocuments(Object objects, String channelName) throws SolrServerException, IOException {
         //参数转换
         SeoRequest seoRequest = (SeoRequest) objects;
@@ -68,6 +48,8 @@ public class SeoShopRepository {
     }
 
 
+
+    @Deprecated
     public void setSeoGoodsMap(Map<String, Object> shop, Map<String, SeoShop> shopMap,SolrDocumentList doc) {
         LinkedList<Object> seoLinkedList = Lists.newLinkedList();
         int args = doc.size();
@@ -75,7 +57,7 @@ public class SeoShopRepository {
             String shopId = SolrUtils.getParameter(doc, i, "shopid");
             // 判断商铺集合是否存在
             if (shopMap.containsKey(shopId) && StringUtil.notNull(shopMap.get(shopId))) {
-                LinkedList<SeoGoods> goodsList = shopMap.get(shopId).getGoodsList();
+                List<SeoGoods> goodsList = shopMap.get(shopId).getGoodsList();
                 int var1 = goodsList.size();
                 if (var1 < 4) {
                     SeoGoods goods = new SeoGoods();
@@ -84,7 +66,7 @@ public class SeoShopRepository {
                     goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
                     goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
                     goods.setActivityLabel(SolrUtils.getParameter(doc, i, "activityLabel"));
-                    shopMap.get(shopId).getGoodsList().addLast(goods);
+//                    shopMap.get(shopId).getGoodsList().addLast(goods);
                 }
             } else {
                 SeoShop seoShop = new SeoShop();
@@ -104,7 +86,7 @@ public class SeoShopRepository {
                 goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
                 goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
                 goods.setActivityLabel(SolrUtils.getParameter(doc, i, "activityLabel"));
-                shopMap.get(shopId).getGoodsList().addLast(goods);
+//                shopMap.get(shopId).getGoodsList().addLast(goods);
             }
         }
         Iterator map = shopMap.keySet().iterator();
@@ -114,13 +96,13 @@ public class SeoShopRepository {
         shop.put("shop", seoLinkedList);
     }
 
-
     /**
      * 设置查询的SeoShop  集合
      *
-     * @param doc
+     * @param
      * @return
      */
+    @Deprecated
     public void setSeoShopMap(Map<String, SeoShop> shopMap, QueryResponse response) {
         SolrDocumentList doc = response.getResults();
         int args = doc.size();
@@ -157,7 +139,7 @@ public class SeoShopRepository {
              */
             if (shopMap.containsKey(shopId)) {
                 if (StringUtil.notNull(shopMap.get(shopId))) {
-                    LinkedList<SeoGoods> goodsList = shopMap.get(shopId).getGoodsList();
+                    List<SeoGoods> goodsList = shopMap.get(shopId).getGoodsList();
                     int var1 = goodsList.size();
                     if (var1 < 4) {
                         SeoGoods goods = new SeoGoods();
@@ -165,7 +147,7 @@ public class SeoShopRepository {
                         goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
                         goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
                         goods.setActivityLabel(SolrUtils.getParameter(doc, i, "activityLabel"));
-                        goodsList.addLast(goods);
+//                        goodsList.addLast(goods);
                     }
                 }
             } else {
@@ -186,7 +168,7 @@ public class SeoShopRepository {
                 goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
                 goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
                 goods.setActivityLabel(SolrUtils.getParameter(doc, i, "activityLabel"));
-                shopMap.get(shopId).getGoodsList().addLast(goods);
+//                shopMap.get(shopId).getGoodsList().addLast(goods);
                 seoGoodsLinkedList.add(seoShop);
             }
         }

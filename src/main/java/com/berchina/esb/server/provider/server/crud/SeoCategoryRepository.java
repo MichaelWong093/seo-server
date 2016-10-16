@@ -39,9 +39,6 @@ public class SeoCategoryRepository {
     @Autowired
     private SolrServerFactoryBean factoryBean;
 
-    @Autowired
-    private SeoGoodsRepository goodsRepository;
-
     public void setSeoCategoryResponseInfo(Map<String, Object> seoCateMap, SeoRequest request) throws SolrServerException, IOException {
 
         Map<String, HttpSolrClient> solrMap = factoryBean.httpSolrServer();
@@ -73,7 +70,7 @@ public class SeoCategoryRepository {
 
         LOGGER.info(" [ 系统类目关系商品信息, {} ] ", JSON.toJSONString(goodsDoc));
 
-        return goodsRepository.setSeoGoodsResponseInfo(goodsDoc);
+        return SolrUtils.setSeoGoodsResponseInfo(goodsDoc);
     }
 
 

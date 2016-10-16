@@ -2,10 +2,13 @@ package com.berchina.esb.server.provider.utils;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import com.berchina.esb.server.provider.model.SeoCateGory;
+import com.berchina.esb.server.provider.model.SeoGoods;
+import com.berchina.esb.server.provider.model.SeoShop;
 import com.berchina.esb.server.provider.server.crud.SeoGoodsRepository;
 import com.google.common.collect.Lists;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -50,6 +53,21 @@ public class SolrUtils {
         query.set("q", "*:*");
         setSolrPage(query, request, rows);
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+    }
+
+
+
+    public static void setShopSolrQuery(List<SeoShop> shops ,
+                                           SolrQuery query, StringBuilder builder, String var) {
+        Iterator<SeoShop> iterator = shops.iterator();
+        while (iterator.hasNext()) {
+            SeoShop shop = iterator.next();
+            builder.append("!").append(var).append(":").append(shop.getShopid());
+            if (iterator.hasNext()) {
+                builder.append(" AND ");
+            }
+        }
+        query.set("fq", new String(builder));
     }
 
 
@@ -107,6 +125,35 @@ public class SolrUtils {
         query.set("q", getQueryQ(null));
         if (!StringUtils.isEmpty(var2)) {
             query.set("fq", getQueryQ("catid", var2));
+        }
+        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+    }
+
+    /**
+     * 店铺搜索参数过滤
+     * @param request
+     * @param query
+     */
+    public static void queryShop(SeoRequest request, SolrQuery query) {
+
+        query.set("q", getQueryQ(request));
+
+        if (!StringUtils.isEmpty(request.getAttribute())){
+            if (!StringUtils.isEmpty(request.getOther()) && request.getOther().equals("shop")){
+                /**
+                 * 商品默认分页
+                 */
+                query.set("start", "0");
+                query.set("rows", "1000");
+            }else{
+                query.set("fq",getQueryQ("shopid", request.getAttribute()));
+                /** 店铺商品只取3个 */
+                query.set("start", "0");
+                query.set("rows", "3");
+            }
+        }else{
+            /** 针对店铺分页 */
+            setSolrPage(query, request, rows);
         }
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
@@ -443,6 +490,29 @@ public class SolrUtils {
         }
         solrDoc.addField("pinyin", pinyin);
         solrDoc.addField("abbre", abbreviation);
+    }
+
+
+    /**
+     * 普通商品数据处理
+     *
+     * @param doc 索引数据
+     */
+    public static LinkedList<SeoGoods> setSeoGoodsResponseInfo(SolrDocumentList doc) {
+        LinkedList<SeoGoods> seoGoodses = Lists.newLinkedList();
+        int args = doc.size();
+        for (int i = 0; i < args; i++) {
+            SeoGoods goods = new SeoGoods();
+            goods.setHotwords(SolrUtils.getParameter(doc, i, "hotwords"));
+            goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
+            goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
+            goods.setShopName(SolrUtils.getParameter(doc, i, "shopid"));
+            goods.setSales(SolrUtils.getParameter(doc, i, "sales"));
+            goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
+            goods.setSource(SolrUtils.getParameter(doc, i, "source"));
+            seoGoodses.add(goods);
+        }
+        return seoGoodses;
     }
 
     /*

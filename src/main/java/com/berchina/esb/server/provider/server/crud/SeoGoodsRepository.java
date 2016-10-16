@@ -87,7 +87,7 @@ public class SeoGoodsRepository {
 
         SolrPageUtil.getPageInfo(solrMap, request, documents);
 
-        return setSeoGoodsResponseInfo(goods.query(query).getResults());
+        return SolrUtils.setSeoGoodsResponseInfo(goods.query(query).getResults());
 
     }
 
@@ -245,27 +245,7 @@ public class SeoGoodsRepository {
         return seoCateGories;
     }
 
-    /**
-     * 普通商品数据处理
-     *
-     * @param doc 索引数据
-     */
-    public LinkedList<SeoGoods> setSeoGoodsResponseInfo(SolrDocumentList doc) {
-        LinkedList<SeoGoods> seoGoodses = Lists.newLinkedList();
-        int args = doc.size();
-        for (int i = 0; i < args; i++) {
-            SeoGoods goods = new SeoGoods();
-            goods.setHotwords(SolrUtils.getParameter(doc, i, "hotwords"));
-            goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
-            goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
-            goods.setShopName(SolrUtils.getParameter(doc, i, "shopid"));
-            goods.setSales(SolrUtils.getParameter(doc, i, "sales"));
-            goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
-            goods.setSource(SolrUtils.getParameter(doc, i, "source"));
-            seoGoodses.add(goods);
-        }
-        return seoGoodses;
-    }
+
 
     /**
      * 全站搜索设置 SKU 商品属性

@@ -2,6 +2,7 @@ package com.berchina.esb.server.provider.model;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @Package com.berchina.esb.server.provider.model
@@ -54,7 +55,7 @@ public class SeoShop implements Serializable {
     /**
      * 商品集合
      */
-    private LinkedList<SeoGoods> goodsList = new LinkedList<SeoGoods>();
+    private List<SeoGoods> goodsList = new LinkedList<SeoGoods>();
 
     public String getShopid() {
         return shopid;
@@ -128,11 +129,11 @@ public class SeoShop implements Serializable {
         this.totalSales = totalSales;
     }
 
-    public LinkedList<SeoGoods> getGoodsList() {
+    public List<SeoGoods> getGoodsList() {
         return goodsList;
     }
 
-    public void setGoodsList(LinkedList<SeoGoods> goodsList) {
+    public void setGoodsList(List<SeoGoods> goodsList) {
         this.goodsList = goodsList;
     }
 
