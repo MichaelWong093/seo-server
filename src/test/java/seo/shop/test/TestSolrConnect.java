@@ -33,8 +33,8 @@ public class TestSolrConnect {
 
     @Before
     public void init() {
-        solrClient = new HttpSolrClient.Builder("http://127.0.0.1:8080/solr/shop").build();
-        goods = new HttpSolrClient.Builder("http://127.0.0.1:8080/solr/goods").build();
+        solrClient = new HttpSolrClient.Builder("http://127.0.0.1:8983/solr/shop").build();
+        goods = new HttpSolrClient.Builder("http://127.0.0.1:8983/solr/goods").build();
     }
 
     @Test

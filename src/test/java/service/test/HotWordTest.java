@@ -136,8 +136,7 @@ public class HotWordTest {
 //	@Test
 	public void extractHw(){
 		//System.out.println(HanLP.extractKeyword(new String("核桃味的瓜子吃起来像核桃"), 4));
-		
-          String line = "1\t核桃味的瓜子吃起来像核桃数据库接口".toString();  
+          String line = "1\t核桃味的瓜子吃起来像核桃数据库接口".toString();
           String[] strSplits = line.split("\t");  
           if(strSplits.length == 2) {  
               int label = Integer.parseInt(strSplits[0]);  

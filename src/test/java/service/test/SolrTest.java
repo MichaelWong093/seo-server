@@ -17,7 +17,7 @@ import org.junit.Test;
 
 public class SolrTest {
 	private SolrClient server;
-	private static final String DEFAULT_URL = "http://127.0.0.1:8983/solr/gdhotwd";
+	private static final String DEFAULT_URL = "http://127.0.0.1:8080/solr/gdhotwd";
 
 	@Before
 	public void init() {

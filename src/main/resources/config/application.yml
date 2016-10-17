@@ -3,7 +3,7 @@ spring:
     active:
   data:
     solr:
-      host: http://127.0.0.1:8080/solr/
+      host: http://127.0.0.1:8983/solr/
       repositories:
         enabled: false
 server:
@@ -21,9 +21,9 @@ seo:
     request:
       adapter: goods,shop,gdhotwd,sphotwd,category,categorys,caterev,sku,brand,brandrev
   task:
-    syn: off
+    syn: on
     app: solr
     port: 8983
     server: 127.0.0.1
-    collection:  #goods,shop,goods,category,categorys,caterev,sku,brand,brandrev
+    collection:  goods,shop,goods,category,categorys,caterev,sku,brand,brandrev
     address: /dataimport?command=full-import&clean=true&commit=true

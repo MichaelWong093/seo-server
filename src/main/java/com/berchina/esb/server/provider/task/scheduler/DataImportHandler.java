@@ -58,7 +58,7 @@ public class DataImportHandler {
      * "0 15 10 ? * 6L 2009-2019" 2009年至2019年的每月的最后一个星期五上午10:15触发
      * "0 15 10 ? * 6#3" 每月的第三个星期五上午10:15触发
      */
-//    @Scheduled(cron = "0 52 17 * * ?")
+    @Scheduled(cron = "0 46 17 * * ?")
 //    @Scheduled(fixedDelay = 50000)
     public void dataImport() {
 

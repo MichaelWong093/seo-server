@@ -43,10 +43,10 @@ public class CategoryTest {
 
     @Before
     public void init() {
-        categorys = new HttpSolrClient.Builder("http://127.0.0.1:8080/solr/categorys").build();
-        caterv = new HttpSolrClient.Builder("http://127.0.0.1:8080/solr/caterev").build();
-        category = new HttpSolrClient.Builder("http://127.0.0.1:8080/solr/category").build();
-        goods = new HttpSolrClient.Builder("http://127.0.0.1:8080/solr/goods").build();
+        categorys = new HttpSolrClient.Builder("http://127.0.0.1:8983/solr/categorys").build();
+        caterv = new HttpSolrClient.Builder("http://127.0.0.1:8983/solr/caterev").build();
+        category = new HttpSolrClient.Builder("http://127.0.0.1:8983/solr/category").build();
+        goods = new HttpSolrClient.Builder("http://127.0.0.1:8983/solr/goods").build();
     }
 
 
