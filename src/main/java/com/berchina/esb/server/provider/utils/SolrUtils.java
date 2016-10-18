@@ -396,9 +396,6 @@ public class SolrUtils {
         }
         return EnumUtils.SEO_HOTWORDS.getName()
                 .concat(Constants.COLON).concat(request.getHotwords());
-//        return EnumUtils.SEO_HOTWORDS.getName()
-//                .concat(Constants.COLON).concat(Constants.ASTERISK)
-//                .concat(request.getHotwords()).concat(Constants.ASTERISK);
     }
 
     /**
