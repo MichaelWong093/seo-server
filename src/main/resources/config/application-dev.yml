@@ -1,0 +1,15 @@
+spring:
+  data:
+    solr:
+      host: http://127.0.0.1:8983/solr/
+      repositories:
+        enabled: false
+seo:
+  task:
+    syn: off
+    app: solr
+    port: 8983
+    server: 127.0.0.1
+    collection:  goods,shop,goods,category,categorys,caterev,sku,brand,brandrev
+    address: /dataimport?command=full-import&clean=true&commit=true
+    logs: /Users/rxbyes/Documents/IDEA/seo-server/seo-logs/suggest/
