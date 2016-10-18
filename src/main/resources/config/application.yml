@@ -27,3 +27,4 @@ seo:
     server: 127.0.0.1
     collection:  goods,shop,goods,category,categorys,caterev,sku,brand,brandrev
     address: /dataimport?command=full-import&clean=true&commit=true
+    logs: /Users/rxbyes/Documents/IDEA/seo-server/seo-logs/suggest/

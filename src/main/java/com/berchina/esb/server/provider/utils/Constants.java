@@ -263,6 +263,8 @@ public class Constants {
      */
     public static final String UNREAD_LOAD = "unread_load";
 
+    public static final String REDA_LOG_PATH = "seo.task.logs";
+
     /*
      * log 文件后缀名
      */
