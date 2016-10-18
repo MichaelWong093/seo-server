@@ -55,12 +55,16 @@ public class SeoGoodsRepository {
 
         request.setCategory(response.getFacetFields().get(0).getValues().get(0).getName());
 
-        LinkedList<SeoGoods> seoGoodses  = this.querySolrDocuments(goodsMap, goods, request, query);
+        LinkedList<SeoGoods> seoGoodses = this.querySolrDocuments(goodsMap, goods, request, query);
+
         if (!StringUtils.isEmpty(seoGoodses) && seoGoodses.size() > 0) {
             goodsMap.put("goods", seoGoodses);
-            goodsMap.put("attribute", setCategoryAttribute(solrMap, query, request));
-            if (StringUtils.isEmpty(request.getBrand())){
-                goodsMap.put("brand", setGoodsBrandAttribute(solrMap, query, request));
+            //  移动端只显示商品列表信息
+            if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
+                goodsMap.put("attribute", setCategoryAttribute(solrMap, query, request));
+                if (StringUtils.isEmpty(request.getBrand())) {
+                    goodsMap.put("brand", setGoodsBrandAttribute(solrMap, query, request));
+                }
             }
         }
     }

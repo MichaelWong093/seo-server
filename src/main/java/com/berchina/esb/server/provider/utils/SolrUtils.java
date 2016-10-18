@@ -204,13 +204,13 @@ public class SolrUtils {
         StringBuilder builder = new StringBuilder();
 
         if (!StringUtils.isEmpty(brand)) {
-            setBrandQuery(query, brand, builder,"brand");
+            setBrandQuery(query, brand, builder, "brand");
         }
-        String attr =  request.getAttribute();
+        String attr = request.getAttribute();
 
         if (!StringUtils.isEmpty(attr)) {
 
-            setBrandQuery(query, attr, builder,"attr");
+            setBrandQuery(query, attr, builder, "attr");
         }
 
         query.setFacet(true);
@@ -226,17 +226,16 @@ public class SolrUtils {
     }
 
     /**
-     *
      * @param query
-     * @param var1  搜索属性
+     * @param var1    搜索属性
      * @param builder
-     * @param var  搜索属性名称
+     * @param var     搜索属性名称
      */
     private static void setBrandQuery(SolrQuery query, String var1, StringBuilder builder, String var) {
         String[] args = var1.split(",");
         for (int i = 0; i < args.length; i++) {
             builder.append(var).append(":").append(args[i]);
-            if (i < args.length -1 ){
+            if (i < args.length - 1) {
                 builder.append(" OR ");
             }
         }
@@ -248,11 +247,12 @@ public class SolrUtils {
         if (StringUtils.isEmpty(request.getStart()) || request.getStart().equals("0"))
             query.set("start", "0");
         else {
-            long start = Long.valueOf(request.getRows()) * (Long.valueOf(request.getStart()) - 1);
-            query.set("start", StringUtil.StringConvert(start));
+            String pageNum = StringUtil.StringConvert(
+                    Long.valueOf(request.getRows()) * (Long.valueOf(request.getStart()) - 1));
+            query.set("start", pageNum);
+            request.setStart(pageNum);
         }
         if (StringUtils.isEmpty(request.getRows())) {
-
             query.set("rows", StringUtil.StringConvert(rows));
         } else {
             query.set("rows", request.getRows());

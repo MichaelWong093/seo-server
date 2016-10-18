@@ -20,6 +20,8 @@ public enum EnumUtils {
 
     SEO_INDEX(Constants.SEO_INDEX),
 
+    SEO_TERMINAL(Constants.SEO_TERMINAL),
+
     SEO_ATTRIBUTE(Constants.SEO_ATTRIBUTE),
 
     SEO_SORT(Constants.SEO_SORT),
@@ -35,11 +37,11 @@ public enum EnumUtils {
     SEO_CATEGORY(Constants.SEO_CATEGORYS_SHOP_),
 
     SEO_BRAND(Constants.SEO_BRAND),
-    
+
     SEO_PAGE_SIZE(Constants.SEO_PAGE_SIZE),
-    
+
     SEO_CURRENT_PAGE(Constants.SEO_CURRENT_PAGE);
-    
+
 
     private final String fieldName;
 

@@ -89,7 +89,7 @@ public class SeoCategoryRepository {
 
         catList.addAll(
                 revDoc.stream().map(doc ->
-                        SolrUtils.getSolrDocumentFiled(doc, "catid"))
+                        SolrUtils.getSolrDocumentFiled(doc, "category"))
                         .collect(Collectors.toList()));
 
         SolrUtils.commit(solrCate);

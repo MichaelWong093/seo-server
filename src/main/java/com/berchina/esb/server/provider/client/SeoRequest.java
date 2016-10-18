@@ -173,6 +173,11 @@ public class SeoRequest extends Request implements Serializable {
          * 排序规则
          */
         this.setRule(StringUtil.StringConvert(map.get(EnumUtils.SEO_RULE.getName())));
+
+        /**
+         * 设备来源
+         */
+        this.setTerminal(StringUtil.StringConvert(map.get(EnumUtils.SEO_TERMINAL.getName())));
     }
 
     public String getStart() {

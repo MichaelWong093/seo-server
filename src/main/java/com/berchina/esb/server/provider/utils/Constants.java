@@ -89,6 +89,12 @@ public class Constants {
      */
     public final static String SEO_ATTRIBUTE = "attribute";
 
+
+    /**
+     * 设备来源
+     */
+    public final static String SEO_TERMINAL = "terminal";
+
     /**
      * 类目基类编号
      */
