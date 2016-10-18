@@ -81,7 +81,7 @@ public class SolrUtils {
                 builder.append(" OR ");
             }
         }
-        builder.append(" )").append(" AND catid:").append(catid);
+        builder.append(" )").append(" AND category:").append(catid);
         query.set("fq", new String(builder));
     }
 
@@ -123,7 +123,7 @@ public class SolrUtils {
         query.clear();
         query.set("q", getQueryQ(null));
         if (!StringUtils.isEmpty(var2)) {
-            query.set("fq", getQueryQ("catid", var2));
+            query.set("fq", getQueryQ("category", var2));
         }
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
@@ -166,7 +166,7 @@ public class SolrUtils {
 
         query.set("fl", "propid,proName");
 
-        query.set("fq", getQueryQ("catid", request.getCategory()));
+        query.set("fq", getQueryQ("category", request.getCategory()));
 
         setSolrPage(query, request, rows);
 
@@ -180,7 +180,7 @@ public class SolrUtils {
 
         query.set("fl", "vid,prvName,propid");
 
-        query.set("fq", getQueryQ("catid", request.getCategory()));
+        query.set("fq", getQueryQ("category", request.getCategory()));
 
         query.set("fq", request.getAttribute());
 
@@ -196,21 +196,50 @@ public class SolrUtils {
      * @param query
      */
     public static void query(SeoRequest request, SolrQuery query) {
-        /**
-         *   全站搜索商品
-         */
+
         query.set("q", getQueryQ(request));
+
+        String brand = request.getBrand();
+
+        StringBuilder builder = new StringBuilder();
+
+        if (!StringUtils.isEmpty(brand)) {
+            setBrandQuery(query, brand, builder,"brand");
+        }
+        String attr =  request.getAttribute();
+
+        if (!StringUtils.isEmpty(attr)) {
+
+            setBrandQuery(query, attr, builder,"attr");
+        }
 
         query.setFacet(true);
 
         query.addFacetField("category");
-
         setSolrPage(query, request, rows);
 
         if (!StringUtils.isEmpty(request.getCategory())) {
             query.set("fq", getQueryQ("revid", request.getCategory()));
         }
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+    }
+
+    /**
+     *
+     * @param query
+     * @param var1  搜索属性
+     * @param builder
+     * @param var  搜索属性名称
+     */
+    private static void setBrandQuery(SolrQuery query, String var1, StringBuilder builder, String var) {
+        String[] args = var1.split(",");
+        for (int i = 0; i < args.length; i++) {
+            builder.append(var).append(":").append(args[i]);
+            if (i < args.length -1 ){
+                builder.append(" OR ");
+            }
+        }
+        query.set("fq", new String(builder));
     }
 
 
@@ -259,11 +288,11 @@ public class SolrUtils {
 
         query.set("q", "*:*");
 
-        query.set("fl", "brandId");
+        query.set("fl", "brand");
 
         if (!StringUtils.isEmpty(request.getCategory())) {
 
-            query.set("fq", getQueryQ("catId", request.getCategory()));
+            query.set("fq", getQueryQ("category", request.getCategory()));
         }
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
@@ -278,7 +307,7 @@ public class SolrUtils {
     public static List<String> getBrandIDCollection(SolrDocumentList brRev) {
         List<String> brsts = Lists.newLinkedList();
         for (int i = 0; i < brRev.size(); i++) {
-            brsts.add(SolrUtils.getParameter(brRev, i, "brandId"));
+            brsts.add(SolrUtils.getParameter(brRev, i, "brand"));
         }
         return brsts;
     }

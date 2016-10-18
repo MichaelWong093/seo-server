@@ -51,26 +51,17 @@ public class SeoGoodsRepository {
 
         SolrUtils.query(request, query);
 
-        LinkedList<SeoGoods> seoGoodses = null;
+        QueryResponse response = goods.query(query);
 
-        /** 全站搜索，多条件筛 @ 关键字 @ 品牌 @ 类目 @ 类目属性 */
-        if (StringUtils.isEmpty(request.getOther())) {
-            // 关键此搜索，无多余条件
-            QueryResponse response = goods.query(query);
-            /**
-             * 根据 搜索 关键词 匹配 搜索商品最多的 类目 catID
-             */
-            request.setCategory(response.getFacetFields().get(0).getValues().get(0).getName());
+        request.setCategory(response.getFacetFields().get(0).getValues().get(0).getName());
 
-            seoGoodses = this.querySolrDocuments(goodsMap, goods, request, query);
-        } else {
-
-        }
-
+        LinkedList<SeoGoods> seoGoodses  = this.querySolrDocuments(goodsMap, goods, request, query);
         if (!StringUtils.isEmpty(seoGoodses) && seoGoodses.size() > 0) {
             goodsMap.put("goods", seoGoodses);
             goodsMap.put("attribute", setCategoryAttribute(solrMap, query, request));
-            goodsMap.put("brand", setGoodsBrandAttribute(solrMap, query, request));
+            if (StringUtils.isEmpty(request.getBrand())){
+                goodsMap.put("brand", setGoodsBrandAttribute(solrMap, query, request));
+            }
         }
     }
 
@@ -183,73 +174,6 @@ public class SeoGoodsRepository {
          */
         return CateUtils.getCategoryCollection(skuK, skuV);
     }
-
-
-    @Deprecated
-    private LinkedList<Object> getObjects(Map<String, HttpSolrClient> solrMap, SolrQuery query, String category) throws SolrServerException, IOException {
-        HttpSolrClient sku = solrMap.get("sku");
-
-        SolrUtils.query(category, query);
-
-        /**
-         * 获取所有 catid 为 category sku info
-         */
-        SolrDocumentList docs = sku.query(query).getResults();
-
-        /**
-         * 基类属性
-         */
-        List<String> list = Lists.newLinkedList();
-
-        list.addAll(docs.stream().map(doc ->
-                SolrUtils.getSolrDocumentFiled(doc, "propid")).collect(Collectors.toList()));
-
-        SolrUtils.query(list, query);
-
-        /**
-         * 所有 sku 属性信息
-         */
-        SolrDocumentList skuDocs = sku.query(query).getResults();
-
-        LinkedList<Object> seoCateGories = Lists.newLinkedList();
-
-        for (SolrDocument doc : docs) {
-
-            String parentPropId = SolrUtils.getSolrDocumentFiled(doc, "propid");
-
-            String parentCatId = SolrUtils.getSolrDocumentFiled(doc, "catid");
-
-            SeoCateGory gory = new SeoCateGory();
-
-            gory.setKey(parentPropId);
-
-            gory.setValue(SolrUtils.getSolrDocumentFiled(doc, "proName"));
-
-            LinkedList<SeoCateGory> cateGories = Lists.newLinkedList();
-
-            for (SolrDocument skues : skuDocs) {
-
-                String skuId = SolrUtils.getSolrDocumentFiled(skues, "propid");
-
-                String catId = SolrUtils.getSolrDocumentFiled(skues, "catid");
-
-                if (skuId.equals(parentPropId) && !catId.equals(parentCatId)) {
-
-                    SeoCateGory cateGory = new SeoCateGory();
-
-                    cateGory.setValue(SolrUtils.getSolrDocumentFiled(skues, "proName"));
-
-                    cateGory.setKey(SolrUtils.getSolrDocumentFiled(skues, "catid"));
-
-                    cateGories.add(cateGory);
-                }
-            }
-            gory.setChilds(cateGories);
-            seoCateGories.add(gory);
-        }
-        return seoCateGories;
-    }
-
 
     /**
      * 全站搜索设置 SKU 商品属性
