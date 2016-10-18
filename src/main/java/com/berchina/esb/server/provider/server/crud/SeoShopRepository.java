@@ -232,7 +232,7 @@ public class SeoShopRepository {
     public void setPage(SeoResponse seoResponse, LinkedList<Object> seoGoodsLinkedList, Object obj) {
         //参数转换
         SeoRequest seoRequest = (SeoRequest) obj;
-        SolrPageUtil spu = new SolrPageUtil(seoGoodsLinkedList, Integer.parseInt(seoRequest.getPageSize()));
+//        SolrPageUtil spu = new SolrPageUtil(seoGoodsLinkedList, Integer.parseInt(seoRequest.getPageSize()));
 //        seoResponse.setSeoGoods(spu.getList(Integer.parseInt(seoRequest.getCurrentPage())));
 //        seoResponse.setPage(spu.getCurrentPage());
 //        seoResponse.setTotalNum(spu.getTotalNum());

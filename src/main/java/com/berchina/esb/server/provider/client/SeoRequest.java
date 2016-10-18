@@ -53,17 +53,18 @@ public class SeoRequest extends Request implements Serializable {
     private String attribute;
 
     /**
-     * 其它
+     * @ 特殊字段标记
+     * @ multiple condition 简称 mc
      */
     private String other;
 
     /**
-     * 起始索引
+     * 页数
      */
     private String start;
 
     /**
-     * 结束索引
+     * 每页显示条数
      */
     private String rows;
 
@@ -71,16 +72,6 @@ public class SeoRequest extends Request implements Serializable {
      * 商品名称
      */
     private String goodsName;
-
-    /**
-     * 当前页数
-     */
-    private String currentPage;
-
-    /**
-     * 每页大小
-     */
-    private String pageSize;
 
     /**
      * 区域位置,码表字典表示
@@ -182,17 +173,6 @@ public class SeoRequest extends Request implements Serializable {
          * 排序规则
          */
         this.setRule(StringUtil.StringConvert(map.get(EnumUtils.SEO_RULE.getName())));
-
-        /**
-         * 当前页数
-         */
-        this.setCurrentPage(StringUtil.StringConvert(map.get(EnumUtils.SEO_CURRENT_PAGE.getName())));
-
-        /**
-         * 每页条数
-         */
-        this.setPageSize(StringUtil.StringConvert(map.get(EnumUtils.SEO_PAGE_SIZE.getName())));
-
     }
 
     public String getStart() {
@@ -299,22 +279,4 @@ public class SeoRequest extends Request implements Serializable {
     public void setGoodsName(String goodsName) {
         this.goodsName = goodsName;
     }
-
-    public String getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(String currentPage) {
-        this.currentPage = currentPage;
-    }
-
-    public String getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(String pageSize) {
-        this.pageSize = pageSize;
-    }
-
-
 }

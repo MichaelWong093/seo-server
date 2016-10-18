@@ -56,9 +56,8 @@ public class SolrUtils {
     }
 
 
-
-    public static void setShopSolrQuery(List<SeoShop> shops ,
-                                           SolrQuery query, StringBuilder builder, String var) {
+    public static void setShopSolrQuery(List<SeoShop> shops,
+                                        SolrQuery query, StringBuilder builder, String var) {
         Iterator<SeoShop> iterator = shops.iterator();
         while (iterator.hasNext()) {
             SeoShop shop = iterator.next();
@@ -131,6 +130,7 @@ public class SolrUtils {
 
     /**
      * 店铺搜索参数过滤
+     *
      * @param request
      * @param query
      */
@@ -138,20 +138,20 @@ public class SolrUtils {
 
         query.set("q", getQueryQ(request));
 
-        if (!StringUtils.isEmpty(request.getAttribute())){
-            if (!StringUtils.isEmpty(request.getOther()) && request.getOther().equals("shop")){
+        if (!StringUtils.isEmpty(request.getAttribute())) {
+            if (!StringUtils.isEmpty(request.getOther()) && request.getOther().equals("shop")) {
                 /**
                  * 商品默认分页
                  */
                 query.set("start", "0");
                 query.set("rows", "1000");
-            }else{
-                query.set("fq",getQueryQ("shopid", request.getAttribute()));
+            } else {
+                query.set("fq", getQueryQ("shopid", request.getAttribute()));
                 /** 店铺商品只取3个 */
                 query.set("start", "0");
                 query.set("rows", "3");
             }
-        }else{
+        } else {
             /** 针对店铺分页 */
             setSolrPage(query, request, rows);
         }
@@ -188,7 +188,6 @@ public class SolrUtils {
 
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
-
 
     /**
      * 类目关联关系
@@ -250,7 +249,8 @@ public class SolrUtils {
     }
 
     /**
-     *  品牌搜索关联关系
+     * 品牌搜索关联关系
+     *
      * @param request
      * @param query
      */
@@ -259,9 +259,9 @@ public class SolrUtils {
 
         query.set("q", "*:*");
 
-        query.set("fl","brandId");
+        query.set("fl", "brandId");
 
-        if (!StringUtils.isEmpty(request.getCategory())){
+        if (!StringUtils.isEmpty(request.getCategory())) {
 
             query.set("fq", getQueryQ("catId", request.getCategory()));
         }
@@ -270,13 +270,14 @@ public class SolrUtils {
 
 
     /**
-     *   获取类目对应的品牌编号
+     * 获取类目对应的品牌编号
+     *
      * @param brRev 品牌索引集合
      * @return 品牌编号
      */
     public static List<String> getBrandIDCollection(SolrDocumentList brRev) {
         List<String> brsts = Lists.newLinkedList();
-        for (int i = 0; i< brRev.size();i++){
+        for (int i = 0; i < brRev.size(); i++) {
             brsts.add(SolrUtils.getParameter(brRev, i, "brandId"));
         }
         return brsts;
