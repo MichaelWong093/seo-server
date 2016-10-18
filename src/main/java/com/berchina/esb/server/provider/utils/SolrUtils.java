@@ -213,6 +213,11 @@ public class SolrUtils {
             setBrandQuery(query, attr, builder, "attr");
         }
 
+        if (!StringUtils.isEmpty(request.getSort())) {
+
+            query.set("sort", getSortRule(request));
+        }
+
         query.setFacet(true);
 
         query.addFacetField("category");
