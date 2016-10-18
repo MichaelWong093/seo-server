@@ -116,8 +116,6 @@ public class SeoGoodsRepository {
 
         SolrDocumentList brandsDoc = brand.query(query).getResults();
 
-        LOGGER.info(" 类目对应的商品品牌 , {}", JSON.toJSON(brandsDoc));
-
         return setBrand(brandsDoc);
     }
 

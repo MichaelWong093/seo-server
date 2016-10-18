@@ -168,7 +168,7 @@ public class SolrUtils {
 
         query.set("fq", getQueryQ("category", request.getCategory()));
 
-        setSolrPage(query, request, rows);
+        setStartAndRows(query);
 
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
@@ -184,7 +184,7 @@ public class SolrUtils {
 
         query.set("fq", request.getAttribute());
 
-        setSolrPage(query, request, rows);
+        setStartAndRows(query);
 
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
@@ -216,6 +216,7 @@ public class SolrUtils {
         query.setFacet(true);
 
         query.addFacetField("category");
+
         setSolrPage(query, request, rows);
 
         if (!StringUtils.isEmpty(request.getCategory())) {
@@ -337,16 +338,6 @@ public class SolrUtils {
         query.clear();
 
         query.set("q", getQueryQ(request));
-
-//        String category = request.getCategory();
-
-        /**
-         * 类目搜索
-         */
-//        if (!StringUtils.isEmpty(category)) {
-
-//            query.set("fq", getQueryQ("parentid", category));
-//        }
 
         /**
          * 商品属性搜索
