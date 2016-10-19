@@ -178,11 +178,6 @@ public class SeoRequest extends Request implements Serializable {
          * 设备来源
          */
         this.setTerminal(StringUtil.StringConvert(map.get(EnumUtils.SEO_TERMINAL.getName())));
-
-        /**
-         * 当前页数
-         */
-        this.setPage(Long.valueOf(this.getSort()));
     }
 
     public String getStart() {

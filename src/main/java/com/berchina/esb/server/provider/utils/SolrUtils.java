@@ -248,14 +248,14 @@ public class SolrUtils {
     }
 
 
-    private static void setSolrPage(SolrQuery query, SeoRequest request){
+    private static void setSolrPage(SolrQuery query, SeoRequest request) {
         if (StringUtils.isEmpty(request.getStart()) || request.getStart().equals("0"))
             query.set("start", "0");
         else {
             String pageNum = StringUtil.StringConvert(
                     Long.valueOf(request.getRows()) * (Long.valueOf(request.getStart()) - 1));
             query.set("start", pageNum);
-            request.setStart(pageNum);
+            request.setPage(pageNum);
         }
         if (StringUtils.isEmpty(request.getRows())) {
             query.set("rows", StringUtil.StringConvert(rows));

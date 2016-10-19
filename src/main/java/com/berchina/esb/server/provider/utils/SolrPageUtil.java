@@ -44,7 +44,7 @@ public class SolrPageUtil {
         seoCateMap.put("totalNum", totalNum);
 
         /** 当前页数 */
-        seoCateMap.put("page", request.getStart().equals("0") ? "1" : request.getStart());
+        seoCateMap.put("page", request.getPage().equals("0") ? "1" : request.getPage());
 
         /** 总页数 */
         long totalPage = totalNum / rows;

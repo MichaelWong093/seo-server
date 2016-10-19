@@ -1,7 +1,6 @@
 package com.berchina.esb.server.provider.client.base;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @Package com.berchina.esb.server.provider.client
@@ -46,26 +45,26 @@ public class Request implements Serializable {
     /**
      * 当前页
      */
-    private long page;
+    private String page;
 
     /**
      * 总页数
      */
-    private long pageSize;
+    private String pageSize;
 
-    public long getPage() {
+    public String getPage() {
         return page;
     }
 
-    public void setPage(long page) {
+    public void setPage(String page) {
         this.page = page;
     }
 
-    public long getPageSize() {
+    public String getPageSize() {
         return pageSize;
     }
 
-    public void setPageSize(long pageSize) {
+    public void setPageSize(String pageSize) {
         this.pageSize = pageSize;
     }
 
