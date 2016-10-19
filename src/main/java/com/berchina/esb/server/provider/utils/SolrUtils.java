@@ -51,7 +51,7 @@ public class SolrUtils {
         StringBuilder builder = new StringBuilder();
         setCollectSolrQuery(catList, query, builder, "category");
         query.set("q", "*:*");
-        setSolrPage(query, request, rows);
+        setSolrPage(query, request);
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
@@ -153,7 +153,7 @@ public class SolrUtils {
             }
         } else {
             /** 针对店铺分页 */
-            setSolrPage(query, request, rows);
+            setSolrPage(query, request);
         }
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
@@ -222,7 +222,7 @@ public class SolrUtils {
 
         query.addFacetField("category");
 
-        setSolrPage(query, request, rows);
+        setSolrPage(query, request);
 
         if (!StringUtils.isEmpty(request.getCategory())) {
             query.set("fq", getQueryQ("revid", request.getCategory()));
@@ -248,7 +248,7 @@ public class SolrUtils {
     }
 
 
-    private static void setSolrPage(SolrQuery query, SeoRequest request, long rows) {
+    private static void setSolrPage(SolrQuery query, SeoRequest request){
         if (StringUtils.isEmpty(request.getStart()) || request.getStart().equals("0"))
             query.set("start", "0");
         else {
