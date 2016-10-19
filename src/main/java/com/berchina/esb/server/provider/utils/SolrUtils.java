@@ -249,13 +249,15 @@ public class SolrUtils {
 
 
     private static void setSolrPage(SolrQuery query, SeoRequest request) {
-        if (StringUtils.isEmpty(request.getStart()) || request.getStart().equals("0"))
+        if (StringUtils.isEmpty(request.getStart())
+                || request.getStart().equals("0") || request.getStart().equals("1")) {
             query.set("start", "0");
-        else {
+            request.setPage("1");
+        } else {
             String pageNum = StringUtil.StringConvert(
                     Long.valueOf(request.getRows()) * (Long.valueOf(request.getStart()) - 1));
             query.set("start", pageNum);
-            request.setPage(pageNum);
+            request.setPage(request.getStart());
         }
         if (StringUtils.isEmpty(request.getRows())) {
             query.set("rows", StringUtil.StringConvert(rows));
@@ -360,15 +362,7 @@ public class SolrUtils {
             query.set("sort", getSortRule(request));
         }
 
-        if (!StringUtils.isEmpty(request.getStart())) {
-
-            query.set("start", request.getStart());
-        }
-
-        if (!StringUtils.isEmpty(request.getRows())) {
-
-            query.set("rows", request.getRows());
-        }
+        setSolrPage(query, request);
 
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
