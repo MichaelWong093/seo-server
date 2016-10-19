@@ -47,10 +47,17 @@ public class SolrUtils {
      * @param query
      */
     public static void query(List<String> catList, SolrQuery query, SeoRequest request) {
+
         StringBuilder builder = new StringBuilder();
+
         setCollectSolrQuery(catList, query, builder, "category");
-        query.set("q", "*:*");
+
+        if (!StringUtils.isEmpty(request.getSort())) {
+
+            query.set("sort", getSortRule(request));
+        }
         setSolrPage(query, request);
+
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
@@ -286,7 +293,7 @@ public class SolrUtils {
         query.clear();
         query.set("q", "*:*");
         query.set("start", "0");
-        query.set("rows", "3000");
+        query.set("rows", "100");
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
@@ -294,7 +301,7 @@ public class SolrUtils {
         query.clear();
         query.set("q", "*:*");
         query.set("start", "0");
-        query.set("rows", "3000");
+        query.set("rows", "100");
         if (!StringUtils.isEmpty(request.getCategory())) {
             query.set("fq", getQueryQ("revid", request.getCategory()));
         }
