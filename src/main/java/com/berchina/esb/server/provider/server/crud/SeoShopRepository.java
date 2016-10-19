@@ -23,6 +23,7 @@ import com.berchina.esb.server.provider.model.SeoShop;
 import com.berchina.esb.server.provider.utils.SolrPageUtil;
 import com.berchina.esb.server.provider.utils.SolrUtils;
 import com.berchina.esb.server.provider.utils.StringUtil;
+import org.springframework.util.StringUtils;
 
 @Repository
 public class SeoShopRepository {
@@ -63,11 +64,12 @@ public class SeoShopRepository {
 
         SolrDocumentList goodses = goodsClient.query(query).getResults();
 
-        LinkedList<SeoGoods> vars = SolrUtils.setSeoGoodsResponseInfo(goodses);
+        if (!StringUtils.isEmpty(seoRequest.getTerminal()) && seoRequest.getTerminal().equals("app")) {
+
+            goods.put("goods", SolrUtils.setSeoGoodsResponseInfo(goodses));
+        }
 
         goods.put("shop", seoShops);
-
-        goods.put("goods", vars);
     }
 
     public List<SeoShop> getShopCollection(SeoRequest request, SolrQuery query, HttpSolrClient shopClient, HttpSolrClient goodsClient) throws SolrServerException, IOException {

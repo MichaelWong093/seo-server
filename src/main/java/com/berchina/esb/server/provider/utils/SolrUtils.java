@@ -71,18 +71,20 @@ public class SolrUtils {
 
 
     public static void setCollectSolrQuery(Set<SeoCateGory> skus,
-                                           SolrQuery query, StringBuilder builder, String category, String catid) {
-        Iterator<SeoCateGory> iterator = skus.iterator();
-        builder.append("( ");
-        while (iterator.hasNext()) {
-            SeoCateGory sku = iterator.next();
-            builder.append(category).append(":").append(sku.getKey());
-            if (iterator.hasNext()) {
-                builder.append(" OR ");
+                                           SolrQuery query, StringBuilder builder, String category, String catid){
+        if (!StringUtils.isEmpty(skus) && skus.size() > 0){
+            Iterator<SeoCateGory> iterator = skus.iterator();
+            builder.append("( ");
+            while (iterator.hasNext()) {
+                SeoCateGory sku = iterator.next();
+                builder.append(category).append(":").append(sku.getKey());
+                if (iterator.hasNext()) {
+                    builder.append(" OR ");
+                }
             }
+            builder.append(" )").append(" AND category:").append(catid);
+            query.set("fq", new String(builder));
         }
-        builder.append(" )").append(" AND category:").append(catid);
-        query.set("fq", new String(builder));
     }
 
 
@@ -189,6 +191,23 @@ public class SolrUtils {
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
+    public static void querys(SeoRequest request, SolrQuery query) {
+
+        query.set("q", getQueryQ(request));
+
+        query.set("fl", "category");
+
+        query.setFacet(true);
+
+        query.addFacetField("category");
+
+        query.set("start", "0");
+
+        query.set("rows", "1");
+
+        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+    }
+
     /**
      * 类目关联关系
      *
@@ -210,7 +229,7 @@ public class SolrUtils {
 
         if (!StringUtils.isEmpty(attr)) {
 
-            setBrandQuery(query, attr, builder, "attr");
+            setBrandQuery(query, attr, builder, "vid");
         }
 
         if (!StringUtils.isEmpty(request.getSort())) {

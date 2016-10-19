@@ -87,7 +87,7 @@ public class Constants {
     /**
      * 属性
      */
-    public final static String SEO_ATTRIBUTE = "attribute";
+    public final static String SEO_ATTRIBUTE = "attr";
 
 
     /**

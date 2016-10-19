@@ -47,7 +47,7 @@ public class SeoGoodsRepository {
 
         HttpSolrClient goods = solrMap.get(request.getChannel());
 
-        SolrUtils.query(request, query);
+        SolrUtils.querys(request, query);
 
         QueryResponse response = goods.query(query);
 
@@ -79,7 +79,7 @@ public class SeoGoodsRepository {
          * 属性歧义 category 泛指属性 goods collection category
          * @ 属性值  attribute  替代 category
          */
-        request.setAttribute(request.getCategory());
+//        request.setAttribute(request.getCategory());
 
         SolrUtils.queryParameter(request, query);
 
