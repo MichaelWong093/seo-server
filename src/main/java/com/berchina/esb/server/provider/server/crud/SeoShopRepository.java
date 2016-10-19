@@ -67,6 +67,7 @@ public class SeoShopRepository {
     public List<SeoShop> getShopCollection(Map<String, Object> goods, SeoRequest request,
                                            SolrQuery query, HttpSolrClient shopClient, HttpSolrClient goodsClient) throws SolrServerException, IOException {
         List<SeoShop> shops = Lists.newLinkedList();
+        SolrUtils.setShopbyGoods(query);
         SolrDocumentList doc = shopClient.query(query).getResults();
         for (int i = 0; i < doc.size(); i++) {
             SeoShop shop = new SeoShop();

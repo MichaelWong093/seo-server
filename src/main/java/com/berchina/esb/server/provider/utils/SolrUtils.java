@@ -305,6 +305,12 @@ public class SolrUtils {
         query.set("rows", "30");
     }
 
+    public static void setShopbyGoods(SolrQuery query) {
+        query.set("start", "0");
+        query.set("rows", "3");
+        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+    }
+
     /**
      * 品牌搜索关联关系
      *
