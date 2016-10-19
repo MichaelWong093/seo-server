@@ -81,7 +81,7 @@ public class SeoCategoryRepository {
         /**
          * 展示类目与系统类目关联关系
          */
-        SolrUtils.query(request, query);
+        SolrUtils.queryCategorys(request, query);
 
         SolrDocumentList revDoc = solrCate.query(query).getResults();
 
@@ -91,8 +91,6 @@ public class SeoCategoryRepository {
                 revDoc.stream().map(doc ->
                         SolrUtils.getSolrDocumentFiled(doc, "category"))
                         .collect(Collectors.toList()));
-
-        SolrUtils.commit(solrCate);
 
         LOGGER.info(" [ 展示类目与系统类目关联关系, {} ] ", JSON.toJSONString(catList));
 
@@ -106,7 +104,7 @@ public class SeoCategoryRepository {
         /**
          * 展示类目
          */
-        SolrUtils.queryCategorys(request, query);
+        SolrUtils.queryCategorys(query);
 
         SolrDocumentList cateGoryDoc = solrCates.query(query).getResults();
 

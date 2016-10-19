@@ -280,14 +280,24 @@ public class SolrUtils {
     /**
      * 展示类目
      *
-     * @param request
      * @param query
      */
+    public static void queryCategorys(SolrQuery query) {
+        query.clear();
+        query.set("q", "*:*");
+        query.set("start", "0");
+        query.set("rows", "3000");
+        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+    }
+
     public static void queryCategorys(SeoRequest request, SolrQuery query) {
         query.clear();
         query.set("q", "*:*");
         query.set("start", "0");
-        query.set("rows", "30000");
+        query.set("rows", "3000");
+        if (!StringUtils.isEmpty(request.getCategory())) {
+            query.set("fq", getQueryQ("revid", request.getCategory()));
+        }
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
@@ -304,13 +314,9 @@ public class SolrUtils {
      */
     public static void queryBrandRev(SeoRequest request, SolrQuery query) {
         query.clear();
-
         query.set("q", "*:*");
-
         query.set("fl", "brand");
-
         if (!StringUtils.isEmpty(request.getCategory())) {
-
             query.set("fq", getQueryQ("category", request.getCategory()));
         }
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
@@ -352,19 +358,14 @@ public class SolrUtils {
      * @param query   请求 SQL
      */
     public static void queryParameter(SeoRequest request, SolrQuery query) {
-
         query.clear();
-
         query.set("q", getQueryQ(request));
-
         /**
          * 商品属性搜索
          */
         if (!StringUtils.isEmpty(request.getCategory())) {
-
             query.set("fq", getQueryQ("category", request.getCategory()));
         }
-
         /**
          * 排序
          */
@@ -372,9 +373,7 @@ public class SolrUtils {
 
             query.set("sort", getSortRule(request));
         }
-
         setSolrPage(query, request);
-
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
