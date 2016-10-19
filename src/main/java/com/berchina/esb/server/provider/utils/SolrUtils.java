@@ -64,12 +64,14 @@ public class SolrUtils {
 
     public static void setShopSolrQuery(List<SeoShop> shops,
                                         SolrQuery query, StringBuilder builder, String var) {
-        Iterator<SeoShop> iterator = shops.iterator();
-        while (iterator.hasNext()) {
-            SeoShop shop = iterator.next();
-            builder.append("!").append(var).append(":").append(shop.getShopid());
-            if (iterator.hasNext()) {
-                builder.append(" OR ");
+        if (!StringUtils.isEmpty(shops) && shops.size() > 0) {
+            Iterator<SeoShop> iterator = shops.iterator();
+            while (iterator.hasNext()) {
+                SeoShop shop = iterator.next();
+                builder.append("!").append(var).append(":").append(shop.getShopid());
+                if (iterator.hasNext()) {
+                    builder.append(" OR ");
+                }
             }
         }
         query.set("fq", new String(builder));
@@ -143,26 +145,10 @@ public class SolrUtils {
      * @param query
      */
     public static void queryShop(SeoRequest request, SolrQuery query) {
-
         query.set("q", getQueryQ(request));
 
-        if (!StringUtils.isEmpty(request.getAttribute())) {
-            if (!StringUtils.isEmpty(request.getOther()) && request.getOther().equals("shop")) {
-                /**
-                 * 商品默认分页
-                 */
-                query.set("start", "0");
-                query.set("rows", "1000");
-            } else {
-                query.set("fq", getQueryQ("shopid", request.getAttribute()));
-                /** 店铺商品只取3个 */
-                query.set("start", "0");
-                query.set("rows", "3");
-            }
-        } else {
-            /** 针对店铺分页 */
-            setSolrPage(query, request);
-        }
+        setSolrPage(query, request);
+
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
@@ -243,6 +229,12 @@ public class SolrUtils {
 
             query.set("sort", getSortRule(request));
         }
+
+        if (!StringUtils.isEmpty(request.getOther())) {
+
+            query.set("fq", getQueryQ("source", request.getOther()));
+        }
+
         setSolrPage(query, request);
 
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);

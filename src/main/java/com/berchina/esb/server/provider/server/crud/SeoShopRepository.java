@@ -32,7 +32,6 @@ public class SeoShopRepository {
     @Autowired
     private SolrServerFactoryBean factoryBean;
 
-
     public void querySolrDocuments(Map<String, Object> goods, SeoRequest seoRequest) throws SolrServerException, IOException {
 
         Map<String, HttpSolrClient> solrMap = factoryBean.httpSolrServer();
@@ -50,29 +49,23 @@ public class SeoShopRepository {
 
         SolrUtils.queryShop(seoRequest, query);
 
-        List<SeoShop> seoShops = getShopCollection(seoRequest, query, shopClient, goodsClient);
-
-        StringBuilder builder = new StringBuilder();
-
-        SolrUtils.setShopSolrQuery(seoShops, query, builder, "shopid");
-
-        seoRequest.setAttribute(new String(builder));
-
-        seoRequest.setOther("shop");
-
-        SolrUtils.queryShop(seoRequest, query);
-
-        SolrDocumentList goodses = goodsClient.query(query).getResults();
-
-        if (!StringUtils.isEmpty(seoRequest.getTerminal()) && seoRequest.getTerminal().equals("app")) {
-
-            goods.put("goods", SolrUtils.setSeoGoodsResponseInfo(goodses));
-        }
+        List<SeoShop> seoShops = getShopCollection(goods, seoRequest, query, shopClient, goodsClient);
 
         goods.put("shop", seoShops);
+
+//        StringBuilder builder = new StringBuilder();
+//        SolrUtils.setShopSolrQuery(seoShops, query, builder, "shopid");
+//        seoRequest.setAttribute(new String(builder));
+//        seoRequest.setOther("shop");
+//        SolrUtils.queryShop(seoRequest, query);
+//        SolrDocumentList goodses = goodsClient.query(query).getResults();
+//        if (!StringUtils.isEmpty(seoRequest.getTerminal()) && seoRequest.getTerminal().equals("app")) {
+//            goods.put("goods", SolrUtils.setSeoGoodsResponseInfo(goodses));
+//        }
     }
 
-    public List<SeoShop> getShopCollection(SeoRequest request, SolrQuery query, HttpSolrClient shopClient, HttpSolrClient goodsClient) throws SolrServerException, IOException {
+    public List<SeoShop> getShopCollection(Map<String, Object> goods, SeoRequest request,
+                                           SolrQuery query, HttpSolrClient shopClient, HttpSolrClient goodsClient) throws SolrServerException, IOException {
         List<SeoShop> shops = Lists.newLinkedList();
         SolrDocumentList doc = shopClient.query(query).getResults();
         for (int i = 0; i < doc.size(); i++) {
@@ -85,6 +78,7 @@ public class SeoShopRepository {
             getShopByGoodsCollection(request, query, shop, goodsClient);
             shops.add(shop);
         }
+        SolrPageUtil.getPageInfo(goods, request, doc);
         LOGGER.info(" [ 搜索商铺输出信息 ], {} ", JSON.toJSON(shops));
         return shops;
     }
@@ -99,146 +93,4 @@ public class SeoShopRepository {
 
         shop.setGoodsList(SolrUtils.setSeoGoodsResponseInfo(gdDoc));
     }
-
-
-    @Deprecated
-    public void setSeoGoodsMap(Map<String, Object> shop, Map<String, SeoShop> shopMap, SolrDocumentList doc) {
-        LinkedList<Object> seoLinkedList = Lists.newLinkedList();
-        int args = doc.size();
-        for (int i = 0; i < args; i++) {
-            String shopId = SolrUtils.getParameter(doc, i, "shopid");
-            // 判断商铺集合是否存在
-            if (shopMap.containsKey(shopId) && StringUtil.notNull(shopMap.get(shopId))) {
-                List<SeoGoods> goodsList = shopMap.get(shopId).getGoodsList();
-                int var1 = goodsList.size();
-                if (var1 < 4) {
-                    SeoGoods goods = new SeoGoods();
-                    goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
-                    goods.setGoodsName(SolrUtils.getParameter(doc, i, "hotwords"));
-                    goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
-                    goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
-                    goods.setActivityLabel(SolrUtils.getParameter(doc, i, "activityLabel"));
-//                    shopMap.get(shopId).getGoodsList().addLast(goods);
-                }
-            } else {
-                SeoShop seoShop = new SeoShop();
-                seoShop.setShopid(shopId);
-                seoShop.setShopName(SolrUtils.getParameter(doc, i, "shopName"));
-                seoShop.setShopLevelId(SolrUtils.getParameter(doc, i, "shopLevelId"));
-                seoShop.setSource(SolrUtils.getParameter(doc, i, "source"));
-                seoShop.setLogo(SolrUtils.getParameter(doc, i, "logo"));
-                seoShop.setAddress(SolrUtils.getParameter(doc, i, "address"));
-                seoShop.setBusinessarea(SolrUtils.getParameter(doc, i, "businessarea"));
-                seoShop.setTotalSales(SolrUtils.getParameter(doc, i, "businessarea"));
-                seoShop.setTrueName(SolrUtils.getParameter(doc, i, "trueName"));
-                shopMap.put(shopId, seoShop);
-                SeoGoods goods = new SeoGoods();
-                goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
-                goods.setGoodsName(SolrUtils.getParameter(doc, i, "hotwords"));
-                goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
-                goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
-                goods.setActivityLabel(SolrUtils.getParameter(doc, i, "activityLabel"));
-//                shopMap.get(shopId).getGoodsList().addLast(goods);
-            }
-        }
-        Iterator map = shopMap.keySet().iterator();
-        while (map.hasNext()) {
-            seoLinkedList.add(shopMap.get(map.next()));
-        }
-        shop.put("shop", seoLinkedList);
-    }
-
-    /**
-     * 设置查询的SeoShop  集合
-     *
-     * @param
-     * @return
-     */
-    @Deprecated
-    public void setSeoShopMap(Map<String, SeoShop> shopMap, QueryResponse response) {
-        SolrDocumentList doc = response.getResults();
-        int args = doc.size();
-        for (int i = 0; i < args; i++) {
-            String shopId = SolrUtils.getParameter(doc, i, "id");
-            SeoShop seoShop = new SeoShop();
-            seoShop.setShopid(shopId);
-            seoShop.setShopName(SolrUtils.getParameter(doc, i, "shopName"));
-            seoShop.setShopLevelId(SolrUtils.getParameter(doc, i, "shopLevelId"));
-            seoShop.setSource(SolrUtils.getParameter(doc, i, "source"));
-            seoShop.setLogo(SolrUtils.getParameter(doc, i, "logo"));
-            seoShop.setAddress(SolrUtils.getParameter(doc, i, "address"));
-            seoShop.setBusinessarea(SolrUtils.getParameter(doc, i, "businessarea"));
-            seoShop.setTotalSales(SolrUtils.getParameter(doc, i, "businessarea"));
-            seoShop.setTrueName(SolrUtils.getParameter(doc, i, "trueName"));
-            shopMap.put(shopId, seoShop);
-        }
-    }
-
-    /**
-     * 结果处理
-     *
-     * @param seoGoodsLinkedList
-     * @param doc
-     */
-    @Deprecated
-    public void setSeoShopResponseInfoT(LinkedList<Object> seoGoodsLinkedList, SolrDocumentList doc) {
-        int args = doc.size();
-        Map<String, SeoShop> shopMap = new HashMap<String, SeoShop>();
-        for (int i = 0; i < args; i++) {
-            String shopId = SolrUtils.getParameter(doc, i, "shopid");
-            /**
-             * 判断有没有商铺信息
-             */
-            if (shopMap.containsKey(shopId)) {
-                if (StringUtil.notNull(shopMap.get(shopId))) {
-                    List<SeoGoods> goodsList = shopMap.get(shopId).getGoodsList();
-                    int var1 = goodsList.size();
-                    if (var1 < 4) {
-                        SeoGoods goods = new SeoGoods();
-                        goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
-                        goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
-                        goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
-                        goods.setActivityLabel(SolrUtils.getParameter(doc, i, "activityLabel"));
-//                        goodsList.addLast(goods);
-                    }
-                }
-            } else {
-                SeoShop seoShop = new SeoShop();
-                seoShop.setShopid(SolrUtils.getParameter(doc, i, "shopid"));
-                seoShop.setShopName(SolrUtils.getParameter(doc, i, "shopName"));
-                seoShop.setShopLevelId(SolrUtils.getParameter(doc, i, "shopLevelId"));
-                seoShop.setSource(SolrUtils.getParameter(doc, i, "source"));
-                seoShop.setLogo(SolrUtils.getParameter(doc, i, "logo"));
-                seoShop.setAddress(SolrUtils.getParameter(doc, i, "address"));
-                seoShop.setBusinessarea(SolrUtils.getParameter(doc, i, "businessarea"));
-                seoShop.setTotalSales(SolrUtils.getParameter(doc, i, "businessarea"));
-                seoShop.setTrueName(SolrUtils.getParameter(doc, i, "trueName"));
-                shopMap.put(shopId, seoShop);
-                SeoGoods goods = new SeoGoods();
-                goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
-                goods.setGoodsName(SolrUtils.getParameter(doc, i, "goodsName"));
-                goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
-                goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
-                goods.setActivityLabel(SolrUtils.getParameter(doc, i, "activityLabel"));
-//                shopMap.get(shopId).getGoodsList().addLast(goods);
-                seoGoodsLinkedList.add(seoShop);
-            }
-        }
-
-    }
-
-    /**
-     * 分页处理
-     */
-    @Deprecated
-    public void setPage(SeoResponse seoResponse, LinkedList<Object> seoGoodsLinkedList, Object obj) {
-        //参数转换
-        SeoRequest seoRequest = (SeoRequest) obj;
-//        SolrPageUtil spu = new SolrPageUtil(seoGoodsLinkedList, Integer.parseInt(seoRequest.getPageSize()));
-//        seoResponse.setSeoGoods(spu.getList(Integer.parseInt(seoRequest.getCurrentPage())));
-//        seoResponse.setPage(spu.getCurrentPage());
-//        seoResponse.setTotalNum(spu.getTotalNum());
-//        seoResponse.setTotalPage(spu.getPageNum());
-    }
-
 }
