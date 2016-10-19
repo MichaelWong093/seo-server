@@ -9,7 +9,6 @@ import java.util.Set;
 import com.berchina.esb.server.provider.model.SeoCateGory;
 import com.berchina.esb.server.provider.model.SeoGoods;
 import com.berchina.esb.server.provider.model.SeoShop;
-import com.berchina.esb.server.provider.server.crud.SeoGoodsRepository;
 import com.google.common.collect.Lists;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -63,7 +62,7 @@ public class SolrUtils {
             SeoShop shop = iterator.next();
             builder.append("!").append(var).append(":").append(shop.getShopid());
             if (iterator.hasNext()) {
-                builder.append(" AND ");
+                builder.append(" OR ");
             }
         }
         query.set("fq", new String(builder));
@@ -71,8 +70,8 @@ public class SolrUtils {
 
 
     public static void setCollectSolrQuery(Set<SeoCateGory> skus,
-                                           SolrQuery query, StringBuilder builder, String category, String catid){
-        if (!StringUtils.isEmpty(skus) && skus.size() > 0){
+                                           SolrQuery query, StringBuilder builder, String category, String catid) {
+        if (!StringUtils.isEmpty(skus) && skus.size() > 0) {
             Iterator<SeoCateGory> iterator = skus.iterator();
             builder.append("( ");
             while (iterator.hasNext()) {
@@ -215,6 +214,7 @@ public class SolrUtils {
      * @param query
      */
     public static void query(SeoRequest request, SolrQuery query) {
+        query.clear();
 
         query.set("q", getQueryQ(request));
 
@@ -236,16 +236,8 @@ public class SolrUtils {
 
             query.set("sort", getSortRule(request));
         }
-
-        query.setFacet(true);
-
-        query.addFacetField("category");
-
         setSolrPage(query, request);
 
-        if (!StringUtils.isEmpty(request.getCategory())) {
-            query.set("fq", getQueryQ("revid", request.getCategory()));
-        }
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 

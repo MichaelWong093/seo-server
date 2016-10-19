@@ -75,13 +75,8 @@ public class SeoGoodsRepository {
      * @throws IOException
      */
     private LinkedList<SeoGoods> querySolrDocuments(Map<String, Object> solrMap, HttpSolrClient goods, SeoRequest request, SolrQuery query) throws SolrServerException, IOException {
-        /**
-         * 属性歧义 category 泛指属性 goods collection category
-         * @ 属性值  attribute  替代 category
-         */
-//        request.setAttribute(request.getCategory());
 
-        SolrUtils.queryParameter(request, query);
+        SolrUtils.query(request, query);
 
         SolrDocumentList documents = goods.query(query).getResults();
 
