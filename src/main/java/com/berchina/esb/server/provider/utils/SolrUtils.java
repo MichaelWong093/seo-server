@@ -293,18 +293,19 @@ public class SolrUtils {
         query.clear();
         query.set("q", "*:*");
         query.set("start", "0");
-        query.set("rows", "100");
+        query.set("rows", "500");
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
     public static void queryCategorys(SeoRequest request, SolrQuery query) {
         query.clear();
         query.set("q", "*:*");
-        query.set("start", "0");
-        query.set("rows", "100");
         if (!StringUtils.isEmpty(request.getCategory())) {
             query.set("fq", getQueryQ("revid", request.getCategory()));
         }
+        query.set("fl", "category");
+        query.set("start", "0");
+        query.set("rows", "260");
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 

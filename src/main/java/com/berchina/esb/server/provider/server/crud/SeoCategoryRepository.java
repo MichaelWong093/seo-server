@@ -46,7 +46,6 @@ public class SeoCategoryRepository {
         Map<String, HttpSolrClient> solrClient = factoryBean.httpSolrServer();
 
         SolrQuery query = new SolrQuery();
-
         /**
          *  @ 品牌搜索
          */
@@ -59,25 +58,30 @@ public class SeoCategoryRepository {
              */
             QueryResponse response = this.getQueryCategoryAttrResponse(solrClient, request, query);
 
-            /**
-             * 商品信息
-             */
-            seoResponse.put("goods", SolrUtils.setSeoGoodsResponseInfo(response.getResults()));
+            LinkedList<Map<String, Object>> brands = getShopPropertyCollection(solrClient, query);
 
-            /**
-             *  商品属性聚合条件
-             */
-            this.setFacetQuery(query, response);
+            if (StringUtils.isEmpty(brands) && brands.size() > 0) {
 
-            /**
-             * SKU 信息
-             */
-            seoResponse.put("attribute", getShopPropertyCollection(solrClient, query));
+                /**
+                 *  商品属性聚合条件
+                 */
+                this.setFacetQuery(query, response);
 
-            /**
-             * 分页信息
-             */
-            SolrPageUtil.getPageInfo(seoResponse, request, response.getResults());
+                /**
+                 * SKU 信息
+                 */
+                seoResponse.put("attribute", brands);
+
+                /**
+                 * 商品信息
+                 */
+                seoResponse.put("goods", SolrUtils.setSeoGoodsResponseInfo(response.getResults()));
+
+                /**
+                 * 分页信息
+                 */
+                SolrPageUtil.getPageInfo(seoResponse, request, response.getResults());
+            }
         }
 
         /**
@@ -85,18 +89,56 @@ public class SeoCategoryRepository {
          */
         if (!StringUtils.isEmpty(request.getCategory())) {
 
-            LinkedList<SeoCateGory> cateGories = this.getSolrCategorys(solrClient, request, query);
+            HttpSolrClient cateClient = solrClient.get(request.getChannel());
+
+            query.clear();
+            query.set("q", "*:*");
+            query.set("fl", "revlevel");
+            query.set("start", "0");
+            query.set("rows", "1");
+            query.set("fq", SolrUtils.getQueryQ("id", request.getCategory()));
+
+            Integer level = (Integer) cateClient.query(query).getResults().get(0).getFieldValue("revlevel");
 
             /**
-             * 类目相关商品
+             * 三级类目处理
              */
-            seoResponse.put("goods", this.getSolrGoods(seoResponse, solrClient, query, request));
+            if (!StringUtils.isEmpty(level) && level == 2) {
 
-            /**
-             * 类目相关属性
-             */
-            seoResponse.put("category", cateGories);
+
+                System.out.println("hello");
+            } else {
+                /**
+                 * 验证类目搜索是否是第三级类目，三级类目特殊化处理
+                 */
+                LinkedList<SeoCateGory> cateGories = this.getSolrCategorys(cateClient, request, query);
+
+                /** 类目搜索之后，搜索商品，过滤恶意搜索，减少服务器类目搜索, 或者是三级类目 */
+                if (!StringUtils.isEmpty(cateGories) && cateGories.size() > 0) {
+
+                    /**
+                     * 类目相关属性
+                     */
+                    seoResponse.put("category", cateGories);
+
+                    /**
+                     * 类目相关商品
+                     */
+                    seoResponse.put("goods", this.getSolrGoods(seoResponse, solrClient, query, request));
+                }
+            }
         }
+    }
+
+    private LinkedList<SeoCateGory> getSolrCategorys(HttpSolrClient cateClient, SeoRequest request, SolrQuery query) throws SolrServerException, IOException {
+
+        SolrUtils.queryCategorys(query);
+
+        SolrDocumentList cateGoryDoc = cateClient.query(query).getResults();
+
+        SolrUtils.commit(cateClient);
+
+        return CateUtils.getSeoCateGories(request.getCategory(), cateGoryDoc);
     }
 
     /**
@@ -108,7 +150,8 @@ public class SeoCategoryRepository {
      * @throws SolrServerException
      * @throws IOException
      */
-    public LinkedList<Map<String, Object>> getShopPropertyCollection(Map<String, HttpSolrClient> solrClient, SolrQuery query) throws SolrServerException, IOException {
+    public LinkedList<Map<String, Object>> getShopPropertyCollection(
+            Map<String, HttpSolrClient> solrClient, SolrQuery query) throws SolrServerException, IOException {
 
         HttpSolrClient sku = solrClient.get(Constants.SEO_SKU);
 
@@ -145,7 +188,6 @@ public class SeoCategoryRepository {
         }
         return cateGories;
     }
-
 
     /**
      * SKU 商品属性键，商品分类总称
@@ -283,8 +325,6 @@ public class SeoCategoryRepository {
 
         SolrUtils.commit(solrGoods);
 
-        LOGGER.info(" [ 系统类目关系商品信息, {} ] ", JSON.toJSONString(goodsDoc));
-
         return SolrUtils.setSeoGoodsResponseInfo(goodsDoc);
     }
 
@@ -305,29 +345,8 @@ public class SeoCategoryRepository {
                 revDoc.stream().map(doc ->
                         SolrUtils.getSolrDocumentFiled(doc, "category"))
                         .collect(Collectors.toList()));
-
-        LOGGER.info(" [ 展示类目与系统类目关联关系, {} ] ", JSON.toJSONString(catList));
-
         return catList;
     }
 
-    private LinkedList<SeoCateGory> getSolrCategorys(
-            Map<String, HttpSolrClient> solrClient, SeoRequest request, SolrQuery query) throws SolrServerException, IOException {
 
-        HttpSolrClient solrCates = solrClient.get(request.getChannel());
-        /**
-         * 展示类目
-         */
-        SolrUtils.queryCategorys(query);
-
-        SolrDocumentList cateGoryDoc = solrCates.query(query).getResults();
-
-        LinkedList<SeoCateGory> seoCateGorys = CateUtils.getSeoCateGories(request.getCategory(), cateGoryDoc);
-
-        SolrUtils.commit(solrCates);
-
-        LOGGER.info(" [ 展示类目数据封装, {} ] ", JSON.toJSONString(seoCateGorys));
-
-        return seoCateGorys;
-    }
 }

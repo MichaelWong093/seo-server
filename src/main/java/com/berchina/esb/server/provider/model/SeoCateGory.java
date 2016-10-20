@@ -32,7 +32,7 @@ public class SeoCateGory implements Serializable {
     /**
      * 叶子类目
      */
-    private LinkedList<SeoCateGory> childs = null;
+    private LinkedList<SeoCateGory> childs = Lists.newLinkedList();
 
 
     public SeoCateGory() {
