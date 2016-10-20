@@ -100,6 +100,10 @@ public class Constants {
      */
     public final static String SEO_PARENTID = "parentid";
 
+    public final static String SEO_PROPID = "propid";
+
+    public final static String SEO_SKU = "sku";
+
     /**
      * 其它
      */

@@ -257,8 +257,7 @@ public class SolrUtils {
         query.set("fq", new String(builder));
     }
 
-
-    private static void setSolrPage(SolrQuery query, SeoRequest request) {
+    public static void setSolrPage(SolrQuery query, SeoRequest request) {
         if (StringUtils.isEmpty(request.getStart())
                 || request.getStart().equals("0") || request.getStart().equals("1")) {
             query.set("start", "0");
