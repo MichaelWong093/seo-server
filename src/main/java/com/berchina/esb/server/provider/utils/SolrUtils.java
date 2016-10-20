@@ -1,10 +1,7 @@
 package com.berchina.esb.server.provider.utils;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.berchina.esb.server.provider.model.SeoCateGory;
 import com.berchina.esb.server.provider.model.SeoGoods;
@@ -13,6 +10,7 @@ import com.google.common.collect.Lists;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -210,6 +208,17 @@ public class SolrUtils {
         query.clear();
 
         query.set("q", getQueryQ(request));
+
+        query.setHighlight(true); // 开启高亮组件
+        query.addHighlightField("hotwords"); // 高亮字段
+        query.setHighlightSimplePre("<font color='red'>");//标记，高亮关键字前缀
+        query.setHighlightSimplePost("</font>");// 后缀
+//        query.setHighlightRequireFieldMatch(true);
+        query.setHighlightSnippets(1); // 结果分片数，默认为1
+        query.setHighlightFragsize(1000); // 每个分片的最大长度，默认为100
+
+        query.set("hl.usePhraseHighlighter", true);
+        query.set("hl.highlightMultiTerm", true);
 
         String brand = request.getBrand();
 
@@ -526,6 +535,25 @@ public class SolrUtils {
     }
 
 
+    public static LinkedList<SeoGoods> setSeoGoodsResponseInfo(
+            Map<String, Map<String, List<String>>> maps, SolrDocumentList doc) {
+        LinkedList<SeoGoods> seoGoodses = Lists.newLinkedList();
+        for (int i = 0; i < doc.size(); i++) {
+            String id = SolrUtils.getParameter(doc, i, "id");
+            SeoGoods goods = new SeoGoods();
+            goods.setHotwords(
+                    String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
+            );
+            goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
+            goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
+            goods.setShopName(SolrUtils.getParameter(doc, i, "shopid"));
+            goods.setSales(SolrUtils.getParameter(doc, i, "sales"));
+            goods.setGoodsId(id);
+            goods.setSource(SolrUtils.getParameter(doc, i, "source"));
+            seoGoodses.add(goods);
+        }
+        return seoGoodses;
+    }
     /**
      * 普通商品数据处理
      *
@@ -547,6 +575,9 @@ public class SolrUtils {
         }
         return seoGoodses;
     }
+
+
+
 
     /*
      * add by yhq 回滚事务

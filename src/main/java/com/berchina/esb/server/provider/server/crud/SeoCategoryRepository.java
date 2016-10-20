@@ -85,6 +85,8 @@ public class SeoCategoryRepository {
          */
         if (!StringUtils.isEmpty(request.getCategory())) {
 
+            LinkedList<SeoCateGory> cateGories = this.getSolrCategorys(solrClient, request, query);
+
             /**
              * 类目相关商品
              */
@@ -93,7 +95,7 @@ public class SeoCategoryRepository {
             /**
              * 类目相关属性
              */
-            seoResponse.put("category", this.getSolrCategorys(solrClient, request, query));
+            seoResponse.put("category", cateGories);
         }
     }
 
@@ -138,7 +140,7 @@ public class SeoCategoryRepository {
             }
             seoCates.put("key", key);
             seoCates.put("value", value);
-            seoCates.put("child", skuV);
+            seoCates.put("childs", skuV);
             cateGories.add(seoCates);
         }
         return cateGories;

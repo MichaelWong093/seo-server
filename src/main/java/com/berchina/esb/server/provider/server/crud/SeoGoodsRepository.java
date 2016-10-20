@@ -11,9 +11,11 @@ import com.berchina.esb.server.provider.utils.SolrUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrResponse;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,12 +80,15 @@ public class SeoGoodsRepository {
 
         SolrUtils.query(request, query);
 
-        SolrDocumentList documents = goods.query(query).getResults();
+        QueryResponse response = goods.query(query);
+
+        SolrDocumentList documents = response.getResults();
+
+        Map<String, Map<String, List<String>>> maps = response.getHighlighting();
 
         SolrPageUtil.getPageInfo(solrMap, request, documents);
 
-        return SolrUtils.setSeoGoodsResponseInfo(goods.query(query).getResults());
-
+        return SolrUtils.setSeoGoodsResponseInfo(maps, documents);
     }
 
 
