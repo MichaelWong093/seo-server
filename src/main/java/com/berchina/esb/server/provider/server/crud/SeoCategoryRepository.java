@@ -93,7 +93,7 @@ public class SeoCategoryRepository {
             /**
              * 类目相关属性
              */
-            seoResponse.put("attribute", this.getSolrCategorys(solrClient, request, query));
+            seoResponse.put("category", this.getSolrCategorys(solrClient, request, query));
         }
     }
 
@@ -189,15 +189,18 @@ public class SeoCategoryRepository {
             atr.append(" ( ");
             int a = attrs.size();
             for (int i = 0; i < a; i++) {
-                atr.append("vid").append(":").append(attrs.get(i));
-                if (i < a - 1) {
-                    atr.append(" OR ");
+                String vid = String.valueOf(attrs.get(i));
+                if (!vid.equals("-1")) {
+                    atr.append("vid").append(":").append(vid);
+                    if (i < a - 1) {
+                        atr.append(" OR ");
+                    }
                 }
             }
             atr.append(" ) ");
         }
         if (!StringUtils.isEmpty(cates) && cates.size() > 0) {
-            atr.append(" AND ");
+            atr.append(" AND ").append(" ( ");
             int b = cates.size();
             for (int i = 0; i < b; i++) {
                 atr.append("category").append(":").append(cates.get(i));
@@ -205,8 +208,10 @@ public class SeoCategoryRepository {
                     atr.append(" OR ");
                 }
             }
+            atr.append(" )");
         }
         query.set("fq", new String(atr));
+        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
     /**
