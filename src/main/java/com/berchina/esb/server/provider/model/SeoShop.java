@@ -53,6 +53,11 @@ public class SeoShop implements Serializable {
     private String totalSales;
 
     /**
+     * 营业时间
+     */
+    private String hours;
+
+    /**
      * 商品集合
      */
     private List<SeoGoods> goodsList = new LinkedList<SeoGoods>();
@@ -137,4 +142,11 @@ public class SeoShop implements Serializable {
         this.goodsList = goodsList;
     }
 
+    public String getHours() {
+        return hours;
+    }
+
+    public void setHours(String hours) {
+        this.hours = hours;
+    }
 }

@@ -76,6 +76,7 @@ public class SeoShopRepository {
             shop.setLogo(SolrUtils.getParameter(doc, i, "logo"));
             shop.setAddress(SolrUtils.getParameter(doc, i, "address"));
             shop.setSource(SolrUtils.getParameter(doc, i, "source"));
+            shop.setHours(SolrUtils.getParameter(doc, i, "businesshours"));
             getShopByGoodsCollection(request, query, shop, goodsClient);
             shops.add(shop);
         }
