@@ -54,6 +54,14 @@ public class SolrUtils {
 
             query.set("sort", getSortRule(request));
         }
+
+        /**
+         * 三级类目搜索使用
+         */
+        query.setFacet(true);
+        query.addFacetField("category");
+        query.addFacetField("vid");
+
         setSolrPage(query, request);
 
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
@@ -555,13 +563,13 @@ public class SolrUtils {
         }
         return seoGoodses;
     }
+
     /**
      * 普通商品数据处理
      *
      * @param doc 索引数据
      */
-    public static LinkedList<SeoGoods> setSeoGoodsResponseInfo(SolrDocumentList doc) {
-        LinkedList<SeoGoods> seoGoodses = Lists.newLinkedList();
+    public static void setSeoGoodsResponseInfo(LinkedList<SeoGoods> seoGoodses, SolrDocumentList doc) {
         int args = doc.size();
         for (int i = 0; i < args; i++) {
             SeoGoods goods = new SeoGoods();
@@ -574,10 +582,7 @@ public class SolrUtils {
             goods.setSource(SolrUtils.getParameter(doc, i, "source"));
             seoGoodses.add(goods);
         }
-        return seoGoodses;
     }
-
-
 
 
     /*

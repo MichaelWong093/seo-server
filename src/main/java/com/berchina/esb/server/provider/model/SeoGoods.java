@@ -58,12 +58,6 @@ public class SeoGoods implements Serializable {
      */
     private String activityLabel;
 
-    /**
-     * 商品名称
-     */
-	private String goodsName;
-
-
     public String getPrices() {
         return prices;
     }
@@ -136,22 +130,12 @@ public class SeoGoods implements Serializable {
         this.activityLabel = activityLabel;
     }
 
-	public String getGoodsName() {
-		return goodsName;
-	}
+    @Override
+    public String toString() {
+        return "SeoGoods [hotwords=" + hotwords + ", prices=" + prices
+                + ", picture=" + picture + ", sales=" + sales + ", comment="
+                + comment + ", shopName=" + shopName + ", source=" + source
+                + ", goodsId=" + goodsId + ", activityLabel=" + activityLabel + "]";
+    }
 
-
-	public void setGoodsName(String goodsName) {
-		this.goodsName = goodsName;
-	}
-
-	@Override
-	public String toString() {
-		return "SeoGoods [hotwords=" + hotwords + ", prices=" + prices
-				+ ", picture=" + picture + ", sales=" + sales + ", comment="
-				+ comment + ", shopName=" + shopName + ", source=" + source
-				+ ", goodsId=" + goodsId + ", activityLabel=" + activityLabel
-				+ ", goodsName=" + goodsName + "]";
-	}
-     
 }

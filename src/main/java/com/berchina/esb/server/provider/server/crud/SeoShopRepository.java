@@ -86,6 +86,9 @@ public class SeoShopRepository {
     }
 
     public void getShopByGoodsCollection(SeoRequest request, SolrQuery query, SeoShop shop, HttpSolrClient goodsClient) throws SolrServerException, IOException {
+
+        LinkedList<SeoGoods> goodses = Lists.newLinkedList();
+
         /** 商品信息组装*/
         request.setAttribute(shop.getShopid());
 
@@ -93,6 +96,8 @@ public class SeoShopRepository {
 
         SolrDocumentList gdDoc = goodsClient.query(query).getResults();
 
-        shop.setGoodsList(SolrUtils.setSeoGoodsResponseInfo(gdDoc));
+        SolrUtils.setSeoGoodsResponseInfo(goodses, gdDoc);
+
+        shop.setGoodsList(goodses);
     }
 }
