@@ -66,12 +66,14 @@ public class TestSolrConnect {
 
         SolrDocumentList goodses = goods.query(query).getResults();
 
-        LinkedList<SeoGoods> vars = SolrUtils.setSeoGoodsResponseInfo(goodses);
+        LinkedList<SeoGoods> vars = Lists.newLinkedList();
+
+        SolrUtils.setSeoGoodsResponseInfo(vars, goodses);
 
         Map maps = Maps.newHashMap();
 
-        maps.put("shop",shops);
-        maps.put("goods",vars);
+        maps.put("shop", shops);
+        maps.put("goods", vars);
 
 
         System.out.println(JSON.toJSON(maps));
@@ -102,7 +104,11 @@ public class TestSolrConnect {
 
         SolrDocumentList gdDoc = goods.query(query).getResults();
 
-        shop.setGoodsList(SolrUtils.setSeoGoodsResponseInfo(gdDoc));
+        LinkedList<SeoGoods> list = Lists.newLinkedList();
+
+        SolrUtils.setSeoGoodsResponseInfo(list, gdDoc);
+
+        shop.setGoodsList(list);
     }
 
     @After
