@@ -95,14 +95,7 @@ public class SeoCategoryRepository {
 
             HttpSolrClient cateClient = solrClient.get(request.getChannel());
 
-            query.clear();
-            query.set("q", "*:*");
-            query.set("fl", "revlevel");
-            query.set("start", "0");
-            query.set("rows", "1");
-            query.set("fq", SolrUtils.getQueryQ("id", request.getCategory()));
-
-            Integer level = (Integer) cateClient.query(query).getResults().get(0).getFieldValue("revlevel");
+            Integer level = getCategoryLevel(request, query, cateClient);
 
             /**
              * 三级类目处理
@@ -118,6 +111,7 @@ public class SeoCategoryRepository {
                  */
                 this.setFacetQuery(query, response);
 
+                seoResponse.put("attribute", getShopPropertyCollection(solrClient, query));
             } else {
                 /**
                  * 验证类目搜索是否是第三级类目，三级类目特殊化处理
@@ -140,6 +134,28 @@ public class SeoCategoryRepository {
                 }
             }
         }
+    }
+
+    /**
+     * 类目级别判断
+     *
+     * @param request
+     * @param query
+     * @param cateClient
+     * @return
+     * @throws SolrServerException
+     * @throws IOException
+     */
+    private Integer getCategoryLevel(
+            SeoRequest request, SolrQuery query, HttpSolrClient cateClient) throws SolrServerException, IOException {
+        query.clear();
+        query.set("q", "*:*");
+        query.set("fl", "revlevel");
+        query.set("start", "0");
+        query.set("rows", "1");
+        query.set("fq", SolrUtils.getQueryQ("id", request.getCategory()));
+
+        return (Integer) cateClient.query(query).getResults().get(0).getFieldValue("revlevel");
     }
 
     private LinkedList<SeoCateGory> getSolrCategorys(HttpSolrClient cateClient, SeoRequest request, SolrQuery query) throws SolrServerException, IOException {
@@ -175,12 +191,14 @@ public class SeoCategoryRepository {
 
         LinkedList<Map<String, Object>> cateGories = Lists.newLinkedList();
 
+        Set<SeoCateGory> setSkuV = Sets.newHashSet();
+
         while (iterator.hasNext()) {
             Map<String, Object> seoCates = Maps.newHashMap();
+
             LinkedList<SeoCateGory> skuV = Lists.newLinkedList();
 
             SeoCateGory cateGory = iterator.next();
-
             String key = cateGory.getKey();
             String value = cateGory.getValue();
 
@@ -193,9 +211,10 @@ public class SeoCategoryRepository {
                     skuV.add(gory);
                 }
             }
+            setSkuV.addAll(skuV);
             seoCates.put("key", key);
             seoCates.put("value", value);
-            seoCates.put("childs", skuV);
+            seoCates.put("childs", setSkuV);
             cateGories.add(seoCates);
         }
         return cateGories;
@@ -246,7 +265,7 @@ public class SeoCategoryRepository {
             int a = attrs.size();
             for (int i = 0; i < a; i++) {
                 String vid = String.valueOf(attrs.get(i));
-                if (!vid.equals("-1")) {
+                if (!vid.equals("-1") && !vid.equals("0")) {
                     atr.append("vid").append(":").append(vid);
                     if (i < a - 1) {
                         atr.append(" OR ");
@@ -373,6 +392,4 @@ public class SeoCategoryRepository {
                         .collect(Collectors.toList()));
         return catList;
     }
-
-
 }

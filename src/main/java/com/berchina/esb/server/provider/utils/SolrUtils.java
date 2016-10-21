@@ -59,8 +59,8 @@ public class SolrUtils {
          * 三级类目搜索使用
          */
         query.setFacet(true);
-        query.addFacetField("category");
         query.addFacetField("vid");
+        query.addFacetField("category");
 
         setSolrPage(query, request);
 
