@@ -271,7 +271,7 @@ public class SeoCategoryRepository {
             int a = attrs.size();
             for (int i = 0; i < a; i++) {
                 String vid = String.valueOf(attrs.get(i));
-                if (!vid.equals("-1") && !vid.equals("0")) {
+                if (!vid.contains("-") && !vid.equals("0")) {
                     atr.append("vid").append(":").append(vid);
                     if (i < a - 1) {
                         atr.append(" OR ");
