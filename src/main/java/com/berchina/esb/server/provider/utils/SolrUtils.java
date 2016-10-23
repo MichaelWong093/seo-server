@@ -544,15 +544,19 @@ public class SolrUtils {
     }
 
 
-    public static LinkedList<SeoGoods> setSeoGoodsResponseInfo(
-            Map<String, Map<String, List<String>>> maps, SolrDocumentList doc) {
+    public static LinkedList<SeoGoods> setSeoGoodsResponseInfo(SeoRequest request,
+                                                               Map<String, Map<String, List<String>>> maps, SolrDocumentList doc) {
         LinkedList<SeoGoods> seoGoodses = Lists.newLinkedList();
         for (int i = 0; i < doc.size(); i++) {
             String id = SolrUtils.getParameter(doc, i, "id");
             SeoGoods goods = new SeoGoods();
-            goods.setHotwords(
-                    String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
-            );
+            if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
+                goods.setHotwords(
+                        String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
+                );
+            } else {
+                goods.setHotwords(SolrUtils.getParameter(doc, i, "hotwords"));
+            }
             goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
             goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
             goods.setShopName(SolrUtils.getParameter(doc, i, "shopid"));
