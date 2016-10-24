@@ -328,7 +328,12 @@ public class SolrUtils {
     }
 
     public static void setShopbyGoods(SeoRequest request, SolrQuery query) {
-        query.set("q", getQueryQ(request));
+//        query.set("q", getQueryQ(request));
+        query.set("q", "*:*");
+
+        if (!StringUtils.isEmpty(request.getAttribute())){
+            query.set("fq", getQueryQ("shopid", request.getAttribute()));
+        }
         setHighlight(query);
         query.set("start", "0");
         query.set("rows", "3");

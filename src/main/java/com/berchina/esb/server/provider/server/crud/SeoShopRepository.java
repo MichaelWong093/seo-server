@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
+import com.berchina.esb.server.provider.utils.EnumUtils;
 import com.google.common.collect.Lists;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -34,23 +35,19 @@ public class SeoShopRepository {
 
         Map<String, HttpSolrClient> solrMap = factoryBean.httpSolrServer();
 
-        setShopCollection(goods, seoRequest, solrMap);
-    }
-
-    public void setShopCollection(Map<String, Object> goods, SeoRequest seoRequest, Map<String, HttpSolrClient> solrMap) throws SolrServerException, IOException {
-
-        HttpSolrClient goodsClient = solrMap.get("goods");
-
-        HttpSolrClient shopClient = solrMap.get(seoRequest.getChannel());
-
-        SolrQuery query = new SolrQuery();
-
-        goods.put("shop", getShopCollection(goods, seoRequest, query, shopClient, goodsClient));
+        getShopCollection(goods, seoRequest, solrMap);
     }
 
     public List<SeoShop> getShopCollection(Map<String, Object> goods, SeoRequest request,
-                                           SolrQuery query, HttpSolrClient shopClient, HttpSolrClient goodsClient) throws SolrServerException, IOException {
+                                           Map<String, HttpSolrClient> solrClient) throws SolrServerException, IOException {
+
+        HttpSolrClient goodsClient = solrClient.get(EnumUtils.SEO_GOODS.getName());
+
+        HttpSolrClient shopClient = solrClient.get(request.getChannel());
+
         List<SeoShop> shops = Lists.newLinkedList();
+
+        SolrQuery query = new SolrQuery();
 
         SolrUtils.queryShop(request, query);
 
@@ -79,6 +76,7 @@ public class SeoShopRepository {
             shops.add(shop);
         }
         SolrPageUtil.getPageInfo(goods, request, doc);
+        goods.put("shop", shops);
         return shops;
     }
 
