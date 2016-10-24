@@ -329,12 +329,13 @@ public class SolrUtils {
 
     public static void setShopbyGoods(SeoRequest request, SolrQuery query) {
 //        query.set("q", getQueryQ(request));
+        query.clear();
         query.set("q", "*:*");
 
-        if (!StringUtils.isEmpty(request.getAttribute())){
+        if (!StringUtils.isEmpty(request.getAttribute())) {
             query.set("fq", getQueryQ("shopid", request.getAttribute()));
         }
-        setHighlight(query);
+//        setHighlight(query);
         query.set("start", "0");
         query.set("rows", "3");
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
@@ -589,25 +590,27 @@ public class SolrUtils {
     public static void setSeoGoodsResponseInfo(
             SeoRequest request, Map<String, Map<String, List<String>>> maps, LinkedList<SeoGoods> seoGoodses, SolrDocumentList doc) {
         int args = doc.size();
-        for (int i = 0; i < args; i++) {
-            SeoGoods goods = new SeoGoods();
-            String id = SolrUtils.getParameter(doc, i, "id");
-            goods.setHotwords(SolrUtils.getParameter(doc, i, "hotwords"));
-            if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
-                goods.setHotwords(
-                        String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
-                );
-            } else {
+        if (!StringUtils.isEmpty(args) && args > 0) {
+            for (int i = 0; i < args; i++) {
+                SeoGoods goods = new SeoGoods();
+                String id = SolrUtils.getParameter(doc, i, "id");
+               /* if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
+                    goods.setHotwords(
+                            String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
+                    );
+                } else {
+                    goods.setHotwords(SolrUtils.getParameter(doc, i, "hotwords"));
+                }*/
                 goods.setHotwords(SolrUtils.getParameter(doc, i, "hotwords"));
+                goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
+                goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
+                goods.setShopName(SolrUtils.getParameter(doc, i, "shopid"));
+                goods.setSales(SolrUtils.getParameter(doc, i, "sales"));
+                goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
+                goods.setSource(SolrUtils.getParameter(doc, i, "source"));
+                goods.setType(SolrUtils.getParameter(doc, i, "sources"));
+                seoGoodses.add(goods);
             }
-            goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
-            goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
-            goods.setShopName(SolrUtils.getParameter(doc, i, "shopid"));
-            goods.setSales(SolrUtils.getParameter(doc, i, "sales"));
-            goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
-            goods.setSource(SolrUtils.getParameter(doc, i, "source"));
-            goods.setType(SolrUtils.getParameter(doc, i, "sources"));
-            seoGoodses.add(goods);
         }
     }
 
