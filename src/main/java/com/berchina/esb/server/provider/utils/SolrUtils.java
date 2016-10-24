@@ -574,7 +574,7 @@ public class SolrUtils {
             goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
             goods.setShopName(SolrUtils.getParameter(doc, i, "shopid"));
             goods.setSales(SolrUtils.getParameter(doc, i, "sales"));
-            goods.setGoodsId(id);
+            goods.setGoodsId(SolrUtils.getParameter(doc, i, "goodsid"));
             goods.setSource(SolrUtils.getParameter(doc, i, "source"));
             goods.setType(SolrUtils.getParameter(doc, i, "sources"));
             seoGoodses.add(goods);
@@ -606,7 +606,7 @@ public class SolrUtils {
                 goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
                 goods.setShopName(SolrUtils.getParameter(doc, i, "shopid"));
                 goods.setSales(SolrUtils.getParameter(doc, i, "sales"));
-                goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
+                goods.setGoodsId(SolrUtils.getParameter(doc, i, "goodsid"));
                 goods.setSource(SolrUtils.getParameter(doc, i, "source"));
                 goods.setType(SolrUtils.getParameter(doc, i, "sources"));
                 seoGoodses.add(goods);
