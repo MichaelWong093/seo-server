@@ -31,19 +31,20 @@ public class SeoGoodsRecommendServer implements SeoServer{
 	public HotWordResponse seoGoods(Object... args) {
     	
         LOGGER.info("=======   商品热词推荐  ========");
-        LinkedList<SeoHotWords> seoGoodsRecommendList = Lists.newLinkedList();
-        try {
-            Object objects = args[0];
-            if (!StringUtils.isEmpty(objects)) {
-                if (objects instanceof SeoRequest) {
-                    repository.setSeoResponseInfo(seoGoodsRecommendList, repository.queryRecommentdDocuments(objects),(SeoRequest)objects);
-                }
-            }
-        } catch (SolrServerException | IOException e) {
-            LOGGER.error("[ 热词搜索异常 : {} ]", e.getMessage());
-            throw new SeoException(e.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
-        }
-        return new HotWordResponse(seoGoodsRecommendList);
+//        LinkedList<SeoHotWords> seoGoodsRecommendList = Lists.newLinkedList();
+//        try {
+//            Object objects = args[0];
+//            if (!StringUtils.isEmpty(objects)) {
+//                if (objects instanceof SeoRequest) {
+//                    repository.setSeoResponseInfo(seoGoodsRecommendList, repository.queryRecommentdDocuments(objects),(SeoRequest)objects);
+//                }
+//            }
+//        } catch (SolrServerException | IOException e) {
+//            LOGGER.error("[ 热词搜索异常 : {} ]", e.getMessage());
+//            throw new SeoException(e.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
+//        }
+//        return new HotWordResponse(seoGoodsRecommendList);
+        return null;
     }
 
 }
