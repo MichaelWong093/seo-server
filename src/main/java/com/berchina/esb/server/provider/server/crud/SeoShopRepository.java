@@ -79,7 +79,6 @@ public class SeoShopRepository {
             shops.add(shop);
         }
         SolrPageUtil.getPageInfo(goods, request, doc);
-        LOGGER.info(" [ 搜索商铺输出信息 ], {} ", JSON.toJSON(shops));
         return shops;
     }
 
