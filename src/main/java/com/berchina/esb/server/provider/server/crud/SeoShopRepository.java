@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
-import com.berchina.esb.server.provider.client.SeoResponse;
 import com.google.common.collect.Lists;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -22,7 +21,6 @@ import com.berchina.esb.server.provider.model.SeoGoods;
 import com.berchina.esb.server.provider.model.SeoShop;
 import com.berchina.esb.server.provider.utils.SolrPageUtil;
 import com.berchina.esb.server.provider.utils.SolrUtils;
-import com.berchina.esb.server.provider.utils.StringUtil;
 import org.springframework.util.StringUtils;
 
 @Repository
@@ -47,32 +45,32 @@ public class SeoShopRepository {
 
         SolrQuery query = new SolrQuery();
 
-        SolrUtils.queryShop(seoRequest, query);
-
-        List<SeoShop> seoShops = getShopCollection(goods, seoRequest, query, shopClient, goodsClient);
-
-        goods.put("shop", seoShops);
-
-//        StringBuilder builder = new StringBuilder();
-//        SolrUtils.setShopSolrQuery(seoShops, query, builder, "shopid");
-//        seoRequest.setAttribute(new String(builder));
-//        seoRequest.setOther("shop");
-//        SolrUtils.queryShop(seoRequest, query);
-//        SolrDocumentList goodses = goodsClient.query(query).getResults();
-//        if (!StringUtils.isEmpty(seoRequest.getTerminal()) && seoRequest.getTerminal().equals("app")) {
-//            goods.put("goods", SolrUtils.setSeoGoodsResponseInfo(goodses));
-//        }
+        goods.put("shop", getShopCollection(goods, seoRequest, query, shopClient, goodsClient));
     }
 
     public List<SeoShop> getShopCollection(Map<String, Object> goods, SeoRequest request,
                                            SolrQuery query, HttpSolrClient shopClient, HttpSolrClient goodsClient) throws SolrServerException, IOException {
         List<SeoShop> shops = Lists.newLinkedList();
-        SolrUtils.setShopbyGoods(query);
-        SolrDocumentList doc = shopClient.query(query).getResults();
+
+        SolrUtils.queryShop(request, query);
+
+        QueryResponse response = shopClient.query(query);
+
+        SolrDocumentList doc = response.getResults();
+
+        Map<String, Map<String, List<String>>> maps = response.getHighlighting();
+
         for (int i = 0; i < doc.size(); i++) {
             SeoShop shop = new SeoShop();
-            shop.setShopid(SolrUtils.getParameter(doc, i, "id"));
-            shop.setShopName(SolrUtils.getParameter(doc, i, "hotwords"));
+            String id = SolrUtils.getParameter(doc, i, "id");
+            shop.setShopid(id);
+            if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
+                shop.setShopName(
+                        String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
+                );
+            } else {
+                shop.setShopName(SolrUtils.getParameter(doc, i, "hotwords"));
+            }
             shop.setLogo(SolrUtils.getParameter(doc, i, "logo"));
             shop.setAddress(SolrUtils.getParameter(doc, i, "address"));
             shop.setSource(SolrUtils.getParameter(doc, i, "source"));
@@ -92,11 +90,13 @@ public class SeoShopRepository {
         /** 商品信息组装*/
         request.setAttribute(shop.getShopid());
 
-        SolrUtils.queryShop(request, query);
+        SolrUtils.setShopbyGoods(request, query);
 
-        SolrDocumentList gdDoc = goodsClient.query(query).getResults();
+        QueryResponse response = goodsClient.query(query);
 
-        SolrUtils.setSeoGoodsResponseInfo(goodses, gdDoc);
+        SolrDocumentList gdDoc = response.getResults();
+
+        SolrUtils.setSeoGoodsResponseInfo(request, response.getHighlighting(), goodses, gdDoc);
 
         shop.setGoodsList(goodses);
     }

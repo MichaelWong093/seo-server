@@ -53,7 +53,7 @@ public class BrandTest {
          */
         LinkedList<SeoGoods> goodses = Lists.newLinkedList();
 
-        SolrUtils.setSeoGoodsResponseInfo(goodses, response.getResults());
+//        SolrUtils.setSeoGoodsResponseInfo(goodses, response.getHighlighting(), response.getResults());
 
         System.out.println(JSON.toJSONString(goodses));
 

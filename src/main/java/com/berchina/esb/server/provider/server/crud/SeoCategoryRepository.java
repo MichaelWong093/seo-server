@@ -1,6 +1,5 @@
 package com.berchina.esb.server.provider.server.crud;
 
-import com.alibaba.fastjson.JSON;
 import com.berchina.esb.server.configloader.config.SolrServerFactoryBean;
 import com.berchina.esb.server.provider.client.SeoRequest;
 import com.berchina.esb.server.provider.model.SeoCateGory;
@@ -78,7 +77,7 @@ public class SeoCategoryRepository {
                 /**
                  * 商品信息
                  */
-                SolrUtils.setSeoGoodsResponseInfo(goodses, documents);
+                SolrUtils.setSeoGoodsResponseInfo(request, response.getHighlighting(), goodses, documents);
 
                 seoResponse.put("goods", goodses);
                 /**
@@ -364,7 +363,7 @@ public class SeoCategoryRepository {
 
         SolrUtils.commit(solrGoods);
 
-        SolrUtils.setSeoGoodsResponseInfo(goodses, goodsDoc);
+        SolrUtils.setSeoGoodsResponseInfo(request, response.getHighlighting(), goodses, goodsDoc);
 
         return response;
     }

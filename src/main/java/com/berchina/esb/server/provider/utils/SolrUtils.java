@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -144,21 +143,6 @@ public class SolrUtils {
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
-    /**
-     * 店铺搜索参数过滤
-     *
-     * @param request
-     * @param query
-     */
-    public static void queryShop(SeoRequest request, SolrQuery query) {
-        query.set("q", getQueryQ(request));
-
-        setSolrPage(query, request);
-
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
-    }
-
-
     public static void queryCategoryKey(SeoRequest request, SolrQuery query) {
         query.clear();
 
@@ -217,16 +201,7 @@ public class SolrUtils {
 
         query.set("q", getQueryQ(request));
 
-        query.setHighlight(true); // 开启高亮组件
-        query.addHighlightField("hotwords"); // 高亮字段
-        query.setHighlightSimplePre("<font color='red'>");//标记，高亮关键字前缀
-        query.setHighlightSimplePost("</font>");// 后缀
-//        query.setHighlightRequireFieldMatch(true);
-        query.setHighlightSnippets(1); // 结果分片数，默认为1
-        query.setHighlightFragsize(1000); // 每个分片的最大长度，默认为100
-
-        query.set("hl.usePhraseHighlighter", true);
-        query.set("hl.highlightMultiTerm", true);
+        setHighlight(query);
 
         String brand = request.getBrand();
 
@@ -255,6 +230,19 @@ public class SolrUtils {
         setSolrPage(query, request);
 
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+    }
+
+    private static void setHighlight(SolrQuery query) {
+        query.setHighlight(true); // 开启高亮组件
+        query.addHighlightField("hotwords"); // 高亮字段
+        query.setHighlightSimplePre("<font color='red'>");//标记，高亮关键字前缀
+        query.setHighlightSimplePost("</font>");// 后缀
+//        query.setHighlightRequireFieldMatch(true);
+        query.setHighlightSnippets(1); // 结果分片数，默认为1
+        query.setHighlightFragsize(1000); // 每个分片的最大长度，默认为100
+
+        query.set("hl.usePhraseHighlighter", true);
+        query.set("hl.highlightMultiTerm", true);
     }
 
     /**
@@ -322,7 +310,26 @@ public class SolrUtils {
         query.set("rows", "30");
     }
 
-    public static void setShopbyGoods(SolrQuery query) {
+    /**
+     * 店铺搜索参数过滤
+     *
+     * @param request
+     * @param query
+     */
+    public static void queryShop(SeoRequest request, SolrQuery query) {
+
+        query.set("q", getQueryQ(request));
+
+        setHighlight(query);
+
+        setSolrPage(query, request);
+
+        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+    }
+
+    public static void setShopbyGoods(SeoRequest request, SolrQuery query) {
+        query.set("q", getQueryQ(request));
+        setHighlight(query);
         query.set("start", "0");
         query.set("rows", "3");
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
@@ -544,8 +551,8 @@ public class SolrUtils {
     }
 
 
-    public static LinkedList<SeoGoods> setSeoGoodsResponseInfo(SeoRequest request,
-                                                               Map<String, Map<String, List<String>>> maps, SolrDocumentList doc) {
+    public static LinkedList<SeoGoods> setSeoGoodsResponseInfos(SeoRequest request,
+                                                                Map<String, Map<String, List<String>>> maps, SolrDocumentList doc) {
         LinkedList<SeoGoods> seoGoodses = Lists.newLinkedList();
         for (int i = 0; i < doc.size(); i++) {
             String id = SolrUtils.getParameter(doc, i, "id");
@@ -563,6 +570,7 @@ public class SolrUtils {
             goods.setSales(SolrUtils.getParameter(doc, i, "sales"));
             goods.setGoodsId(id);
             goods.setSource(SolrUtils.getParameter(doc, i, "source"));
+            goods.setType(SolrUtils.getParameter(doc, i, "sources"));
             seoGoodses.add(goods);
         }
         return seoGoodses;
@@ -573,17 +581,27 @@ public class SolrUtils {
      *
      * @param doc 索引数据
      */
-    public static void setSeoGoodsResponseInfo(LinkedList<SeoGoods> seoGoodses, SolrDocumentList doc) {
+    public static void setSeoGoodsResponseInfo(
+            SeoRequest request, Map<String, Map<String, List<String>>> maps, LinkedList<SeoGoods> seoGoodses, SolrDocumentList doc) {
         int args = doc.size();
         for (int i = 0; i < args; i++) {
             SeoGoods goods = new SeoGoods();
+            String id = SolrUtils.getParameter(doc, i, "id");
             goods.setHotwords(SolrUtils.getParameter(doc, i, "hotwords"));
+            if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
+                goods.setHotwords(
+                        String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
+                );
+            } else {
+                goods.setHotwords(SolrUtils.getParameter(doc, i, "hotwords"));
+            }
             goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
             goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
             goods.setShopName(SolrUtils.getParameter(doc, i, "shopid"));
             goods.setSales(SolrUtils.getParameter(doc, i, "sales"));
             goods.setGoodsId(SolrUtils.getParameter(doc, i, "id"));
             goods.setSource(SolrUtils.getParameter(doc, i, "source"));
+            goods.setType(SolrUtils.getParameter(doc, i, "sources"));
             seoGoodses.add(goods);
         }
     }

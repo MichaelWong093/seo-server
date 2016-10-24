@@ -58,6 +58,11 @@ public class SeoGoods implements Serializable {
      */
     private String activityLabel;
 
+    /**
+     * 商品类型
+     */
+    private String type;
+
     public String getPrices() {
         return prices;
     }
@@ -128,6 +133,14 @@ public class SeoGoods implements Serializable {
 
     public void setActivityLabel(String activityLabel) {
         this.activityLabel = activityLabel;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override

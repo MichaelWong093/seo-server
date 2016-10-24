@@ -88,7 +88,7 @@ public class SeoGoodsRepository {
 
         SolrPageUtil.getPageInfo(solrMap, request, documents);
 
-        return SolrUtils.setSeoGoodsResponseInfo(request, maps, documents);
+        return SolrUtils.setSeoGoodsResponseInfos(request, maps, documents);
     }
 
 
