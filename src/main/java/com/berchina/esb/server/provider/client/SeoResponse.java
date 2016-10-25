@@ -1,9 +1,13 @@
 package com.berchina.esb.server.provider.client;
 
 import com.berchina.esb.server.provider.client.base.Response;
+import com.berchina.esb.server.provider.model.SeoHotWords;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +26,8 @@ public class SeoResponse extends Response implements Serializable {
      */
     private Map<String, Object> seoGoods = Maps.newHashMap();
 
+    LinkedList<List<SeoHotWords>> hotWords = Lists.newLinkedList();
+
     public SeoResponse() {
     }
 
@@ -31,6 +37,14 @@ public class SeoResponse extends Response implements Serializable {
         super.setMessage("成功");
         super.setSerialNum(seoRequest.getSerialNum());
         this.seoGoods = seoCateMap;
+    }
+
+    public SeoResponse(LinkedList<List<SeoHotWords>> hotWords, SeoRequest seoRequest) {
+        super.setTime(seoRequest.getTime());
+        super.setCode("0000");
+        super.setMessage("成功");
+        super.setSerialNum(seoRequest.getSerialNum());
+        this.hotWords = hotWords;
     }
 
     public Map<String, Object> getSeoGoods() {
