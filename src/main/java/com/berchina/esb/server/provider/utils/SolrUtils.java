@@ -320,6 +320,11 @@ public class SolrUtils {
 
         query.set("q", getQueryQ(request));
 
+        if (!StringUtils.isEmpty(request.getOther())){
+
+            query.set("fq", getQueryQ("source", request.getOther()));
+        }
+
         setHighlight(query);
 
         setSolrPage(query, request);
