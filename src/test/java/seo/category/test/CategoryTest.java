@@ -105,9 +105,9 @@ public class CategoryTest {
 //        System.out.println( "类目条数 "+  allCategories.getNumFound() +" 所有类目信息 " +JSON.toJSON(allCategories));
 
 
-        LinkedList<SeoCateGory> goryLinkedList = CateUtils.getSeoCateGories(request.getCategory(), allCategories);
+//        LinkedList<SeoCateGory> goryLinkedList = CateUtils.getSeoCateGories(request.getCategory(), allCategories);
 
-        System.out.println("展示类目："+ JSON.toJSONString(goryLinkedList));
+//        System.out.println("展示类目："+ JSON.toJSONString(goryLinkedList));
 
 
 

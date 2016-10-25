@@ -1,5 +1,6 @@
 package com.berchina.esb.server.provider.server.crud;
 
+import com.alibaba.fastjson.JSON;
 import com.berchina.esb.server.configloader.config.SolrServerFactoryBean;
 import com.berchina.esb.server.provider.client.SeoRequest;
 import com.berchina.esb.server.provider.model.SeoCateGory;
@@ -41,6 +42,11 @@ public class SeoCategoryRepository {
     private SolrServerFactoryBean factoryBean;
 
     public void setSeoCategoryResponseInfo(Map<String, Object> seoResponse, SeoRequest request) throws SolrServerException, IOException {
+
+        /**
+         * 类目搜索，记录叶子节点类目编号，进行商品搜索
+         */
+//        LinkedList<String> endCates = Lists.newLinkedList();
 
         Map<String, HttpSolrClient> solrClient = factoryBean.httpSolrServer();
 
@@ -119,6 +125,9 @@ public class SeoCategoryRepository {
 
                 /** 类目搜索之后，搜索商品，过滤恶意搜索，减少服务器类目搜索, 或者是三级类目 */
                 if (!StringUtils.isEmpty(cateGories) && cateGories.size() > 0) {
+
+
+                    System.out.println(JSON.toJSONString(cateGories));
 
                     /**
                      * 类目相关属性

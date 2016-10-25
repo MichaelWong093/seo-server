@@ -71,7 +71,8 @@ public class CateUtils {
      * @param documentList 索引类目集合
      * @return 父子类目所属的叶子类目
      */
-    public static LinkedList<SeoCateGory> getSeoCateGories(final String cateId, SolrDocumentList documentList) {
+    public static LinkedList<SeoCateGory> getSeoCateGories(
+            final String cateId, SolrDocumentList documentList) {
 
         LinkedList<SeoCateGory> list = setCategoryTree(cateId, documentList);
 
@@ -93,7 +94,8 @@ public class CateUtils {
         return list;
     }
 
-    private static LinkedList<SeoCateGory> setCategoryTree(String cateId, SolrDocumentList documentList) {
+    private static LinkedList<SeoCateGory> setCategoryTree(
+            String cateId, SolrDocumentList documentList) {
 
         LinkedList<SeoCateGory> gories = Lists.newLinkedList();
 
