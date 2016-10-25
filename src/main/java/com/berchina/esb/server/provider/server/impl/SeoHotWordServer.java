@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.berchina.esb.server.provider.model.SeoHotWords;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
