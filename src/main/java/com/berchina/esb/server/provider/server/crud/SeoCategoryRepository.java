@@ -404,6 +404,31 @@ public class SeoCategoryRepository {
                 revDoc.stream().map(doc ->
                         SolrUtils.getSolrDocumentFiled(doc, "category"))
                         .collect(Collectors.toList()));
-        return catList;
+
+
+        HttpSolrClient category = solrClient.get("category");
+
+
+        StringBuilder bd = new StringBuilder();
+        /**
+         * 系统类目关联分装
+         */
+        SolrUtils.setCollectSolrQuery(catList, query, bd, "id");
+        /**
+         * 系统类目统一处理
+         */
+        request.setCategory(new String(bd));
+
+        SolrUtils.queryCategorys(request, query);
+
+        SolrDocumentList categories = category.query(query).getResults();
+
+        List<String> gorys = Lists.newArrayList();
+
+        gorys.addAll(
+                categories.stream().map(doc ->
+                        SolrUtils.getSolrDocumentFiled(doc, "id"))
+                        .collect(Collectors.toList()));
+        return gorys;
     }
 }

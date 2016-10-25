@@ -92,7 +92,7 @@ public class SeoShopRepository {
 
         SolrDocumentList gdDoc = response.getResults();
 
-        SolrUtils.setSeoGoodsResponseInfo(request, response.getHighlighting(), goodses, gdDoc);
+        SolrUtils.setSeoGoodsResponseInfo(goodses, gdDoc);
 
         shop.setGoodsList(goodses);
     }
