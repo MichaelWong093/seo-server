@@ -135,6 +135,10 @@ public class Constants {
      */
     public final static String SEO_CATEGORYS_SHOP_ = "categorys";
 
+    public final static String SEO_CATEGORY_SHOP_ = "category";
+
+    public final static String SEO_CATEREV_SHOP_ = "caterev";
+
 
     /**
      * 后台展示类目 Collection 名称

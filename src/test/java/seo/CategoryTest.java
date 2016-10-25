@@ -49,7 +49,7 @@ public class CategoryTest {
         /**
          * 展示类目集合
          */
-        LinkedList<SeoCateGory> cateGories = repository.getSolrCategorys(categorys, request, query);
+        LinkedList<SeoCateGory> cateGories = repository.getSolrCategorys(request);
 
         LOGGER.info("展示类目：{}", JSON.toJSONString(cateGories));
 

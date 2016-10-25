@@ -45,9 +45,10 @@ public class SolrUtils {
      */
     public static void query(List<String> catList, SolrQuery query, SeoRequest request) {
 
-        StringBuilder builder = new StringBuilder();
-
-        setCollectSolrQuery(catList, query, builder, "category");
+        if (!StringUtils.isEmpty(catList) && catList.size() > 0){
+            StringBuilder builder = new StringBuilder();
+            setCollectSolrQuery(catList, query, builder, "category");
+        }
 
         if (!StringUtils.isEmpty(request.getSort())) {
 
