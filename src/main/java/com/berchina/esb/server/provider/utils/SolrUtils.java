@@ -302,7 +302,7 @@ public class SolrUtils {
             query.set("fq", request.getCategory());
         }
 
-        query.set("fl", "category");
+        query.set("fl", "category,id");
         query.set("start", "0");
         query.set("rows", "260");
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
@@ -595,20 +595,12 @@ public class SolrUtils {
      *
      * @param doc 索引数据
      */
-    public static void setSeoGoodsResponseInfo(
-            SeoRequest request, Map<String, Map<String, List<String>>> maps, LinkedList<SeoGoods> seoGoodses, SolrDocumentList doc) {
+    public static void setSeoGoodsResponseInfo(LinkedList<SeoGoods> seoGoodses, SolrDocumentList doc) {
         int args = doc.size();
         if (!StringUtils.isEmpty(args) && args > 0) {
             for (int i = 0; i < args; i++) {
                 SeoGoods goods = new SeoGoods();
                 String id = SolrUtils.getParameter(doc, i, "id");
-               /* if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
-                    goods.setHotwords(
-                            String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
-                    );
-                } else {
-                    goods.setHotwords(SolrUtils.getParameter(doc, i, "hotwords"));
-                }*/
                 goods.setHotwords(SolrUtils.getParameter(doc, i, "hotwords"));
                 goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
                 goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));

@@ -78,7 +78,7 @@ public class SeoCategoryRepository {
                 /**
                  * 商品信息
                  */
-                SolrUtils.setSeoGoodsResponseInfo(request, response.getHighlighting(), goodses, documents);
+                SolrUtils.setSeoGoodsResponseInfo(goodses, documents);
 
                 seoResponse.put("goods", goodses);
                 /**
@@ -365,7 +365,7 @@ public class SeoCategoryRepository {
 
         SolrUtils.commit(solrGoods);
 
-        SolrUtils.setSeoGoodsResponseInfo(request, response.getHighlighting(), goodses, goodsDoc);
+        SolrUtils.setSeoGoodsResponseInfo(goodses, goodsDoc);
 
         return response;
     }
