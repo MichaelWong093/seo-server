@@ -42,7 +42,7 @@ public class CategoryTest {
 
         SeoRequest request = new SeoRequest();
 
-        request.setCategory("56");
+        request.setCategory("1679");
 
         SolrQuery query = new SolrQuery();
 
@@ -136,7 +136,6 @@ public class CategoryTest {
         System.out.println(JSON.toJSONString(goodses));
 
         System.out.println(JSON.toJSONString(goodses.getNumFound()));
-
 
     }
 
