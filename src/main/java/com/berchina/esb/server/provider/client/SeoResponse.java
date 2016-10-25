@@ -26,8 +26,6 @@ public class SeoResponse extends Response implements Serializable {
      */
     private Map<String, Object> seoGoods = Maps.newHashMap();
 
-    LinkedList<List<SeoHotWords>> hotWords = Lists.newLinkedList();
-
     public SeoResponse() {
     }
 
@@ -39,13 +37,6 @@ public class SeoResponse extends Response implements Serializable {
         this.seoGoods = seoCateMap;
     }
 
-    public SeoResponse(LinkedList<List<SeoHotWords>> hotWords, SeoRequest seoRequest) {
-        super.setTime(seoRequest.getTime());
-        super.setCode("0000");
-        super.setMessage("成功");
-        super.setSerialNum(seoRequest.getSerialNum());
-        this.hotWords = hotWords;
-    }
 
     public Map<String, Object> getSeoGoods() {
         return seoGoods;

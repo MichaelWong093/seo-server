@@ -2,7 +2,6 @@ package com.berchina.esb.server.provider.server.crud;
 
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
@@ -51,7 +50,7 @@ public class SeoHotWordRepository {
         return response;
     }
 
-    public void setSeoResponseInfo(LinkedList<List<SeoHotWords>> hotWords , SeoRequest request) throws IOException, SolrServerException {
+    public void setSeoResponseInfo( Map<String, Object> maps , SeoRequest request) throws IOException, SolrServerException {
 
         LinkedList<SeoHotWords> wordses = Lists.newLinkedList();
 
@@ -74,7 +73,7 @@ public class SeoHotWordRepository {
                 wordses.add(hotwords);
             }
         }
-        hotWords.add(wordses);
+        maps.put("hotWords",wordses);
     }
 
 

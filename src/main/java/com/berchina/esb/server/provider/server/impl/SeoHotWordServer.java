@@ -1,13 +1,10 @@
 package com.berchina.esb.server.provider.server.impl;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 
-import com.berchina.esb.server.provider.model.SeoHotWords;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +20,11 @@ import com.berchina.esb.server.provider.server.SeoServer;
 import com.berchina.esb.server.provider.server.crud.SeoHotWordRepository;
 
 /**
+ *
  * @Package com.berchina.esb.server.provider.server.impl
  * @Description: TODO ( 热词联想)
  * @Author yanhuiqing
- * @Date 2016年9月9日 下午2:42:28
+ * @Date  2016年9月9日 下午2:42:28
  * @Version V1.0
  */
 @Service
@@ -40,17 +38,16 @@ public class SeoHotWordServer implements SeoServer {
     @Override
     public SeoResponse seoGoods(Object... args) {
 
-        LinkedList<List<SeoHotWords>> hotWords = Lists.newLinkedList();
-
+        Map<String, Object> hotwords = Maps.newConcurrentMap();
         try {
             Object objects = args[0];
             if (!StringUtils.isEmpty(objects)) {
                 if (objects instanceof SeoRequest) {
                     SeoRequest seoRequest = (SeoRequest) objects;
 
-                    repository.setSeoResponseInfo(hotWords, seoRequest);
+                    repository.setSeoResponseInfo(hotwords, seoRequest);
 
-                    return new SeoResponse(hotWords, seoRequest);
+                    return new SeoResponse(hotwords, seoRequest);
                 }
             }
         } catch (SolrServerException | IOException e) {
