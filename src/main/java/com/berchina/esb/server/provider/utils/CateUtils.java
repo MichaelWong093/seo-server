@@ -118,4 +118,24 @@ public class CateUtils {
         }
         return gories;
     }
+
+    public static LinkedList<String> setEndCategoryQueryString(LinkedList<SeoCateGory> cateGories) {
+
+        LinkedList<String> gories = Lists.newLinkedList();
+
+        if (!StringUtils.isEmpty(cateGories) && cateGories.size() > 0) {
+            for (int i = 0; i < cateGories.size(); i++) {
+
+                LinkedList<SeoCateGory> seoCateGories = cateGories.get(i).getChilds();
+
+                if (!StringUtils.isEmpty(seoCateGories) && seoCateGories.size() > 0) {
+                    for (SeoCateGory gory : seoCateGories
+                            ) {
+                        gories.add(gory.getKey());
+                    }
+                }
+            }
+        }
+        return gories;
+    }
 }

@@ -43,11 +43,6 @@ public class SeoCategoryRepository {
 
     public void setSeoCategoryResponseInfo(Map<String, Object> seoResponse, SeoRequest request) throws SolrServerException, IOException {
 
-        /**
-         * 类目搜索，记录叶子节点类目编号，进行商品搜索
-         */
-//        LinkedList<String> endCates = Lists.newLinkedList();
-
         Map<String, HttpSolrClient> solrClient = factoryBean.httpSolrServer();
 
         SolrQuery query = new SolrQuery();
@@ -107,7 +102,7 @@ public class SeoCategoryRepository {
              */
             if (!StringUtils.isEmpty(level) && level == 2) {
 
-                QueryResponse response = this.getSolrGoods(goodses, seoResponse, solrClient, query, request);
+                QueryResponse response = this.getSolrGoods(null, goodses, seoResponse, solrClient, query, request);
 
                 seoResponse.put("goods", goodses);
 
@@ -125,16 +120,13 @@ public class SeoCategoryRepository {
 
                 /** 类目搜索之后，搜索商品，过滤恶意搜索，减少服务器类目搜索, 或者是三级类目 */
                 if (!StringUtils.isEmpty(cateGories) && cateGories.size() > 0) {
-
-
-                    System.out.println(JSON.toJSONString(cateGories));
-
                     /**
                      * 类目相关属性
                      */
                     seoResponse.put("category", cateGories);
 
-                    this.getSolrGoods(goodses, seoResponse, solrClient, query, request);
+                    this.getSolrGoods(
+                            CateUtils.setEndCategoryQueryString(cateGories), goodses, seoResponse, solrClient, query, request);
                     /**
                      * 类目相关商品
                      */
@@ -172,7 +164,7 @@ public class SeoCategoryRepository {
         return new Integer(00);
     }
 
-    private LinkedList<SeoCateGory> getSolrCategorys(HttpSolrClient cateClient, SeoRequest request, SolrQuery query) throws SolrServerException, IOException {
+    public LinkedList<SeoCateGory> getSolrCategorys(HttpSolrClient cateClient, SeoRequest request, SolrQuery query) throws SolrServerException, IOException {
 
         SolrUtils.queryCategorys(query);
 
@@ -356,13 +348,14 @@ public class SeoCategoryRepository {
     }
 
 
-    private QueryResponse getSolrGoods(LinkedList<SeoGoods> goodses, Map<String, Object> seoResponse,
-                                       Map<String, HttpSolrClient> solrClient, SolrQuery query, SeoRequest request)
+    private QueryResponse getSolrGoods(
+            LinkedList<String> gories, LinkedList<SeoGoods> goodses, Map<String, Object> seoResponse,
+            Map<String, HttpSolrClient> solrClient, SolrQuery query, SeoRequest request)
             throws SolrServerException, IOException {
 
         HttpSolrClient solrGoods = solrClient.get(EnumUtils.SEO_GOODS.getName());
 
-        SolrUtils.query(this.getSolrCate(request, solrClient, query), query, request);
+        SolrUtils.query(this.getSolrCate(gories, request, solrClient, query), query, request);
 
         QueryResponse response = solrGoods.query(query);
 
@@ -387,10 +380,17 @@ public class SeoCategoryRepository {
      * @throws SolrServerException
      * @throws IOException
      */
-    private List<String> getSolrCate(
-            SeoRequest request, Map<String, HttpSolrClient> solrClient, SolrQuery query) throws SolrServerException, IOException {
+    private List<String> getSolrCate(LinkedList<String> gories,
+                                     SeoRequest request, Map<String, HttpSolrClient> solrClient, SolrQuery query) throws SolrServerException, IOException {
 
         HttpSolrClient solrCate = solrClient.get("caterev");
+
+        StringBuilder builder = new StringBuilder();
+
+        SolrUtils.setCollectSolrQuery(gories, query, builder, "revid");
+
+        request.setCategory(new String(builder));
+
         /**
          * 展示类目与系统类目关联关系
          */

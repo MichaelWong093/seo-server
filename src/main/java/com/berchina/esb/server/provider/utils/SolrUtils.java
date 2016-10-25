@@ -295,10 +295,13 @@ public class SolrUtils {
 
     public static void queryCategorys(SeoRequest request, SolrQuery query) {
         query.clear();
+
         query.set("q", "*:*");
+
         if (!StringUtils.isEmpty(request.getCategory())) {
-            query.set("fq", getQueryQ("revid", request.getCategory()));
+            query.set("fq", request.getCategory());
         }
+
         query.set("fl", "category");
         query.set("start", "0");
         query.set("rows", "260");
@@ -320,7 +323,7 @@ public class SolrUtils {
 
         query.set("q", getQueryQ(request));
 
-        if (!StringUtils.isEmpty(request.getOther())){
+        if (!StringUtils.isEmpty(request.getOther())) {
 
             query.set("fq", getQueryQ("source", request.getOther()));
         }
@@ -743,5 +746,6 @@ public class SolrUtils {
                     ServerException.SEO_SERVER_URL_CONNECT_ERROR);
         }
     }
+
 
 }
