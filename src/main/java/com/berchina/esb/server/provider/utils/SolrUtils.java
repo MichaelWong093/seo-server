@@ -14,6 +14,7 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.params.ModifiableSolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -174,9 +175,13 @@ public class SolrUtils {
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
-    public static void querys(SeoRequest request, SolrQuery query) {
+    public static void querys(SeoRequest request, SolrQuery query, boolean flag) {
 
-        query.set("q", getQueryQ(request));
+        if (flag){
+            query.set("q", getQueryQs(request));
+        }else {
+            query.set("q", getQueryQ(request));
+        }
 
         query.set("fl", "category");
 
@@ -318,16 +323,13 @@ public class SolrUtils {
      * 店铺搜索参数过滤
      *
      * @param request
-     * @param query
+     * @param params
      */
-    public static void queryShop(SeoRequest request, SolrQuery query) {
+    public static void queryShop(SeoRequest request, ModifiableSolrParams params) {
+
+        SolrQuery query = new SolrQuery();
 
         query.set("q", getQueryQ(request));
-
-        if (!StringUtils.isEmpty(request.getOther())) {
-
-            query.set("fq", getQueryQ("source", request.getOther()));
-        }
 
         if (!StringUtils.isEmpty(request.getTerminal()) && request.getTerminal().equals("app")) {
 
@@ -347,7 +349,7 @@ public class SolrUtils {
 
                         String rule = request.getRule() == null ? "asc" : request.getRule();
 
-                        query.set("sort", "geodist()  " + rule);
+                        query.set("sort", "geodist() " + rule);
 
                     } else {
                         query.set("sort", getSortRule(request));
@@ -357,15 +359,20 @@ public class SolrUtils {
             }
         }
 
+        if (!StringUtils.isEmpty(request.getOther())) {
+
+            query.addFilterQuery("source:" + request.getOther());
+        }
         setHighlight(query);
 
         setSolrPage(query, request);
 
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+        params.add(query);
+
+        LOGGER.info(" [ SOLR SQL 语法: {}] ", params);
     }
 
     public static void setShopbyGoods(SeoRequest request, SolrQuery query) {
-//        query.set("q", getQueryQ(request));
         query.clear();
         query.set("q", "*:*");
 
@@ -460,18 +467,38 @@ public class SolrUtils {
     }
 
 
+    public static String getQueryQ(SeoRequest request) {
+
+        StringBuilder builder = new StringBuilder();
+
+        if (null == request || StringUtils.isEmpty(request.getHotwords())) {
+            return Constants.COLON_ASTERISK;
+        }
+        if (request.getHotwords().length() == 1) {
+            return
+                    builder.append(EnumUtils.SEO_HOTWORDS.getName())
+                            .append(Constants.COLON).append(Constants.ASTERISK)
+                            .append(request.getHotwords()).append(Constants.ASTERISK).toString();
+        }
+        return EnumUtils.SEO_HOTWORDS.getName()
+                .concat(Constants.COLON).concat(request.getHotwords());
+    }
+
     /**
      * 商品搜索
      *
      * @param request 用户搜索参数 Q 值
      * @return Q 值结果
      */
-    private static String getQueryQ(SeoRequest request) {
-        if (null == request || StringUtils.isEmpty(request.getHotwords())) {
-            return Constants.COLON_ASTERISK;
+    public static String getQueryQs(SeoRequest request) {
+        StringBuilder builder = new StringBuilder();
+        if (!StringUtils.isEmpty(request.getHotwords())) {
+            return
+                    builder.append(EnumUtils.SEO_HOTWORDS.getName())
+                            .append(Constants.COLON).append(Constants.ASTERISK)
+                            .append(request.getHotwords()).append(Constants.ASTERISK).toString();
         }
-        return EnumUtils.SEO_HOTWORDS.getName()
-                .concat(Constants.COLON).concat(request.getHotwords());
+        return null;
     }
 
     /**
@@ -577,38 +604,31 @@ public class SolrUtils {
      * 给索引文档添加 关键字的 拼音和全拼的字段 Field
      */
     public static void convert2PinyinField(SolrInputDocument solrDoc, String keyWords) {
-        List<Pinyin> pinyinList = EasySeg.convertToPinyinList(keyWords);
-        String pinyin = "";
-        String abbreviation = "";
-        for (Pinyin py : pinyinList) {
-            // 热词转换pinyin
-            pinyin += py.getPinyinWithoutTone();
-            abbreviation += py.getHead();
+        if (StringUtil.isChinese(keyWords)){
+            List<Pinyin> pinyinList = EasySeg.convertToPinyinList(keyWords);
+            String pinyin = "";
+            String abbreviation = "";
+            for (Pinyin py : pinyinList) {
+                // 热词转换pinyin
+                pinyin += py.getPinyinWithoutTone();
+                abbreviation += py.getHead();
+            }
+            if (pinyin.indexOf("none") > 0 || abbreviation.indexOf("none") > 0) {//去除非汉子的拼音问题
+                pinyin = pinyin.replaceAll("none", "");
+                abbreviation = abbreviation.replaceAll("none", "");
+            }
+            solrDoc.addField("pinyin", pinyin);
+            solrDoc.addField("abbre", abbreviation);
         }
-        if (pinyin.indexOf("none") > 0 || abbreviation.indexOf("none") > 0) {//去除非汉子的拼音问题
-            pinyin = pinyin.replaceAll("none", "");
-            abbreviation = abbreviation.replaceAll("none", "");
-        }
-        solrDoc.addField("pinyin", pinyin);
-        solrDoc.addField("abbre", abbreviation);
     }
 
 
-    public static LinkedList<SeoGoods> setSeoGoodsResponseInfos(SeoRequest request,
-                                                                Map<String, Map<String, List<String>>> maps, SolrDocumentList doc) {
+    public static LinkedList<SeoGoods> setSeoGoodsResponseInfos(
+            Map<String, Map<String, List<String>>> maps, SolrDocumentList doc) {
         LinkedList<SeoGoods> seoGoodses = Lists.newLinkedList();
         for (int i = 0; i < doc.size(); i++) {
             String id = SolrUtils.getParameter(doc, i, "id");
             SeoGoods goods = new SeoGoods();
-
-            /*if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
-                goods.setHotwords(
-                        String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
-                );
-            } else {
-                goods.setHotwords(SolrUtils.getParameter(doc, i, "hotwords"));
-            }*/
-
             goods.setHotwords(String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", ""));
             goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
             goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));

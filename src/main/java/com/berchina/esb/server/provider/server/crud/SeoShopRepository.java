@@ -10,6 +10,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.ModifiableSolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +49,11 @@ public class SeoShopRepository {
 
         SolrQuery query = new SolrQuery();
 
-        SolrUtils.queryShop(request, query);
+        ModifiableSolrParams params = new ModifiableSolrParams();
 
-        QueryResponse response = shopClient.query(query);
+        SolrUtils.queryShop(request, params);
+
+        QueryResponse response = shopClient.query(params);
 
         SolrDocumentList doc = response.getResults();
 
@@ -60,20 +63,10 @@ public class SeoShopRepository {
             SeoShop shop = new SeoShop();
             String id = SolrUtils.getParameter(doc, i, "id");
             shop.setShopid(id);
-
-           /* if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
-                shop.setShopName(
-                        String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
-                );
-            } else {
-                shop.setShopName(SolrUtils.getParameter(doc, i, "hotwords"));
-            }*/
-
             shop.setShopName(
-                    String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
-            );
+                    String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", ""));
             shop.setLogo(SolrUtils.getParameter(doc, i, "logo"));
-            shop.setDist(SolrUtils.getParameter(doc,i,"_dist_"));
+            shop.setDist(SolrUtils.getParameter(doc, i, "_dist_"));
             shop.setAddress(SolrUtils.getParameter(doc, i, "address"));
             shop.setSource(SolrUtils.getParameter(doc, i, "source"));
             shop.setHours(SolrUtils.getParameter(doc, i, "businesshours"));

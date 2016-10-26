@@ -49,7 +49,7 @@ public class SeoGoodsRepository {
 
         HttpSolrClient goods = solrMap.get(request.getChannel());
 
-        SolrUtils.querys(request, query);
+        SolrUtils.querys(request, query, false);
 
         QueryResponse response = goods.query(query);
 
@@ -66,6 +66,11 @@ public class SeoGoodsRepository {
                     goodsMap.put("brand", setGoodsBrandAttribute(solrMap, query, request));
                 }
             }
+        } else {
+            /**
+             * 暂无开发，后续开发细则
+             */
+            SolrUtils.querys(request, query,true);
         }
     }
 
@@ -88,7 +93,7 @@ public class SeoGoodsRepository {
 
         SolrPageUtil.getPageInfo(solrMap, request, documents);
 
-        return SolrUtils.setSeoGoodsResponseInfos(request, maps, documents);
+        return SolrUtils.setSeoGoodsResponseInfos(maps, documents);
     }
 
 
