@@ -60,13 +60,18 @@ public class SeoShopRepository {
             SeoShop shop = new SeoShop();
             String id = SolrUtils.getParameter(doc, i, "id");
             shop.setShopid(id);
-            if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
+
+           /* if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
                 shop.setShopName(
                         String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
                 );
             } else {
                 shop.setShopName(SolrUtils.getParameter(doc, i, "hotwords"));
-            }
+            }*/
+
+            shop.setShopName(
+                    String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
+            );
             shop.setLogo(SolrUtils.getParameter(doc, i, "logo"));
             shop.setDist(SolrUtils.getParameter(doc,i,"_dist_"));
             shop.setAddress(SolrUtils.getParameter(doc, i, "address"));

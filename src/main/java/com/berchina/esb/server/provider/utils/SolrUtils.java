@@ -45,7 +45,7 @@ public class SolrUtils {
      */
     public static void query(List<String> catList, SolrQuery query, SeoRequest request) {
 
-        if (!StringUtils.isEmpty(catList) && catList.size() > 0){
+        if (!StringUtils.isEmpty(catList) && catList.size() > 0) {
             StringBuilder builder = new StringBuilder();
             setCollectSolrQuery(catList, query, builder, "category");
         }
@@ -329,20 +329,30 @@ public class SolrUtils {
             query.set("fq", getQueryQ("source", request.getOther()));
         }
 
-        if (!StringUtils.isEmpty(request.getTerminal()) && request.getTerminal().equals("app")){
+        if (!StringUtils.isEmpty(request.getTerminal()) && request.getTerminal().equals("app")) {
 
-            if (!StringUtils.isEmpty(request.getLongitude()) && !StringUtils.isEmpty(request.getLatitude())){
+            if (!StringUtils.isEmpty(request.getLongitude()) && !StringUtils.isEmpty(request.getLatitude())) {
 
-                query.set("fq","{!geofilt}");
+                query.set("fq", "{!geofilt}");
 
-                query.set("pt",request.getLongitude() + " " + request.getLatitude());
+                query.set("pt", request.getLongitude() + " " + request.getLatitude());
 
                 query.set("sfield", "position");
 
                 query.set("d", "5000");
 
-                /*query.set("sort", "geodist() asc");*/
+                if (!StringUtils.isEmpty(request.getSort())) {
 
+                    if (request.getSort().equals("dist")) {
+
+                        String rule = request.getRule() == null ? "asc" : request.getRule();
+
+                        query.set("sort", "geodist()  " + rule);
+
+                    } else {
+                        query.set("sort", getSortRule(request));
+                    }
+                }
                 query.set("fl", "*,_dist_:geodist(),score");
             }
         }
@@ -590,13 +600,16 @@ public class SolrUtils {
         for (int i = 0; i < doc.size(); i++) {
             String id = SolrUtils.getParameter(doc, i, "id");
             SeoGoods goods = new SeoGoods();
-            if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
+
+            /*if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
                 goods.setHotwords(
                         String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", "")
                 );
             } else {
                 goods.setHotwords(SolrUtils.getParameter(doc, i, "hotwords"));
-            }
+            }*/
+
+            goods.setHotwords(String.valueOf(maps.get(id).get("hotwords")).replace("[", "").replace("]", ""));
             goods.setPrices(SolrUtils.getParameter(doc, i, "prices"));
             goods.setPicture(SolrUtils.getParameter(doc, i, "picture"));
             goods.setShopName(SolrUtils.getParameter(doc, i, "shopid"));
