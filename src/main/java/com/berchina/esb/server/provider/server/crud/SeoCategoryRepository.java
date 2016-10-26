@@ -76,6 +76,8 @@ public class SeoCategoryRepository {
 
     public void setSeoCategoryResponseInfo(Map<String, Object> seoResponse, SeoRequest request) throws SolrServerException, IOException {
 
+        query.clear();
+
         initCategory();
 
         LinkedList<SeoGoods> goodses = Lists.newLinkedList();
@@ -94,7 +96,7 @@ public class SeoCategoryRepository {
 
             SolrDocumentList documents = response.getResults();
 
-            if (StringUtils.isEmpty(documents) && documents.size() > 0) {
+            if (!StringUtils.isEmpty(documents) && documents.size() > 0) {
 
                 /**
                  *  商品属性聚合条件
@@ -131,7 +133,11 @@ public class SeoCategoryRepository {
              */
             if (!StringUtils.isEmpty(level) && level == 2) {
 
-                QueryResponse response = this.getSolrGoods(null, goodses, seoResponse, request);
+                LinkedList<String> gories = Lists.newLinkedList();
+
+                gories.add(request.getCategory());
+
+                QueryResponse response = this.getSolrGoods(gories, goodses, seoResponse, request);
 
                 seoResponse.put("goods", goodses);
                 /**
@@ -196,7 +202,7 @@ public class SeoCategoryRepository {
 
         query.set("fq", SolrUtils.getQueryQ("id", request.getCategory()));
 
-        SolrDocumentList docs = skuClient.query(query).getResults();
+        SolrDocumentList docs = categorysClient.query(query).getResults();
 
         if (!StringUtils.isEmpty(docs) && docs.size() > 0) {
 
@@ -371,18 +377,10 @@ public class SeoCategoryRepository {
 
 
     public QueryResponse getSolrGoods(LinkedList<String> gories, LinkedList<SeoGoods> goodses, Map<String, Object> seoResponse, SeoRequest request) throws SolrServerException, IOException {
-
-        List<String> categories = Lists.newLinkedList();
-
         /**
          * 排除叶子类目，因叶子类目没有类目列表
          */
-        if (!StringUtils.isEmpty(gories) && gories.size() > 0) {
-
-            categories = getSolrCate(gories, request);
-        }
-
-        SolrUtils.query(categories, query, request);
+        SolrUtils.query(getSolrCate(gories, request), query, request);
 
         QueryResponse response = goodsClient.query(query);
 
@@ -425,9 +423,7 @@ public class SeoCategoryRepository {
 
         catList.addAll(
                 revDoc.stream().map(doc ->
-                        SolrUtils.getSolrDocumentFiled(doc, "category"))
-                        .collect(Collectors.toList()));
-
+                        SolrUtils.getSolrDocumentFiled(doc, "category")).collect(Collectors.toList()));
 
         StringBuilder bd = new StringBuilder();
         /**
