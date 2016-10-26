@@ -178,6 +178,16 @@ public class SeoRequest extends Request implements Serializable {
          * 设备来源
          */
         this.setTerminal(StringUtil.StringConvert(map.get(EnumUtils.SEO_TERMINAL.getName())));
+
+        /**
+         * 经度
+         */
+        this.setLongitude(StringUtil.StringConvert(map.get(EnumUtils.SEO_LONGITUDE.getName())));
+
+        /**
+         * 纬度
+         */
+        this.setLatitude(StringUtil.StringConvert(map.get(EnumUtils.SEO_LATITUDE.getName())));
     }
 
     public String getStart() {

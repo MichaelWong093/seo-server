@@ -68,6 +68,7 @@ public class SeoShopRepository {
                 shop.setShopName(SolrUtils.getParameter(doc, i, "hotwords"));
             }
             shop.setLogo(SolrUtils.getParameter(doc, i, "logo"));
+            shop.setDist(SolrUtils.getParameter(doc,i,"_dist_"));
             shop.setAddress(SolrUtils.getParameter(doc, i, "address"));
             shop.setSource(SolrUtils.getParameter(doc, i, "source"));
             shop.setHours(SolrUtils.getParameter(doc, i, "businesshours"));

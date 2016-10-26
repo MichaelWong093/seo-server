@@ -74,6 +74,16 @@ public class Constants {
     public final static String SEO_BRAND = "brand";
 
     /**
+     * 经度
+     */
+    public final static String SEO_LONGITUDE = "longitude";
+
+    /**
+     * 纬度
+     */
+    public final static String SEO_LATITUDE = "latitude";
+
+    /**
      * 排序
      */
     public final static String SEO_SORT = "sort";

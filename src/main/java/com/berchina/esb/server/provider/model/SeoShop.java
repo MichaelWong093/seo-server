@@ -58,6 +58,11 @@ public class SeoShop implements Serializable {
     private String hours;
 
     /**
+     * 距离
+     */
+    private String dist;
+
+    /**
      * 商品集合
      */
     private List<SeoGoods> goodsList = new LinkedList<SeoGoods>();
@@ -148,5 +153,13 @@ public class SeoShop implements Serializable {
 
     public void setHours(String hours) {
         this.hours = hours;
+    }
+
+    public String getDist() {
+        return dist;
+    }
+
+    public void setDist(String dist) {
+        this.dist = dist;
     }
 }

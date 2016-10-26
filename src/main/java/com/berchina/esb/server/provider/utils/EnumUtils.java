@@ -22,6 +22,10 @@ public enum EnumUtils {
 
     SEO_TERMINAL(Constants.SEO_TERMINAL),
 
+    SEO_LONGITUDE(Constants.SEO_LONGITUDE),
+
+    SEO_LATITUDE(Constants.SEO_LATITUDE),
+
     SEO_ATTRIBUTE(Constants.SEO_ATTRIBUTE),
 
     SEO_SORT(Constants.SEO_SORT),

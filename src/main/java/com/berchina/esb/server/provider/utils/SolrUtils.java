@@ -329,6 +329,24 @@ public class SolrUtils {
             query.set("fq", getQueryQ("source", request.getOther()));
         }
 
+        if (!StringUtils.isEmpty(request.getTerminal()) && request.getTerminal().equals("app")){
+
+            if (!StringUtils.isEmpty(request.getLongitude()) && !StringUtils.isEmpty(request.getLatitude())){
+
+                query.set("fq","{!geofilt}");
+
+                query.set("pt",request.getLongitude() + " " + request.getLatitude());
+
+                query.set("sfield", "position");
+
+                query.set("d", "5000");
+
+                /*query.set("sort", "geodist() asc");*/
+
+                query.set("fl", "*,_dist_:geodist(),score");
+            }
+        }
+
         setHighlight(query);
 
         setSolrPage(query, request);
