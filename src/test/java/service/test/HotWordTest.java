@@ -68,9 +68,6 @@ public class HotWordTest {
 
 // 标准分词
         System.out.println(HanLP.segment(text));
-
-
-
     }
 
     //@Test

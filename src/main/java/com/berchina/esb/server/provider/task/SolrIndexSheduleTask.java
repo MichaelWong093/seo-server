@@ -40,7 +40,7 @@ public class SolrIndexSheduleTask {
     }
 
     //	  @Scheduled(cron = "0/59 * * * * ?")
-    @Scheduled(fixedDelay = 50000)
+//    @Scheduled(fixedDelay = 50000)
     public void solrIndexLoader() {
         LOGGER.info("====halley=====开始加载索引..." + new Date());
         long now = System.currentTimeMillis();

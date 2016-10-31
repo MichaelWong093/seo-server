@@ -7,6 +7,7 @@ import com.berchina.esb.server.provider.model.SeoCateGory;
 import com.berchina.esb.server.provider.model.SeoGoods;
 import com.berchina.esb.server.provider.model.SeoShop;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
@@ -15,6 +16,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -177,9 +179,9 @@ public class SolrUtils {
 
     public static void querys(SeoRequest request, SolrQuery query, boolean flag) {
 
-        if (flag){
+        if (flag) {
             query.set("q", getQueryQs(request));
-        }else {
+        } else {
             query.set("q", getQueryQ(request));
         }
 
@@ -604,7 +606,7 @@ public class SolrUtils {
      * 给索引文档添加 关键字的 拼音和全拼的字段 Field
      */
     public static void convert2PinyinField(SolrInputDocument solrDoc, String keyWords) {
-        if (StringUtil.isChinese(keyWords)){
+        if (StringUtil.isChinese(keyWords)) {
             List<Pinyin> pinyinList = EasySeg.convertToPinyinList(keyWords);
             String pinyin = "";
             String abbreviation = "";
@@ -791,5 +793,71 @@ public class SolrUtils {
         }
     }
 
+    /**
+     * 属性搜搜
+     *
+     * @param vars  支持多个属性值搜索
+     * @return
+     */
+    public static String getStringAtrr(String vars) {
+
+        if (org.springframework.util.StringUtils.isEmpty(vars)) {
+            Assert.assertNotNull(" Commodity attribute not empty ", vars);
+        }
+
+        StringBuilder bd = new StringBuilder();
+        /**
+         * 属性键
+         */
+        List<String> key = Lists.newLinkedList();
+
+        /**
+         * 属性值
+         */
+        List<String> value = Lists.newLinkedList();
+
+        String[] var = vars.split(",");
+
+        for (int i = 0; i < var.length; i++) {
+            String[] vid = var[i].split(":");
+            for (int j = 0; j < vid.length; j++) {
+                if (j % 2 == 0) {
+                    key.add(vid[j]);
+                } else {
+                    value.add(vid[j]);
+                }
+            }
+        }
+
+        HashSet<String> eqSet = Sets.newHashSet();
+        eqSet.addAll(key);
+
+        Iterator<String> iterator = eqSet.iterator();
+
+        while (iterator.hasNext()) {
+            String ks = iterator.next();
+            List<String> st = Lists.newLinkedList();
+            for (int k = 0; k < key.size() && k < value.size(); k++) {
+                if (ks.equals(key.get(k))) {
+                    st.add(value.get(k));
+                }
+            }
+
+            int a = st.size();
+
+            bd.append(" ( ");
+            for (int i = 0; i < a; i++) {
+                bd.append("vid").append(":").append(st.get(i));
+                if (i < a - 1) {
+                    bd.append(" OR ");
+                }
+            }
+            bd.append(" ) ");
+            if (iterator.hasNext()) {
+                bd.append(" AND ");
+            }
+        }
+        return new String(bd);
+    }
 
 }
