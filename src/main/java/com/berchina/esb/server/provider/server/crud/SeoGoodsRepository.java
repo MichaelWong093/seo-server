@@ -128,7 +128,6 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
 
         SolrQuery query = new SolrQuery();
 
-//        HttpSolrClient sku = solrMap.get("sku");
         /**
          * 获取 SKU 属性时 过滤 facet_fields propid 和 大于 0 的 propid
          */
