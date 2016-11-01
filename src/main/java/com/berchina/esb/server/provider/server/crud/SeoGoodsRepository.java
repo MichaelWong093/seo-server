@@ -17,6 +17,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.ModifiableSolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,32 +46,29 @@ public class SeoGoodsRepository {
 
         Map<String, HttpSolrClient> solrMap = factoryBean.httpSolrServer();
 
-        SolrQuery query = new SolrQuery();
+        ModifiableSolrParams params = new ModifiableSolrParams();
 
         HttpSolrClient goods = solrMap.get(request.getChannel());
 
-        SolrUtils.querys(request, query, false);
+        SolrUtils.querys(request, params, false);
 
-        QueryResponse response = goods.query(query);
+        QueryResponse response = goods.query(params);
 
         request.setCategory(response.getFacetFields().get(0).getValues().get(0).getName());
 
-        LinkedList<SeoGoods> seoGoodses = this.querySolrDocuments(goodsMap, goods, request, query);
+        LinkedList<SeoGoods> seoGoodses = this.querySolrDocuments(goodsMap, goods, request, params);
 
         if (!StringUtils.isEmpty(seoGoodses) && seoGoodses.size() > 0) {
             goodsMap.put("goods", seoGoodses);
             //  移动端只显示商品列表信息
             if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
-                goodsMap.put("attribute", setCategoryAttribute(solrMap, query, request));
+                goodsMap.put("attribute", setCategoryAttribute(solrMap, request));
                 if (StringUtils.isEmpty(request.getBrand())) {
-                    goodsMap.put("brand", setGoodsBrandAttribute(solrMap, query, request));
+                    goodsMap.put("brand", setGoodsBrandAttribute(solrMap, request));
                 }
             }
         } else {
-            /**
-             * 暂无开发，后续开发细则
-             */
-            SolrUtils.querys(request, query,true);
+
         }
     }
 
@@ -81,11 +79,11 @@ public class SeoGoodsRepository {
      * @throws SolrServerException
      * @throws IOException
      */
-    private LinkedList<SeoGoods> querySolrDocuments(Map<String, Object> solrMap, HttpSolrClient goods, SeoRequest request, SolrQuery query) throws SolrServerException, IOException {
+    private LinkedList<SeoGoods> querySolrDocuments(Map<String, Object> solrMap, HttpSolrClient goods, SeoRequest request, ModifiableSolrParams params) throws SolrServerException, IOException {
 
-        SolrUtils.query(request, query);
+        SolrUtils.query(request, params);
 
-        QueryResponse response = goods.query(query);
+        QueryResponse response = goods.query(params);
 
         SolrDocumentList documents = response.getResults();
 
@@ -96,18 +94,18 @@ public class SeoGoodsRepository {
         return SolrUtils.setSeoGoodsResponseInfos(maps, documents);
     }
 
-
     /**
      * 类目品牌合并
      *
      * @param solrMap
-     * @param query
      * @param request
      * @return
      * @throws SolrServerException
      * @throws IOException
      */
-    private List setGoodsBrandAttribute(Map<String, HttpSolrClient> solrMap, SolrQuery query, SeoRequest request) throws SolrServerException, IOException {
+    private List setGoodsBrandAttribute(Map<String, HttpSolrClient> solrMap, SeoRequest request) throws SolrServerException, IOException {
+
+        SolrQuery query = new SolrQuery();
 
         HttpSolrClient brandrev = solrMap.get("brandrev");
 
@@ -130,14 +128,15 @@ public class SeoGoodsRepository {
      * SKU 商品属性搜索合并
      *
      * @param solrMap
-     * @param query
      * @param request
      * @return
      * @throws SolrServerException
      * @throws IOException
      */
     private List<Map<String, Object>> setCategoryAttribute(
-            Map<String, HttpSolrClient> solrMap, SolrQuery query, SeoRequest request) throws SolrServerException, IOException {
+            Map<String, HttpSolrClient> solrMap, SeoRequest request) throws SolrServerException, IOException {
+
+        SolrQuery query = new SolrQuery();
 
         HttpSolrClient sku = solrMap.get("sku");
         /**

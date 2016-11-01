@@ -147,9 +147,7 @@ public class SolrUtils {
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
-    public static void queryCategoryKey(SeoRequest request, SolrQuery query) {
-        query.clear();
-
+    public static SolrQuery queryCategoryKey(SeoRequest request, SolrQuery query) {
         query.set("q", "*:*");
 
         query.set("fl", "propid,proName");
@@ -159,6 +157,8 @@ public class SolrUtils {
         setStartAndRows(query);
 
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+
+        return query;
     }
 
     public static void queryCategoryValue(SeoRequest request, SolrQuery query) {
@@ -177,8 +177,8 @@ public class SolrUtils {
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
-    public static void querys(SeoRequest request, SolrQuery query, boolean flag) {
-
+    public static void querys(SeoRequest request, ModifiableSolrParams params, boolean flag) {
+        SolrQuery query = new SolrQuery();
         if (flag) {
             query.set("q", getQueryQs(request));
         } else {
@@ -195,6 +195,8 @@ public class SolrUtils {
 
         query.set("rows", "1");
 
+        params.add(query);
+
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
@@ -202,10 +204,11 @@ public class SolrUtils {
      * 类目关联关系
      *
      * @param request
-     * @param query
+     * @param params
      */
-    public static void query(SeoRequest request, SolrQuery query) {
-        query.clear();
+    public static void query(SeoRequest request, ModifiableSolrParams params) {
+
+        SolrQuery query = new SolrQuery();
 
         query.set("q", getQueryQ(request));
 
@@ -216,13 +219,14 @@ public class SolrUtils {
         StringBuilder builder = new StringBuilder();
 
         if (!StringUtils.isEmpty(brand)) {
-            setBrandQuery(query, brand, builder, "brand");
+
+            query.addFilterQuery(setBrandQuery(brand, builder, "brand"));
         }
         String attr = request.getAttribute();
 
         if (!StringUtils.isEmpty(attr)) {
 
-            setBrandQuery(query, attr, builder, "vid");
+            query.addFilterQuery(getStringAtrr(attr));
         }
 
         if (!StringUtils.isEmpty(request.getSort())) {
@@ -233,11 +237,15 @@ public class SolrUtils {
         if (!StringUtils.isEmpty(request.getOther())) {
 
             query.set("fq", getQueryQ("source", request.getOther()));
+
+            query.addFilterQuery("source:" + request.getOther());
         }
 
         setSolrPage(query, request);
 
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+        params.add(params);
+
+        LOGGER.info(" [ SOLR SQL 语法: {}] ", params);
     }
 
     private static void setHighlight(SolrQuery query) {
@@ -254,12 +262,11 @@ public class SolrUtils {
     }
 
     /**
-     * @param query
      * @param var1    搜索属性
      * @param builder
      * @param var     搜索属性名称
      */
-    private static void setBrandQuery(SolrQuery query, String var1, StringBuilder builder, String var) {
+    private static String setBrandQuery(String var1, StringBuilder builder, String var) {
         String[] args = var1.split(",");
         for (int i = 0; i < args.length; i++) {
             builder.append(var).append(":").append(args[i]);
@@ -267,8 +274,9 @@ public class SolrUtils {
                 builder.append(" OR ");
             }
         }
-        query.set("fq", new String(builder));
+        return new String(builder);
     }
+
 
     public static void setSolrPage(SolrQuery query, SeoRequest request) {
         if (StringUtils.isEmpty(request.getStart())
@@ -796,7 +804,7 @@ public class SolrUtils {
     /**
      * 属性搜搜
      *
-     * @param vars  支持多个属性值搜索
+     * @param vars 支持多个属性值搜索
      * @return
      */
     public static String getStringAtrr(String vars) {
