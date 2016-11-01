@@ -240,6 +240,8 @@ public class SolrUtils {
      */
     public static void query(SeoRequest request, ModifiableSolrParams params) {
 
+        params.clear();
+
         SolrQuery query = new SolrQuery();
 
         query.set("q", getQueryQ(request));
@@ -275,7 +277,7 @@ public class SolrUtils {
 
         setSolrPage(query, request);
 
-        params.add(params);
+        params.add(query);
 
         LOGGER.info(" [ SOLR SQL 语法: {}] ", params);
     }

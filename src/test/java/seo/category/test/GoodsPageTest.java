@@ -110,7 +110,7 @@ public class GoodsPageTest {
 
         LinkedList<SeoCateGory> seoSku = Lists.newLinkedList();
 
-        SeoGoodsRepository.setSku(seoSku, sku.query(query).getResults());
+        SolrUtils.setSku(seoSku, sku.query(query).getResults());
 
         Set<SeoCateGory> skuK = Sets.newHashSet();
 
