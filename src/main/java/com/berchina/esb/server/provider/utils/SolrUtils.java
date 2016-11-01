@@ -208,7 +208,9 @@ public class SolrUtils {
     }
 
     public static void querys(SeoRequest request, ModifiableSolrParams params, boolean flag) {
+
         SolrQuery query = new SolrQuery();
+
         if (flag) {
             query.set("q", getQueryQs(request));
         } else {

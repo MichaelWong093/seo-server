@@ -58,12 +58,16 @@ public class SeoGoodsRepository {
 
         LinkedList<SeoGoods> seoGoodses = this.querySolrDocuments(goodsMap, goods, request, params);
 
-        if (!StringUtils.isEmpty(seoGoodses) && seoGoodses.size() > 0) {
+        if (!StringUtils.isEmpty(seoGoodses) && seoGoodses.size() > 0)
+        {
             goodsMap.put("goods", seoGoodses);
             //  移动端只显示商品列表信息
-            if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
+            if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app"))
+            {
                 goodsMap.put("attribute", setCategoryAttribute(solrMap, request));
-                if (StringUtils.isEmpty(request.getBrand())) {
+
+                if (StringUtils.isEmpty(request.getBrand()))
+                {
                     goodsMap.put("brand", setGoodsBrandAttribute(solrMap, request));
                 }
             }
