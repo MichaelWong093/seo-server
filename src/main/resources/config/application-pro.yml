@@ -10,6 +10,6 @@ seo:
     app: solr
     port: 8983
     server: 127.0.0.1
-    collection:  goods,shop,goods,category,categorys,caterev,sku,brand,brandrev
+    collection:  goods,shop,category,categorys,caterev,sku,brand,brandrev
     address: /dataimport?command=full-import&clean=true&commit=true
     logs: /home/emall/seo/seo-logs/suggest/
