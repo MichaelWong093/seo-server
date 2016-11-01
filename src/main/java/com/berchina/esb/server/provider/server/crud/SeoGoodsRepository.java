@@ -67,8 +67,6 @@ public class SeoGoodsRepository {
                     goodsMap.put("brand", setGoodsBrandAttribute(solrMap, request));
                 }
             }
-        } else {
-
         }
     }
 
