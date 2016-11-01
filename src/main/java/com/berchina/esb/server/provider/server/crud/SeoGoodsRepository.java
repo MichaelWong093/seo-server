@@ -121,7 +121,7 @@ public class SeoGoodsRepository {
 
         SolrDocumentList brandsDoc = brand.query(query).getResults();
 
-        return setBrand(brandsDoc);
+        return SolrUtils.setBrand(brandsDoc);
     }
 
     /**
@@ -146,7 +146,7 @@ public class SeoGoodsRepository {
 
         LinkedList<SeoCateGory> seoSku = Lists.newLinkedList();
 
-        SeoGoodsRepository.setSku(seoSku, sku.query(query).getResults());
+        SolrUtils.setSku(seoSku, sku.query(query).getResults());
 
         Set<SeoCateGory> skuK = Sets.newHashSet();
 
@@ -179,32 +179,5 @@ public class SeoGoodsRepository {
         return CateUtils.getCategoryCollection(skuK, skuV);
     }
 
-    /**
-     * 全站搜索设置 SKU 商品属性
-     *
-     * @param seoSku
-     * @param doc
-     */
-    public static void setSku(LinkedList<SeoCateGory> seoSku, SolrDocumentList doc) {
-        int args = doc.size();
-        for (int i = 0; i < args; i++) {
-            SeoCateGory sku = new SeoCateGory();
-            sku.setKey(SolrUtils.getParameter(doc, i, "propid"));
-            sku.setValue(SolrUtils.getParameter(doc, i, "proName"));
-            seoSku.add(sku);
-        }
-    }
 
-    public static LinkedList<SeoCateGory.Brand> setBrand(SolrDocumentList doc) {
-        LinkedList<SeoCateGory.Brand> seoBrand = Lists.newLinkedList();
-        int args = doc.size();
-        for (int i = 0; i < args; i++) {
-            SeoCateGory.Brand brand = new SeoCateGory.Brand();
-            brand.setId(SolrUtils.getParameter(doc, i, "id"));
-            brand.setName(SolrUtils.getParameter(doc, i, "chineseName"));
-            brand.setBdLogo(SolrUtils.getParameter(doc, i, "brandLogo"));
-            seoBrand.add(brand);
-        }
-        return seoBrand;
-    }
 }

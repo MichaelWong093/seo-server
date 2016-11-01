@@ -40,6 +40,36 @@ public class SolrUtils {
 
     private static final long rows = 10;
 
+
+    /**
+     * 全站搜索设置 SKU 商品属性
+     *
+     * @param seoSku
+     * @param doc
+     */
+    public static void setSku(LinkedList<SeoCateGory> seoSku, SolrDocumentList doc) {
+        int args = doc.size();
+        for (int i = 0; i < args; i++) {
+            SeoCateGory sku = new SeoCateGory();
+            sku.setKey(SolrUtils.getParameter(doc, i, "propid"));
+            sku.setValue(SolrUtils.getParameter(doc, i, "proName"));
+            seoSku.add(sku);
+        }
+    }
+
+    public static LinkedList<SeoCateGory.Brand> setBrand(SolrDocumentList doc) {
+        LinkedList<SeoCateGory.Brand> seoBrand = Lists.newLinkedList();
+        int args = doc.size();
+        for (int i = 0; i < args; i++) {
+            SeoCateGory.Brand brand = new SeoCateGory.Brand();
+            brand.setId(SolrUtils.getParameter(doc, i, "id"));
+            brand.setName(SolrUtils.getParameter(doc, i, "chineseName"));
+            brand.setBdLogo(SolrUtils.getParameter(doc, i, "brandLogo"));
+            seoBrand.add(brand);
+        }
+        return seoBrand;
+    }
+
     /**
      * 系统类目
      *
