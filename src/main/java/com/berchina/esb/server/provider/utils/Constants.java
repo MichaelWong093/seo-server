@@ -149,6 +149,8 @@ public class Constants {
 
     public final static String SEO_CATEREV_SHOP_ = "caterev";
 
+    public final static String SEO_BRANDREV_ = "brandrev";
+
 
     /**
      * 后台展示类目 Collection 名称

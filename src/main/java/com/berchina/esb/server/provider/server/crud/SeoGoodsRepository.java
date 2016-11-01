@@ -35,40 +35,32 @@ import java.util.*;
  * @Version V1.0
  */
 @Repository
-public class SeoGoodsRepository {
+public class SeoGoodsRepository extends SeoAbstractRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeoGoodsRepository.class);
 
-    @Autowired
-    private SolrServerFactoryBean factoryBean;
-
     public void seoGoodsRepository(Map<String, Object> goodsMap, SeoRequest request) throws IOException, SolrServerException {
 
-        Map<String, HttpSolrClient> solrMap = factoryBean.httpSolrServer();
+        super.init();
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        HttpSolrClient goods = solrMap.get(request.getChannel());
-
         SolrUtils.querys(request, params, false);
 
-        QueryResponse response = goods.query(params);
+        QueryResponse response = goodsClient.query(params);
 
         request.setCategory(response.getFacetFields().get(0).getValues().get(0).getName());
 
-        LinkedList<SeoGoods> seoGoodses = this.querySolrDocuments(goodsMap, goods, request, params);
+        LinkedList<SeoGoods> seoGoodses = this.querySolrDocuments(goodsMap, request, params);
 
-        if (!StringUtils.isEmpty(seoGoodses) && seoGoodses.size() > 0)
-        {
+        if (!StringUtils.isEmpty(seoGoodses) && seoGoodses.size() > 0) {
             goodsMap.put("goods", seoGoodses);
             //  移动端只显示商品列表信息
-            if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app"))
-            {
-                goodsMap.put("attribute", setCategoryAttribute(solrMap, request));
+            if (!StringUtils.isEmpty(request.getTerminal()) && !request.getTerminal().equals("app")) {
+                goodsMap.put("attribute", setCategoryAttribute(request));
 
-                if (StringUtils.isEmpty(request.getBrand()))
-                {
-                    goodsMap.put("brand", setGoodsBrandAttribute(solrMap, request));
+                if (StringUtils.isEmpty(request.getBrand())) {
+                    goodsMap.put("brand", setGoodsBrandAttribute(request));
                 }
             }
         }
@@ -81,11 +73,11 @@ public class SeoGoodsRepository {
      * @throws SolrServerException
      * @throws IOException
      */
-    private LinkedList<SeoGoods> querySolrDocuments(Map<String, Object> solrMap, HttpSolrClient goods, SeoRequest request, ModifiableSolrParams params) throws SolrServerException, IOException {
+    private LinkedList<SeoGoods> querySolrDocuments(Map<String, Object> solrMap, SeoRequest request, ModifiableSolrParams params) throws SolrServerException, IOException {
 
         SolrUtils.query(request, params);
 
-        QueryResponse response = goods.query(params);
+        QueryResponse response = goodsClient.query(params);
 
         SolrDocumentList documents = response.getResults();
 
@@ -99,48 +91,44 @@ public class SeoGoodsRepository {
     /**
      * 类目品牌合并
      *
-     * @param solrMap
      * @param request
      * @return
      * @throws SolrServerException
      * @throws IOException
      */
-    private List setGoodsBrandAttribute(Map<String, HttpSolrClient> solrMap, SeoRequest request) throws SolrServerException, IOException {
+    private List setGoodsBrandAttribute(SeoRequest request) throws SolrServerException, IOException {
 
         SolrQuery query = new SolrQuery();
 
-        HttpSolrClient brandrev = solrMap.get("brandrev");
-
-        HttpSolrClient brand = solrMap.get("brand");
-
         SolrUtils.queryBrandRev(request, query);
 
-        SolrDocumentList brRev = brandrev.query(query).getResults();
+        SolrDocumentList brRev = bdrevClient.query(query).getResults();
 
-        StringBuilder builder = new StringBuilder();
+        if (!StringUtils.isEmpty(brRev) && brRev.size() > 0) {
+            StringBuilder builder = new StringBuilder();
 
-        SolrUtils.setCollectSolrQuery(SolrUtils.getBrandIDCollection(brRev), query, builder, "id");
+            SolrUtils.setCollectSolrQuery(SolrUtils.getBrandIDCollection(brRev), query, builder, "id");
 
-        SolrDocumentList brandsDoc = brand.query(query).getResults();
+            SolrDocumentList brandsDoc = brandClient.query(query).getResults();
 
-        return SolrUtils.setBrand(brandsDoc);
+            return SolrUtils.setBrand(brandsDoc);
+        }
+        return Lists.newLinkedList();
     }
 
     /**
      * SKU 商品属性搜索合并
      *
-     * @param solrMap
      * @param request
      * @return
      * @throws SolrServerException
      * @throws IOException
      */
-    private List<Map<String, Object>> setCategoryAttribute(
-            Map<String, HttpSolrClient> solrMap, SeoRequest request) throws SolrServerException, IOException {
+    private List<Map<String, Object>> setCategoryAttribute(SeoRequest request) throws SolrServerException, IOException {
 
         SolrQuery query = new SolrQuery();
 
-        HttpSolrClient sku = solrMap.get("sku");
+//        HttpSolrClient sku = solrMap.get("sku");
         /**
          * 获取 SKU 属性时 过滤 facet_fields propid 和 大于 0 的 propid
          */
@@ -148,7 +136,7 @@ public class SeoGoodsRepository {
 
         LinkedList<SeoCateGory> seoSku = Lists.newLinkedList();
 
-        SolrUtils.setSku(seoSku, sku.query(query).getResults());
+        SolrUtils.setSku(seoSku, skuClient.query(query).getResults());
 
         Set<SeoCateGory> skuK = Sets.newHashSet();
 
@@ -169,7 +157,7 @@ public class SeoGoodsRepository {
 
         SolrUtils.queryCategoryValue(request, query);
 
-        SolrDocumentList skuV = sku.query(query).getResults();
+        SolrDocumentList skuV = skuClient.query(query).getResults();
 
         LOGGER.info(" 商品属性  Value, {}", JSON.toJSON(skuV));
 

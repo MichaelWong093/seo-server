@@ -34,51 +34,11 @@ import java.util.stream.Collectors;
  * @Version V1.0
  */
 @Repository
-public class SeoCategoryRepository {
+public class SeoCategoryRepository extends SeoAbstractRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeoCategoryRepository.class);
 
-    @Autowired
-    private SolrServerFactoryBean factoryBean;
-
-    private Map<String, HttpSolrClient> solrClient;
-
-    private SolrQuery query = new SolrQuery();
-
-    private HttpSolrClient goodsClient;
-
-    private HttpSolrClient skuClient;
-
-    private HttpSolrClient categorysClient;
-
-    private HttpSolrClient categoryClient;
-
-    private HttpSolrClient caterevClient;
-
-    /**
-     * 类目初始化
-     */
-    private void initCategory() {
-
-        solrClient = factoryBean.httpSolrServer();
-
-        categorysClient = solrClient.get(Constants.SEO_CATEGORYS_SHOP_);
-
-        skuClient = solrClient.get(Constants.SEO_SKU);
-
-        goodsClient = solrClient.get(Constants.SEO_GOODS_);
-
-        categoryClient = solrClient.get(Constants.SEO_CATEGORY_SHOP_);
-
-        caterevClient = solrClient.get(Constants.SEO_CATEREV_SHOP_);
-    }
-
-
     public void setSeoCategoryResponseInfo(Map<String, Object> seoResponse, SeoRequest request) throws SolrServerException, IOException {
-
-        query.clear();
-
-        initCategory();
 
         LinkedList<SeoGoods> goodses = Lists.newLinkedList();
 
