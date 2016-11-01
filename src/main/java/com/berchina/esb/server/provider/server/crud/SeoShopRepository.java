@@ -28,6 +28,7 @@ import org.springframework.util.StringUtils;
 public class SeoShopRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeoShopRepository.class);
+
     @Autowired
     private SolrServerFactoryBean factoryBean;
 

@@ -176,6 +176,4 @@ public class SeoGoodsRepository {
          */
         return CateUtils.getCategoryCollection(skuK, skuV);
     }
-
-
 }
