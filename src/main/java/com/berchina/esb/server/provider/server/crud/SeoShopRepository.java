@@ -25,26 +25,18 @@ import com.berchina.esb.server.provider.utils.SolrUtils;
 import org.springframework.util.StringUtils;
 
 @Repository
-public class SeoShopRepository {
+public class SeoShopRepository extends SeoAbstractRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeoShopRepository.class);
 
-    @Autowired
-    private SolrServerFactoryBean factoryBean;
-
     public void querySolrDocuments(Map<String, Object> goods, SeoRequest seoRequest) throws SolrServerException, IOException {
 
-        Map<String, HttpSolrClient> solrMap = factoryBean.httpSolrServer();
-
-        getShopCollection(goods, seoRequest, solrMap);
+        getShopCollection(goods, seoRequest);
     }
 
-    public List<SeoShop> getShopCollection(Map<String, Object> goods, SeoRequest request,
-                                           Map<String, HttpSolrClient> solrClient) throws SolrServerException, IOException {
+    public List<SeoShop> getShopCollection(Map<String, Object> goods, SeoRequest request) throws SolrServerException, IOException {
 
-        HttpSolrClient goodsClient = solrClient.get(EnumUtils.SEO_GOODS.getName());
-
-        HttpSolrClient shopClient = solrClient.get(request.getChannel());
+        super.InitShop();
 
         List<SeoShop> shops = Lists.newLinkedList();
 
@@ -71,7 +63,7 @@ public class SeoShopRepository {
             shop.setAddress(SolrUtils.getParameter(doc, i, "address"));
             shop.setSource(SolrUtils.getParameter(doc, i, "source"));
             shop.setHours(SolrUtils.getParameter(doc, i, "businesshours"));
-            getShopByGoodsCollection(request, query, shop, goodsClient);
+            getShopByGoodsCollection(request, query, shop);
             shops.add(shop);
         }
         SolrPageUtil.getPageInfo(goods, request, doc);
@@ -79,7 +71,7 @@ public class SeoShopRepository {
         return shops;
     }
 
-    public void getShopByGoodsCollection(SeoRequest request, SolrQuery query, SeoShop shop, HttpSolrClient goodsClient) throws SolrServerException, IOException {
+    public void getShopByGoodsCollection(SeoRequest request, SolrQuery query, SeoShop shop) throws SolrServerException, IOException {
 
         LinkedList<SeoGoods> goodses = Lists.newLinkedList();
 
