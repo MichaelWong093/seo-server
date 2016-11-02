@@ -41,7 +41,7 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
 
     public void seoGoodsRepository(Map<String, Object> goodsMap, SeoRequest request) throws IOException, SolrServerException {
 
-        super.init();
+        super.InitGoods();
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 

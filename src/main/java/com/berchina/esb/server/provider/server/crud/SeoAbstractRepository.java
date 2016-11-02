@@ -47,9 +47,9 @@ public abstract class SeoAbstractRepository {
     public HttpSolrClient bdrevClient;
 
 
-    public void init() {
+    public void InitGoods() {
 
-        solrClient = factoryBean.httpSolrServer();
+        this.setFactory();
 
         goodsClient = solrClient.get(Constants.SEO_GOODS_);
 
@@ -60,17 +60,26 @@ public abstract class SeoAbstractRepository {
         skuClient = solrClient.get(Constants.SEO_SKU);
     }
 
+    private void setFactory() {
+        solrClient = factoryBean.httpSolrServer();
+    }
+
     public void InitCategory() {
+
+        this.setFactory();
 
         categorysClient = solrClient.get(Constants.SEO_CATEGORYS_SHOP_);
 
         caterevClient = solrClient.get(Constants.SEO_CATEREV_SHOP_);
 
         categoryClient = solrClient.get(Constants.SEO_CATEGORY_SHOP_);
+
+        skuClient = solrClient.get(Constants.SEO_SKU);
+
+        goodsClient = solrClient.get(Constants.SEO_GOODS_);
     }
 
     public void InitShop() {
-
 
     }
 

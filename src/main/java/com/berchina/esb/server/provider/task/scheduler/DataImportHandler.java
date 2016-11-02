@@ -59,7 +59,7 @@ public class DataImportHandler {
      * "0 15 10 ? * 6#3" 每月的第三个星期五上午10:15触发
      */
 //    @Scheduled(cron = "0 55 15 * * ?")
-    @Scheduled(fixedDelay = 50000)
+//    @Scheduled(fixedDelay = 50000)
     public void dataImport() {
 
         if (this.synSolr(environment)) {

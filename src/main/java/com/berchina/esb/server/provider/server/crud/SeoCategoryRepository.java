@@ -40,6 +40,8 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
 
     public void setSeoCategoryResponseInfo(Map<String, Object> seoResponse, SeoRequest request) throws SolrServerException, IOException {
 
+        super.InitCategory();
+
         LinkedList<SeoGoods> goodses = Lists.newLinkedList();
 
         /**
