@@ -15,15 +15,7 @@ import java.util.Map;
  * @Version V1.0
  */
 public class SolrPageUtil {
-    private LinkedList<Object> list; // 记录
-    private long pageSize;// 每页显示的记录数
-    private long pageNum;// 总页数
-    private long totalNum;//总条数
-
-    private long currentPage = 1;// 当前页
-    private long fromIndex = 0;// 记录起始索引
-    private long toIndex = 0;// 记录结束索引
-
+    
     public static void getPageInfo(Map<String, Object> seoMap, SeoRequest request, SolrDocumentList goodsDoc) {
 
         long totalNum = goodsDoc.getNumFound();
@@ -45,13 +37,6 @@ public class SolrPageUtil {
     }
 
     public SolrPageUtil() {
-    }
-    public LinkedList<Object> getList() {
-        return list;
-    }
-
-    public void setList(LinkedList<Object> list) {
-        this.list = list;
     }
 
 }

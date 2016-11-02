@@ -12,6 +12,7 @@ public enum EnumUtils {
     SEO_HOTWORDS(Constants.SEO_HOT_WORDS),
 
     SEO_OTHER(Constants.SEO_OTHE),
+
     SEO_SHOP(Constants.SEO_SHOP_),
 
     SEO_GOODS(Constants.SEO_GOODS_),
