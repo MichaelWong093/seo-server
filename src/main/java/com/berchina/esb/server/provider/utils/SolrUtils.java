@@ -40,6 +40,7 @@ public class SolrUtils {
 
     private static final long rows = 10;
 
+    private SolrQuery query = new SolrQuery();
 
     /**
      * 全站搜索设置 SKU 商品属性
@@ -358,9 +359,9 @@ public class SolrUtils {
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
-    private static void setStartAndRows(SolrQuery query) {
+    public static void setStartAndRows(SolrQuery query) {
         query.set("start", "0");
-        query.set("rows", "30");
+        query.set("rows", "300");
     }
 
     /**

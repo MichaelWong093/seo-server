@@ -42,16 +42,13 @@ public class SeoCategoryServer implements SeoServer {
             Object objects = args[0];
             if (!StringUtils.isEmpty(objects)) {
                 if (objects instanceof SeoRequest) {
-
                     SeoRequest seoRequest = (SeoRequest) objects;
-
-                    repository.setSeoCategoryResponseInfo(category, seoRequest);
-
+                    this.repository.setSeoCategoryResponse(category, seoRequest);
                     return new SeoResponse(category, seoRequest);
                 }
             }
         } catch (SolrServerException | IOException ex) {
-            LOGGER.error("[ 搜索商品异常 : {} ]", ex.getMessage());
+            LOGGER.error(" 类目搜索商品异常 : {} ", ex.getMessage());
             throw new SeoException(ex.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
         }
         throw new SeoException(ServerException.SEO_RESPONSE_HANDLE_ERROR);

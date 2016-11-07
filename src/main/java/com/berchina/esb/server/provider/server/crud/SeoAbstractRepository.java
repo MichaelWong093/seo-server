@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * @Package com.berchina.esb.server.provider.server.crud
- * @Description: TODO ( SEO 服务相关基类 )
+ * @Description: TODO ( 服务相关基类 )
  * @Author 任小斌 renxiaobin
  * @Date 2016 下午3:04
  * @Version V1.0
@@ -78,8 +78,7 @@ public abstract class SeoAbstractRepository {
     /**
      * 商品相关 Solr 实例化
      */
-    public void InitGoods()
-    {
+    public void InitGoods() {
         this.setFactory();
 
         goodsClient = solrClient.get(Constants.SEO_GOODS_);
@@ -94,16 +93,14 @@ public abstract class SeoAbstractRepository {
     /**
      * 初始化 SolrHttpClient 实例
      */
-    private void setFactory()
-    {
+    private void setFactory() {
         solrClient = factoryBean.httpSolrServer();
     }
 
     /**
      * 类目相关 Solr 实例化
      */
-    public void InitCategory()
-    {
+    public void InitCategory() {
         this.setFactory();
 
         categorysClient = solrClient.get(Constants.SEO_CATEGORYS_SHOP_);
@@ -120,8 +117,7 @@ public abstract class SeoAbstractRepository {
     /**
      * 店铺相关 Solr 实例化
      */
-    public void InitShop()
-    {
+    public void InitShop() {
         this.setFactory();
 
         goodsClient = solrClient.get(Constants.SEO_GOODS_);

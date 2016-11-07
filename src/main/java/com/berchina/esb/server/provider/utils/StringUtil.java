@@ -54,8 +54,8 @@ public class StringUtil {
 
                                             channel.equals(Constants.SEO_SHOP_STATUS) ? Constants.SEO_SHOP_ :
 
-                                                    channel.equals(Constants.SEO_CATEGORY_STATUS) ? Constants.SEO_CATEGORYS_SHOP_ : 
-                                                    	
+                                                    channel.equals(Constants.SEO_CATEGORY_STATUS) ? Constants.SEO_CATEGORYS_SHOP_ :
+
                                                     	channel.equals(Constants.SEO_GOODS_RECOMMEND_STATUS) ? Constants.SEO_GOODS_HOTWD_ :"";
         }
         return null;
@@ -78,8 +78,8 @@ public class StringUtil {
 
                                             channel.equals(Constants.SEO_SHOP_HOTWORDS_STATUS) ? Constants.SEO_HOT_WORDS_SERVER :
 
-                                                    channel.equals(Constants.SEO_CATEGORY_STATUS) ? Constants.SEO_CATEGORY_SERVER : 
-                                                    	
+                                                    channel.equals(Constants.SEO_CATEGORY_STATUS) ? Constants.SEO_CATEGORY_SERVER :
+
                                                     	channel.equals(Constants.SEO_GOODS_RECOMMEND_STATUS)?Constants.SEO_GOODS_RECOMMEND_SERVER:"";
         }
         return null;
@@ -136,12 +136,12 @@ public class StringUtil {
      * @param args
      */
     public static boolean notNull(Object args) {
-        if (null == args) {
-        	throw new SeoException(ServerException.SEO_NULL_ERROR);
+        if (!StringUtils.isEmpty(args)) {
+        	return true;
         }
-        return true;
+        return false;
     }
-    
+
     /**
      * 在请求字符流中获取输入参数
      *

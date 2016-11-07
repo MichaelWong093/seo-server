@@ -33,27 +33,28 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeoCategoryRepository.class);
 
-    public void setSeoCategoryResponseInfo(Map<String, Object> seoResponse, SeoRequest request) throws SolrServerException, IOException {
+    public void setSeoCategoryResponse(Map<String, Object> seoResponse, SeoRequest request) throws SolrServerException, IOException {
 
+        // 初始化类目搜索链接
         super.InitCategory();
-
-        LinkedList<SeoGoods> goodses = Lists.newLinkedList();
-
+        /**
+         *  保存商品集合
+         */
+        LinkedList<SeoGoods> goods = Lists.newLinkedList();
         /**
          *  @ 品牌搜索
          */
-        if (!StringUtils.isEmpty(request.getBrand())) {
-
+        if (StringUtil.notNull(request.getBrand())) {
             /***
              * 根据品牌搜索，展示商品属性，及商品信息
              *
              * 商品属性：搜索商品信息聚合商品 "属性"，"类目" 组装商品属性类目
              */
-            QueryResponse response = this.getQueryCategoryAttrResponse(request);
+            QueryResponse response = this.getQueryCategoryAttr(request);
 
             SolrDocumentList documents = response.getResults();
 
-            if (!StringUtils.isEmpty(documents) && documents.size() > 0) {
+            if (StringUtil.notNull(documents) && documents.size() > 0) {
 
                 /**
                  *  商品属性聚合条件
@@ -68,9 +69,9 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
                 /**
                  * 商品信息
                  */
-                SolrUtils.setSeoGoodsResponseInfo(goodses, documents);
+                SolrUtils.setSeoGoodsResponseInfo(goods, documents);
 
-                seoResponse.put("goods", goodses);
+                seoResponse.put("goods", goods);
                 /**
                  * 分页信息
                  */
@@ -78,31 +79,32 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
             }
         }
 
+
         /**
          * 类目搜索
          */
-        if (!StringUtils.isEmpty(request.getCategory())) {
+        if (StringUtil.notNull(request.getCategory())) {
 
             Integer level = this.getCategoryLevel(request);
 
             /**
              * 三级类目处理
              */
-            if (!StringUtils.isEmpty(level) && level == 2) {
+            if (StringUtil.notNull(level) && level == 2) {
 
                 LinkedList<String> gories = Lists.newLinkedList();
 
                 gories.add(request.getCategory());
 
-                QueryResponse response = this.getSolrGoods(gories, goodses, seoResponse, request);
+                QueryResponse response = this.getSolrGoods(gories, goods, seoResponse, request);
 
-                seoResponse.put("goods", goodses);
+                seoResponse.put("goods", goods);
                 /**
                  *  商品属性聚合条件
                  */
                 this.setFacetQuery(response);
 
-                if (!StringUtils.isEmpty(goodses) && goodses.size() > 0) {
+                if (StringUtil.notNull(goods) && goods.size() > 0) {
 
                     seoResponse.put("attribute", this.getShopPropertyCollection());
                 }
@@ -113,18 +115,18 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
                 LinkedList<SeoCateGory> cateGories = this.getSolrCategorys(request);
 
                 /** 类目搜索之后，搜索商品，过滤恶意搜索，减少服务器类目搜索, 或者是三级类目 */
-                if (!StringUtils.isEmpty(cateGories) && cateGories.size() > 0) {
+                if (StringUtil.notNull(cateGories) && cateGories.size() > 0) {
                     /**
                      * 类目相关属性
                      */
                     seoResponse.put("category", cateGories);
 
                     this.getSolrGoods(
-                            CateUtils.setEndCategoryQueryString(cateGories), goodses, seoResponse, request);
+                            CateUtils.setEndCategoryQueryString(cateGories), goods, seoResponse, request);
                     /**
                      * 类目相关商品
                      */
-                    seoResponse.put("goods", goodses);
+                    seoResponse.put("goods", goods);
                 }
             }
         }
@@ -151,17 +153,17 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
      * @throws IOException
      */
     public Integer getCategoryLevel(SeoRequest request) throws SolrServerException, IOException {
-        query.clear();
-        query.set("q", "*:*");
-        query.set("fl", "revlevel");
-        query.set("start", "0");
-        query.set("rows", "1");
+        super.query.clear();
 
-        query.set("fq", SolrUtils.getQueryQ("id", request.getCategory()));
+        super.query.set("q", "*:*");
+        super.query.set("fl", "revlevel");
+        super.query.set("start", "0");
+        super.query.set("rows", "1");
+        super.query.set("fq", SolrUtils.getQueryQ("id", request.getCategory()));
 
         SolrDocumentList docs = categorysClient.query(query).getResults();
 
-        if (!StringUtils.isEmpty(docs) && docs.size() > 0) {
+        if (StringUtil.notNull(docs) && docs.size() > 0) {
 
             return (Integer) docs.get(0).getFieldValue("revlevel");
         }
@@ -253,7 +255,7 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
 
         StringBuilder atr = new StringBuilder();
 
-        if (!StringUtils.isEmpty(attrs) && attrs.size() > 0) {
+        if (StringUtil.notNull(attrs) && attrs.size() > 0) {
             query.clear();
             query.set("q", "*:*");
             atr.append(" ( ");
@@ -269,7 +271,7 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
             }
             atr.append(" ) ");
         }
-        if (!StringUtils.isEmpty(cates) && cates.size() > 0) {
+        if (StringUtil.notNull(cates) && cates.size() > 0) {
             atr.append(" AND ").append(" ( ");
             int b = cates.size();
             for (int i = 0; i < b; i++) {
@@ -281,6 +283,7 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
             atr.append(" )");
         }
         query.set("fq", new String(atr));
+        SolrUtils.setStartAndRows(query);
         LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
@@ -309,26 +312,22 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
      * @throws SolrServerException
      * @throws IOException
      */
-    public QueryResponse getQueryCategoryAttrResponse(SeoRequest request) throws SolrServerException, IOException {
+    public QueryResponse getQueryCategoryAttr(SeoRequest request) throws SolrServerException, IOException {
         /**
-         * 品牌搜索，根据品牌标识，找到相关类目
+         *  根据品牌聚合,展示商品属性，商品信息
          */
-        if (!StringUtils.isEmpty(request.getBrand())) {
-            /**
-             *  根据品牌聚合,展示商品属性，商品信息
-             */
-            query.set("q", "*:*");
+        query.set("q", "*:*");
 
-            query.setFacet(true);
+        query.setFacet(true);
 
-            query.addFacetField("vid");
+        query.addFacetField("vid");
 
-            query.addFacetField("category");
+        query.addFacetField("category");
 
-            query.set("fq", SolrUtils.getQueryQ("brand", request.getBrand()));
+        query.set("fq", SolrUtils.getQueryQ("brand", request.getBrand()));
 
-            SolrUtils.setSolrPage(query, request);
-        }
+        SolrUtils.setSolrPage(query, request);
+
         return goodsClient.query(query);
     }
 
