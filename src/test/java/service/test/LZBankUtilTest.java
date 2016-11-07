@@ -36,8 +36,6 @@ public class LZBankUtilTest {
 
         query = new SolrQuery();
 
-
-
         query.set("q","");
 
         SolrDocumentList documents = goods.query(query).getResults();

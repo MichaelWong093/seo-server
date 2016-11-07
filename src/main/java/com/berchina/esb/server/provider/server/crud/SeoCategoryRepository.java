@@ -79,18 +79,14 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
             }
         }
 
-
         /**
          * 类目搜索
          */
         if (StringUtil.notNull(request.getCategory())) {
-
-            Integer level = this.getCategoryLevel(request);
-
             /**
              * 三级类目处理
              */
-            if (StringUtil.notNull(level) && level == 2) {
+            if (!this.getCategoryLevel(request)) {
 
                 LinkedList<String> gories = Lists.newLinkedList();
 
@@ -145,18 +141,19 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
     }
 
     /**
-     * 类目级别判断
+     * 类目级别判断,获取类目编号
      *
      * @param request
      * @return
      * @throws SolrServerException
      * @throws IOException
      */
-    public Integer getCategoryLevel(SeoRequest request) throws SolrServerException, IOException {
+    public boolean getCategoryLevel(SeoRequest request) throws SolrServerException, IOException {
+
         super.query.clear();
 
         super.query.set("q", "*:*");
-        super.query.set("fl", "revlevel");
+        super.query.set("fl", "id");
         super.query.set("start", "0");
         super.query.set("rows", "1");
         super.query.set("fq", SolrUtils.getQueryQ("id", request.getCategory()));
@@ -165,9 +162,28 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
 
         if (StringUtil.notNull(docs) && docs.size() > 0) {
 
-            return (Integer) docs.get(0).getFieldValue("revlevel");
+            return getCategoryByParentId(StringUtil.StringConvert(docs.get(0).getFieldValue("id")));
         }
-        return new Integer(00);
+        return false;
+    }
+
+
+    /**
+     * 根据展示类目编号递归叶子类目，假设无叶子类目则表示，当前搜索类目为叶子类目，否则为叶子类目父类目
+     *
+     * @param parentId
+     * @return
+     */
+    public boolean getCategoryByParentId(String parentId) throws IOException, SolrServerException {
+        super.query.clear();
+
+        query.set("q", "*:*");
+        query.set("fl", "id");
+        query.set("fq", SolrUtils.getQueryQ("parentid", parentId));
+
+        SolrDocumentList leves = categorysClient.query(query).getResults();
+
+        return StringUtil.notNull(leves) && leves.size() > 0 ? true : false;
     }
 
 
