@@ -188,11 +188,9 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
 
         LinkedList<Map<String, Object>> cateGories = Lists.newLinkedList();
 
-        Set<SeoCateGory> setSkuV = Sets.newHashSet();
-
         while (iterator.hasNext()) {
+            Set<SeoCateGory> setSkuV = Sets.newHashSet();
             Map<String, Object> seoCates = Maps.newHashMap();
-
             LinkedList<SeoCateGory> skuV = Lists.newLinkedList();
 
             SeoCateGory cateGory = iterator.next();
@@ -201,17 +199,20 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
 
             for (SolrDocument doc : skuDoc) {
                 String propid = StringUtil.StringConvert(doc.get("propid"));
-                if (cateGory.getKey().equals(propid)) {
+                if (key.equals(propid)) {
                     SeoCateGory gory = new SeoCateGory();
                     gory.setKey(StringUtil.StringConvert(doc.get("vid")));
                     gory.setValue(StringUtil.StringConvert(doc.get("prvName")));
                     skuV.add(gory);
                 }
             }
+
             setSkuV.addAll(skuV);
+
             seoCates.put("key", key);
             seoCates.put("value", value);
             seoCates.put("childs", setSkuV);
+
             cateGories.add(seoCates);
         }
         return cateGories;
@@ -255,10 +256,11 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
 
         StringBuilder atr = new StringBuilder();
 
+        super.query.clear();
+        super.query.set("q", "*:*");
+
         if (StringUtil.notNull(attrs) && attrs.size() > 0) {
-            query.clear();
-            query.set("q", "*:*");
-            atr.append(" ( ");
+            atr.append("(");
             int a = attrs.size();
             for (int i = 0; i < a; i++) {
                 String vid = String.valueOf(attrs.get(i));
@@ -269,10 +271,10 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
                     }
                 }
             }
-            atr.append(" ) ");
+            atr.append(")");
         }
         if (StringUtil.notNull(cates) && cates.size() > 0) {
-            atr.append(" AND ").append(" ( ");
+            atr.append(" AND ").append("(");
             int b = cates.size();
             for (int i = 0; i < b; i++) {
                 atr.append("category").append(":").append(cates.get(i));
@@ -280,11 +282,11 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
                     atr.append(" OR ");
                 }
             }
-            atr.append(" )");
+            atr.append(")");
         }
-        query.set("fq", new String(atr));
-        SolrUtils.setStartAndRows(query);
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+        super.query.set("fq", new String(atr));
+        SolrUtils.setStartAndRows(super.query);
+        LOGGER.info(" [ SOLR SQL 语法: {}] ", super.query);
     }
 
     /**
@@ -313,22 +315,25 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
      * @throws IOException
      */
     public QueryResponse getQueryCategoryAttr(SeoRequest request) throws SolrServerException, IOException {
+        super.query.clear();
         /**
          *  根据品牌聚合,展示商品属性，商品信息
          */
-        query.set("q", "*:*");
+        super.query.set("q", "*:*");
 
-        query.setFacet(true);
+        super.query.setFacet(true);
 
-        query.addFacetField("vid");
+        super.query.addFacetField("vid");
 
-        query.addFacetField("category");
+        super.query.addFacetField("category");
 
-        query.set("fq", SolrUtils.getQueryQ("brand", request.getBrand()));
+        super.query.set("fq", SolrUtils.getQueryQ("brand", request.getBrand()));
 
-        SolrUtils.setSolrPage(query, request);
+        SolrUtils.setSolrPage(super.query, request);
 
-        return goodsClient.query(query);
+        LOGGER.info(" { 商品搜索过滤商品SKU，类目信息，{} } ", super.query);
+
+        return goodsClient.query(super.query);
     }
 
 
@@ -403,5 +408,4 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
                         .collect(Collectors.toList()));
         return gorys;
     }
-
 }

@@ -54,8 +54,7 @@ public class CategoryServerTests {
 
         Map<String, Object> goods = response.getSeoGoods();
 
-        LOGGER.info(" 类目搜索输出信息, {}", JSON.toJSONString(goods.get("goods")));
-
+//        LOGGER.info(" 类目搜索输出信息, {}", JSON.toJSONString(goods.get("goods")));
         capture.toString();
     }
 }
