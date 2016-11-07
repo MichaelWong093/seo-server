@@ -337,7 +337,9 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
     }
 
 
-    public QueryResponse getSolrGoods(LinkedList<String> gories, LinkedList<SeoGoods> goodses, Map<String, Object> seoResponse, SeoRequest request) throws SolrServerException, IOException {
+    public QueryResponse getSolrGoods(
+            LinkedList<String> gories, LinkedList<SeoGoods> goodses, Map<String, Object> seoResponse, SeoRequest request)
+            throws SolrServerException, IOException {
         /**
          * 排除叶子类目，因叶子类目没有类目列表
          */

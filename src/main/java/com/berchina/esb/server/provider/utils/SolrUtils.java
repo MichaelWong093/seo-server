@@ -40,8 +40,6 @@ public class SolrUtils {
 
     private static final long rows = 10;
 
-    private SolrQuery query = new SolrQuery();
-
     /**
      * 全站搜索设置 SKU 商品属性
      *
