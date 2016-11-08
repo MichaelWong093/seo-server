@@ -143,6 +143,9 @@ public class CateUtils {
                         gories.add(gory.getKey());
                     }
                 }
+                else {
+                    gories.add(cateGories.get(i).getKey());
+                }
             }
         }
         return gories;
