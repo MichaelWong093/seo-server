@@ -2,12 +2,13 @@ package com.berchina.esb.server.provider.handle;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.berchina.esb.server.provider.client.SeoRequest;
 import com.berchina.esb.server.provider.client.base.Response;
@@ -21,6 +22,7 @@ import com.berchina.esb.server.provider.server.SeoServerFactory;
  * @Version V1.0
  */
 @RestController
+@RequestMapping("/seo")
 public class SeoHandle {
 
     @Autowired
@@ -32,10 +34,25 @@ public class SeoHandle {
      * @param request 关键字搜索channel: goods 商品搜索, hotwd 智能分词
      * @return 商品列表信息
      */
-    @RequestMapping("/seo/{channel}")
-    @ResponseBody
+
+    @RequestMapping(value = "/{channel}")
     ResponseEntity<Response> seoGoods(HttpServletRequest request) {
 
         return new ResponseEntity<>(factory.setSeoServer(new SeoRequest(request)), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "搜索服务总入口", notes = "更多细节请联系开发人员")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "channel", value = "服务地址标示", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "hotwords", value = "搜索关键词", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "sort", value = "排序属性名称", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "rule", value = "排序规则，desc || asc", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "start", value = "页码", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "rows", value = "页数", required = true, dataType = "String")
+    })
+    @RequestMapping(value = "/gd", method = RequestMethod.POST)
+    ResponseEntity<Response> getGoods(HttpServletRequest request) {
+
+        return null;
     }
 }

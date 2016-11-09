@@ -61,7 +61,6 @@ public class DataImportHandler {
 //    @Scheduled(cron = "0 55 15 * * ?")
 //    @Scheduled(fixedDelay = 50000)
     public void dataImport() {
-
         if (this.synSolr(environment)) {
             try {
 
