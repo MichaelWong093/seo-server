@@ -1,0 +1,25 @@
+spring:
+  profiles:
+    active: pro
+  data:
+    solr:
+      host: http://127.0.0.1:8983/solr/
+      repositories:
+        enabled: false
+
+server:
+  port: 9000
+  #address: 98.10.231.98
+  session:
+    timeout: 300
+  #context-path: /
+security:
+  basic:
+    enabled: false
+
+seo:
+  system:
+    request:
+      adapter: goods,shop,gdhotwd,sphotwd,category,categorys,caterev,sku,brand,brandrev
+
+debug: true
