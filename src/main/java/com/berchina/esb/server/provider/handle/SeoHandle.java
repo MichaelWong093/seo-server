@@ -53,6 +53,6 @@ public class SeoHandle {
     @RequestMapping(value = "/gd", method = RequestMethod.POST)
     ResponseEntity<Response> getGoods(HttpServletRequest request) {
 
-        return null;
+        return new ResponseEntity<Response>(new Response(),HttpStatus.OK);
     }
 }
