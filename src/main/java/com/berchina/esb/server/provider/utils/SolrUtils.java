@@ -16,9 +16,9 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import com.berchina.esb.server.configloader.exception.SeoException;
@@ -843,7 +843,7 @@ public class SolrUtils {
     public static String getStringAtrr(String vars) {
 
         if (org.springframework.util.StringUtils.isEmpty(vars)) {
-            Assert.assertNotNull(" Commodity attribute not empty ", vars);
+            Assert.notNull(" Commodity attribute not empty ", vars);
         }
 
         StringBuilder bd = new StringBuilder();

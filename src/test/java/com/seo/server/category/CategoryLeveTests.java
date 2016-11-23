@@ -6,7 +6,6 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.common.SolrDocumentList;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import java.io.IOException;
@@ -46,9 +45,7 @@ public class CategoryLeveTests {
 
         SolrDocumentList leves = solrClient.query(query).getResults();
 
-        Assert.assertArrayEquals(new int[0], new int[leves.size()]);
-
-        Assert.assertNotNull(" 类目搜索为三级类目 ", leves);
-
     }
+
+
 }
