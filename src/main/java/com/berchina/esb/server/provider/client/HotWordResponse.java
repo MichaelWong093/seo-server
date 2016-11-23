@@ -13,10 +13,9 @@ import com.berchina.esb.server.provider.model.SeoHotWords;
  * @Version V1.0
  */
 public class HotWordResponse extends Response {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 8645763068822268199L;
+
 	private LinkedList<SeoHotWords> hotWords;//搜索的结果集
 	
 	public HotWordResponse(){}

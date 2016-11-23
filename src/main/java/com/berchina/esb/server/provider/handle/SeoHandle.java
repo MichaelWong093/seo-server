@@ -34,7 +34,6 @@ public class SeoHandle {
      * @param request 关键字搜索channel: goods 商品搜索, hotwd 智能分词
      * @return 商品列表信息
      */
-
     @RequestMapping(value = "/{channel}")
     ResponseEntity<Response> seoGoods(HttpServletRequest request) {
 
