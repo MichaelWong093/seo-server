@@ -1,4 +1,4 @@
-package com.seo.server.category;
+package com.seo.test.category;
 
 /**
  * @Package com.seo.server.category
@@ -14,7 +14,6 @@ package com.seo.server.category;
 //})
 
 public class Junit4Test {
-
 
 }
 

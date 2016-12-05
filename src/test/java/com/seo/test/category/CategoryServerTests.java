@@ -1,4 +1,4 @@
-package com.seo.server.category;
+package com.seo.test.category;
 
 import com.alibaba.fastjson.JSON;
 import com.berchina.esb.server.SeoApplication;

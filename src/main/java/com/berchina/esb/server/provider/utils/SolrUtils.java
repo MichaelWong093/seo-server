@@ -762,7 +762,7 @@ public class SolrUtils {
     /*
      * add by yhq 提交事务，关闭资源
      */
-    private static void commitAndClose(HttpSolrClient solrClient) {
+    public static void commitAndClose(HttpSolrClient solrClient) {
         try {
 
             if (null != solrClient) {

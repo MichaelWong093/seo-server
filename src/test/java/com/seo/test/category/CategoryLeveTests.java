@@ -1,4 +1,4 @@
-package com.seo.server.category;
+package com.seo.test.category;
 
 import com.berchina.esb.server.provider.client.SeoRequest;
 import com.berchina.esb.server.provider.utils.SolrUtils;
@@ -8,6 +8,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.common.SolrDocumentList;
 import org.junit.Before;
 import org.junit.Test;
+
 import java.io.IOException;
 
 /**
@@ -46,6 +47,4 @@ public class CategoryLeveTests {
         SolrDocumentList leves = solrClient.query(query).getResults();
 
     }
-
-
 }

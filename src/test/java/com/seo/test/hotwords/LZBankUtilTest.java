@@ -1,17 +1,13 @@
-package service.test;
+package com.seo.test.hotwords;
 
 import com.berchina.esb.server.provider.client.SeoRequest;
+import com.hankcs.hanlp.HanLP;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.berchina.esb.server.provider.segment.EasySeg;
-import com.berchina.esb.server.provider.utils.SegmentUtil;
-import com.hankcs.hanlp.HanLP;
 
 import java.io.IOException;
 

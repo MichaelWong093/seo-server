@@ -1,26 +1,22 @@
-package service.test;
+package com.seo.test.hotwords;
+
+import com.berchina.esb.server.provider.utils.IOUtills;
+import com.hankcs.hanlp.HanLP;
+import com.hankcs.hanlp.dictionary.BaseSearcher;
+import com.hankcs.hanlp.dictionary.CoreSynonymDictionary;
+import com.hankcs.hanlp.dictionary.CustomDictionary;
+import com.hankcs.hanlp.dictionary.stopword.CoreStopWordDictionary;
+import com.hankcs.hanlp.seg.Dijkstra.DijkstraSegment;
+import com.hankcs.hanlp.seg.NShort.NShortSegment;
+import com.hankcs.hanlp.seg.Segment;
+import com.hankcs.hanlp.seg.common.Term;
+import com.hankcs.hanlp.suggest.Suggester;
+import org.junit.Test;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-
-import com.hankcs.hanlp.collection.AhoCorasick.AhoCorasickDoubleArrayTrie;
-import com.hankcs.hanlp.dictionary.BaseSearcher;
-import com.hankcs.hanlp.dictionary.CoreDictionary;
-import com.hankcs.hanlp.dictionary.CustomDictionary;
-import com.hankcs.hanlp.tokenizer.IndexTokenizer;
-import org.junit.Test;
-
-import com.berchina.esb.server.provider.utils.IOUtills;
-import com.hankcs.hanlp.HanLP;
-import com.hankcs.hanlp.dictionary.CoreSynonymDictionary;
-import com.hankcs.hanlp.dictionary.stopword.CoreStopWordDictionary;
-import com.hankcs.hanlp.seg.Segment;
-import com.hankcs.hanlp.seg.Dijkstra.DijkstraSegment;
-import com.hankcs.hanlp.seg.NShort.NShortSegment;
-import com.hankcs.hanlp.seg.common.Term;
-import com.hankcs.hanlp.suggest.Suggester;
 //import com.hp.hpl.sparta.Text;
 
 /**

@@ -1,6 +1,4 @@
-package service.test;
-
-import java.util.List;
+package com.seo.test.hotwords;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -14,6 +12,8 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
 
 public class SolrTest {
 	private SolrClient server;
@@ -157,25 +157,25 @@ public class SolrTest {
 	        for (FacetField facet : facets) {
 	            print(facet);
 	            List<Count> facetCounts = facet.getValues();
-	            for (FacetField.Count count : facetCounts) {
+	            for (Count count : facetCounts) {
 	                System.out.println(count.getName() + ": " + count.getCount());
 	            }
 	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	    } 
+	    }
 	}
-	
+
 	//@Test
 	public void facetQueryCase() {
 	    SolrQuery params = new SolrQuery("*:*");
-	    
+
 	    //排序
 	    params.addSort("goodsname", ORDER.asc);
-	    
+
 	    params.setStart(0);
 	    params.setRows(200);
-	 
+
 	    //Facet为solr中的层次分类查询
 	    //分片信息
 	    params.setFacet(true)
@@ -185,25 +185,25 @@ public class SolrTest {
 	        .setFacetPrefix("牛肉面")//查询goodsname、shopname中关键字前缀是“牛肉面”的
 	        .addFacetField("goodsname")
 	        .addFacetField("shopname");//分片字段
-	 
+
 	    try {
 	        QueryResponse response = server.query(params);
-	        
+
 	        //输出查询结果集
 	        SolrDocumentList list = response.getResults();
 	        print("Query result nums: " + list.getNumFound());
-	        
+
 	        for (int i = 0; i < list.size(); i++) {
 	            print(list.get(i));
 	        }
-	        
+
 	        print("All facet filed result: ");
 	        //输出分片信息
 	        List<FacetField> facets = response.getFacetFields();
 	        for (FacetField facet : facets) {
 	            print(facet);
 	            List<Count> facetCounts = facet.getValues();
-	            for (FacetField.Count count : facetCounts) {
+	            for (Count count : facetCounts) {
 	                //关键字 - 出现次数
 	                print(count.getName() + ": " + count.getCount());
 	            }
