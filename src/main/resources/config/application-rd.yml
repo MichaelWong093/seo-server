@@ -6,10 +6,10 @@ spring:
         enabled: false
 seo:
   task:
-    syn: off
+    syn: on
     app: solr
     port: 8080
     server: 172.16.3.78
-    collection:  goods,shop,goods,category,categorys,caterev,sku,brand,brandrev
+    collection:  goods,shop,category,categorys,caterev,sku,brand,brandrev
     address: /dataimport?command=full-import&clean=true&commit=true
-    logs: /home/3demall/seo/seo-logs/
+    logs: /home/3demall/seo/seo-logs/suggest/

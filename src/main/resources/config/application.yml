@@ -15,16 +15,8 @@ server:
 security:
   basic:
     enabled: false
-
 seo:
   system:
     request:
       adapter: goods,shop,gdhotwd,sphotwd,category,categorys,caterev,sku,brand,brandrev
-  task:
-    syn: on
-    app: solr
-    port: 8983
-    server: 127.0.0.1
-    collection:  goods #,shop,goods,category,categorys,caterev,sku,brand,brandrev
-    address: /dataimport?command=full-import&clean=true&commit=true
-    logs: /Users/rxbyes/Documents/IDEA/seo-server/seo-logs/suggest/
+debug: true
