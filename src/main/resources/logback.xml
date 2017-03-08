@@ -1,7 +1,7 @@
 <!-- Logback configuration. See http://logback.qos.ch/manual/index.html -->
 <!-- http://webinglin.github.io/2015/06/04/Logback-学习笔记/-->
 <configuration scan="true" scanPeriod="10 seconds" debug="false">
-    <!--<property name="LOG_HOME" value="home/weblogic/logs" />-->
+    <property name="LOG_HOME" value="home/weblogic/logs" />
     <!--TRACE、DEBUG、INFO、WARN 和 ERROR-->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

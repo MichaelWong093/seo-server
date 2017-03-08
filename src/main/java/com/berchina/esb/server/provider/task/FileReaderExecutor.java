@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,40 +45,36 @@ public class FileReaderExecutor {
 
     //处理文件名称
     private void proccessFileName() {
-        switch (this.loadStyle) {
-            case Constants.FULL_LOAD:
-                for (int i = 0; i < fileNames.size(); i++) {//重命名已读的文件为未读文件
-                    String fileName = fileNames.get(i);
-                    if (IOUtills.isThisSuffix(fileName, Constants.FINISH_READ)) {
-                        String tmp = fileName.substring(0, fileName.indexOf(Constants.FINISH_READ));
-                        IOUtills.renameFile(fileName, tmp);
+        if (this.loadStyle.equals(Constants.FULL_LOAD)) {
+            for (int i = 0; i < fileNames.size(); i++) {//重命名已读的文件为未读文件
+                String fileName = fileNames.get(i);
+                if (IOUtills.isThisSuffix(fileName, Constants.FINISH_READ)) {
+                    String tmp = fileName.substring(0, fileName.indexOf(Constants.FINISH_READ));
+                    IOUtills.renameFile(fileName, tmp);
 
-                    }
                 }
-                this.fileNames.clear();
-                this.fileNames = IOUtills.listFileWithPath(path);//再次加载文件 保证文件读取的正确性
-                if (!isLoadToday) {
-                    removeTodayFile(fileNames);
+            }
+            this.fileNames.clear();
+            this.fileNames = IOUtills.listFileWithPath(path);//再次加载文件 保证文件读取的正确性
+            if (!isLoadToday) {
+                removeTodayFile(fileNames);
+            }
+            return;
+        } else if (this.loadStyle.equals(Constants.UNREAD_LOAD)) {
+            for (int i = 0; i < fileNames.size(); i++) {//只读 未读的文件
+                String fileName = fileNames.get(i);
+                if (IOUtills.isThisSuffix(fileName, Constants.FINISH_READ)) {
+                    fileNames.remove(i);
                 }
-                return;
-            case Constants.UNREAD_LOAD:
-                for (int i = 0; i < fileNames.size(); i++) {//只读 未读的文件
-                    String fileName = fileNames.get(i);
-                    if (IOUtills.isThisSuffix(fileName, Constants.FINISH_READ)) {
-                        fileNames.remove(i);
-                    }
-                }
-                this.fileNames.clear();
-                this.fileNames = IOUtills.listFileWithPath(path);//再次加载文件 保证文件读取的正确性
-                if (!isLoadToday) {
-                    removeTodayFile(fileNames);
-                }
-                return;
-            default:
-                break;
+            }
+            this.fileNames.clear();
+            this.fileNames = IOUtills.listFileWithPath(path);//再次加载文件 保证文件读取的正确性
+            if (!isLoadToday) {
+                removeTodayFile(fileNames);
+            }
+            return;
+        } else {
         }
-
-
     }
 
     /*
@@ -112,7 +109,6 @@ public class FileReaderExecutor {
 
             }
         }
-
     }
 
     //将文件中的内容分类为 商品关键字和 店铺关键字
@@ -122,7 +118,7 @@ public class FileReaderExecutor {
         //历史搜索 包含mac地址
         //List<String> gdkeyWordsHis = new ArrayList<String>();
         //List<String> spkeyWordsHis = new ArrayList<String>();
-        Map<String, List<String>> map = new HashMap<>();
+        Map<String, List<String>> map = Maps.newHashMap();
         for (String words : keyWordsList) {
             if (words.indexOf(Constants.COLON) > 0) {
                 String[] _array = words.split(Constants.COLON);

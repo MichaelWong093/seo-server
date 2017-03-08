@@ -47,9 +47,11 @@ public class SeoCategoryServer implements SeoServer {
                     return new SeoResponse(category, seoRequest);
                 }
             }
-        } catch (SolrServerException | IOException ex) {
+        } catch (SolrServerException  ex) {
             LOGGER.error(" 类目搜索商品异常 : {} ", ex.getMessage());
             throw new SeoException(ex.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         throw new SeoException(ServerException.SEO_RESPONSE_HANDLE_ERROR);
     }

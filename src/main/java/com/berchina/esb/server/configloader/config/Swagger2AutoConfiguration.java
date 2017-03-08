@@ -6,6 +6,7 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -38,7 +39,7 @@ public class Swagger2AutoConfiguration {
                         .title(" 百合生活搜索服务 API 相关文档 ")
                         .description("百合生活网址：http://www.bhelife.com")
                         .termsOfServiceUrl("http://www.bhelife.com")
-                        .contact("联系方式：renxiaobin@berchina.com")
+                        .contact(new Contact("rxbyes", "http://www.bhelife.com", "renxiaobin@berchina.com"))
                         .version("1.0").build();
     }
 }

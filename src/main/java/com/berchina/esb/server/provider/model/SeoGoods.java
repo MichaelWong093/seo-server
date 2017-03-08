@@ -63,6 +63,19 @@ public class SeoGoods implements Serializable {
      */
     private String type;
 
+    /**
+     * 积分支付标示
+     */
+    private int integralflag;
+
+    public int getIntegralflag() {
+        return integralflag;
+    }
+
+    public void setIntegralflag(int integralflag) {
+        this.integralflag = integralflag;
+    }
+
     public String getPrices() {
         return prices;
     }

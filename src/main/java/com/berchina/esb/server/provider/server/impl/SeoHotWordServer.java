@@ -20,11 +20,10 @@ import com.berchina.esb.server.provider.server.SeoServer;
 import com.berchina.esb.server.provider.server.crud.SeoHotWordRepository;
 
 /**
- *
  * @Package com.berchina.esb.server.provider.server.impl
  * @Description: TODO ( 热词联想)
  * @Author yanhuiqing
- * @Date  2016年9月9日 下午2:42:28
+ * @Date 2016年9月9日 下午2:42:28
  * @Version V1.0
  */
 @Service
@@ -50,7 +49,10 @@ public class SeoHotWordServer implements SeoServer {
                     return new SeoResponse(hotwords, seoRequest);
                 }
             }
-        } catch (SolrServerException | IOException e) {
+        } catch (SolrServerException e) {
+            LOGGER.error("[ 热词搜索异常 : {} ]", e.getMessage());
+            throw new SeoException(e.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
+        } catch (IOException e) {
             LOGGER.error("[ 热词搜索异常 : {} ]", e.getMessage());
             throw new SeoException(e.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
         }

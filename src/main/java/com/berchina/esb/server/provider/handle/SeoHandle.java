@@ -37,7 +37,7 @@ public class SeoHandle {
     @RequestMapping(value = "/{channel}")
     ResponseEntity<Response> seoGoods(HttpServletRequest request) {
 
-        return new ResponseEntity<>(factory.setSeoServer(new SeoRequest(request)), HttpStatus.OK);
+        return new ResponseEntity<Response>(factory.setSeoServer(new SeoRequest(request)), HttpStatus.OK);
     }
 
     @ApiOperation(value = "搜索服务总入口", notes = "更多细节请联系开发人员")
@@ -52,6 +52,6 @@ public class SeoHandle {
     @RequestMapping(value = "/gd", method = RequestMethod.POST)
     ResponseEntity<Response> getGoods(HttpServletRequest request) {
 
-        return new ResponseEntity<Response>(new Response(),HttpStatus.OK);
+        return new ResponseEntity<Response>(new Response(), HttpStatus.OK);
     }
 }

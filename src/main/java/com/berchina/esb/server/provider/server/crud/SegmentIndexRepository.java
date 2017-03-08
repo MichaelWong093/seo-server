@@ -119,21 +119,17 @@ public class SegmentIndexRepository {
     @Deprecated
     private void assembleSolrFiedlByHisSearch(SolrInputDocument solrDoc,
                                               String channel, String keyWords, String mac) {
-        switch (channel) {
-            case Constants.SEO_GOODS_HOTWD_://商品 历史搜索
-                solrDoc.addField("goodsHisSearch", keyWords);
-                solrDoc.addField("mac", mac);
-                solrDoc.addField("id", StringUtil.uniqueId());
-                break;
-            case Constants.SEO_SHOP_HOTWD_://店铺 历史搜索
-                solrDoc.addField("shopHisSearch", keyWords);
-                solrDoc.addField("mac", mac);
-                solrDoc.addField("id", StringUtil.uniqueId());
-                break;
+        if (channel.equals(Constants.SEO_GOODS_HOTWD_)) {
+            solrDoc.addField("goodsHisSearch", keyWords);
+            solrDoc.addField("mac", mac);
+            solrDoc.addField("id", StringUtil.uniqueId());
 
-            default:
+        } else if (channel.equals(Constants.SEO_SHOP_HOTWD_)) {
+            solrDoc.addField("shopHisSearch", keyWords);
+            solrDoc.addField("mac", mac);
+            solrDoc.addField("id", StringUtil.uniqueId());
 
-                break;
+        } else {
         }
 
     }
@@ -195,16 +191,13 @@ public class SegmentIndexRepository {
      * 根据 商品和店铺的热词渠道号 切换 商品和店铺的索引库 连接
      */
     public void shiftSolrClient(String channel) {
-        switch (channel) {
-            case Constants.SEO_GOODS_HOTWD_://商品 渠道
-                getSolrClient(Constants.SEO_GOODS_);//商品 索引库
-                break;
-            case Constants.SEO_SHOP_HOTWD_://店铺 渠道
-                getSolrClient(Constants.SEO_SHOP_);//店铺 索引库
-                break;
+        if (channel.equals(Constants.SEO_GOODS_HOTWD_)) {
+            getSolrClient(Constants.SEO_GOODS_);//商品 索引库
 
-            default:
-                break;
+        } else if (channel.equals(Constants.SEO_SHOP_HOTWD_)) {
+            getSolrClient(Constants.SEO_SHOP_);//店铺 索引库
+
+        } else {
         }
     }
 
@@ -263,14 +256,17 @@ public class SegmentIndexRepository {
                     .addFacetField("hotwords");
             QueryResponse response = solrClient.query(params);
             return response;
-        } catch (SolrServerException | IOException e) {
+        } catch (SolrServerException e) {
             SolrUtils.rollBack(solrClient);
             LOGGER.error("[ solr 服务器异常 : {} ]", e.getMessage());
             throw new SeoException(e.getMessage(),
                     ServerException.SEO_SERVER_URL_CONNECT_ERROR);
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             SolrUtils.commit(solrClient);
         }
+        return null;
     }
 
     /*
@@ -309,14 +305,17 @@ public class SegmentIndexRepository {
             SolrQuery params = equalMatchQuery(words, channel);//全等 匹配
             QueryResponse response = solrClient.query(params);
             return response;
-        } catch (SolrServerException | IOException e) {
+        } catch (IOException e) {
             SolrUtils.rollBack(solrClient);
             LOGGER.error("[ solr 服务器异常 : {} ]", e.getMessage());
             throw new SeoException(e.getMessage(),
                     ServerException.SEO_SERVER_URL_CONNECT_ERROR);
+        } catch (SolrServerException e) {
+            e.printStackTrace();
         } finally {
             SolrUtils.commit(solrClient);
         }
+        return null;
     }
 
     /*
@@ -354,17 +353,13 @@ public class SegmentIndexRepository {
      */
     private void assembleSolrFieldByChannel(SolrInputDocument solrDoc, String channel, String keyWords) {
 
-        switch (channel) {
-            case Constants.SEO_GOODS_HOTWD_://商品 热词
-                solrDoc.addField("goodsName", keyWords);
-                break;
-            case Constants.SEO_SHOP_HOTWD_://店铺 热词
-                solrDoc.addField("shopName", keyWords);
-                break;
+        if (channel.equals(Constants.SEO_GOODS_HOTWD_)) {
+            solrDoc.addField("goodsName", keyWords);
 
-            default:
+        } else if (channel.equals(Constants.SEO_SHOP_HOTWD_)) {
+            solrDoc.addField("shopName", keyWords);
 
-                break;
+        } else {
         }
     }
 

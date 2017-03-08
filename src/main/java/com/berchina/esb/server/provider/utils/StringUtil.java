@@ -56,7 +56,7 @@ public class StringUtil {
 
                                                     channel.equals(Constants.SEO_CATEGORY_STATUS) ? Constants.SEO_CATEGORYS_SHOP_ :
 
-                                                    	channel.equals(Constants.SEO_GOODS_RECOMMEND_STATUS) ? Constants.SEO_GOODS_HOTWD_ :"";
+                                                            channel.equals(Constants.SEO_GOODS_RECOMMEND_STATUS) ? Constants.SEO_GOODS_HOTWD_ : "";
         }
         return null;
     }
@@ -80,7 +80,7 @@ public class StringUtil {
 
                                                     channel.equals(Constants.SEO_CATEGORY_STATUS) ? Constants.SEO_CATEGORY_SERVER :
 
-                                                    	channel.equals(Constants.SEO_GOODS_RECOMMEND_STATUS)?Constants.SEO_GOODS_RECOMMEND_SERVER:"";
+                                                            channel.equals(Constants.SEO_GOODS_RECOMMEND_STATUS) ? Constants.SEO_GOODS_RECOMMEND_SERVER : "";
         }
         return null;
     }
@@ -137,7 +137,7 @@ public class StringUtil {
      */
     public static boolean notNull(Object args) {
         if (!StringUtils.isEmpty(args)) {
-        	return true;
+            return true;
         }
         return false;
     }
@@ -229,50 +229,53 @@ public class StringUtil {
         }
         return dest;
     }
+
     //获取mac地址
-    public static String getLocalMac(){
-    	try {
-			InetAddress ia = InetAddress.getLocalHost();
-			byte[] mac = NetworkInterface.getByInetAddress(ia).getHardwareAddress();
-			StringBuffer sb = new StringBuffer();
-			for(int i=0;i<mac.length;i++){
-				if(i!=0){
-					sb.append("-");
-				}
-				int tmp = mac[i];
-				String str = Integer.toHexString(tmp & 0xFF);
-				if(str.length()==1){
-					sb.append("0"+str);
-				}else{
-					sb.append(str);
-				}
-			}
-			return sb.toString().toUpperCase();
-		} catch (UnknownHostException | SocketException e) {
-			LOGGER.error("[ 获取mac地址异常]", e.getMessage());
-		}
-    	return uniqueId();//如果获取不到给一个 默认序列
-    }
+//    public static String getLocalMac() {
+//        try {
+//            InetAddress ia = InetAddress.getLocalHost();
+//            byte[] mac = NetworkInterface.getByInetAddress(ia).getHardwareAddress();
+//            StringBuffer sb = new StringBuffer();
+//            for (int i = 0; i < mac.length; i++) {
+//                if (i != 0) {
+//                    sb.append("-");
+//                }
+//                int tmp = mac[i];
+//                String str = Integer.toHexString(tmp & 0xFF);
+//                if (str.length() == 1) {
+//                    sb.append("0" + str);
+//                } else {
+//                    sb.append(str);
+//                }
+//            }
+//            return sb.toString().toUpperCase();
+//        } catch (SocketException e) {
+//            LOGGER.error("[ 获取mac地址异常]", e.getMessage());
+//        }
+//        return uniqueId();//如果获取不到给一个 默认序列
+//    }
+
     //获取项目的 热词log夹文件路径
-	public static String getHwLogPath() {
-		String path = StringUtil.class.getClassLoader().getResource("").getPath();
-		int end = path.length()-("WEB-INF"+File.separator+"classes"+File.separator).length();
-		if("\\".equals(File.separator)){
-			path = path.substring(1,end);
-		}
-		if("/".equals(File.separator)){
-			path = path.substring(0,end);
-		}
-		path += File.separator+"seo-logs"+File.separator+"suggest"+File.separator;
-		path = path.replaceAll("\\\\", "\\/");
-		return path;
-	}
-	/*
-	 * 获取今天的年与日 字符串 以 - 分割
-	 */
-	public static String getNowDayStr(){
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		return sdf.format(new Date());
-	}
+    public static String getHwLogPath() {
+        String path = StringUtil.class.getClassLoader().getResource("").getPath();
+        int end = path.length() - ("WEB-INF" + File.separator + "classes" + File.separator).length();
+        if ("\\".equals(File.separator)) {
+            path = path.substring(1, end);
+        }
+        if ("/".equals(File.separator)) {
+            path = path.substring(0, end);
+        }
+        path += File.separator + "seo-logs" + File.separator + "suggest" + File.separator;
+        path = path.replaceAll("\\\\", "\\/");
+        return path;
+    }
+
+    /*
+     * 获取今天的年与日 字符串 以 - 分割
+     */
+    public static String getNowDayStr() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(new Date());
+    }
 
 }
