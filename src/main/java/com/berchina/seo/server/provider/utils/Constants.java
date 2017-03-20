@@ -139,7 +139,6 @@ public class Constants {
      */
     public final static String SEO_SHOP_ = "shop";
 
-
     /**
      * 前台类目搜索 Collection 名称
      */

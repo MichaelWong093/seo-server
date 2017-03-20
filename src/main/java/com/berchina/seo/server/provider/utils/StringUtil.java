@@ -74,7 +74,6 @@ public class StringUtil {
             file.close();
             byteBuffer.clear();
             unmap(byteBuffer);
-//            return bytes;
             return set;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
