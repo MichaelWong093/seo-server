@@ -2,8 +2,13 @@ spring:
   data:
     solr:
       host: http://127.0.0.1:8983/solr/
+#      host: http://98.11.0.98/solr/
       repositories:
         enabled: false
+#  redis:
+#    database: 0
+#    host: 127.0.0.1
+#    port: 6379
 seo:
   task:
     syn: off

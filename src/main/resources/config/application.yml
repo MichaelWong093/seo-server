@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: rd
+    active: dev
   data:
     solr:
       host: http://127.0.0.1:8983/solr/
@@ -18,5 +18,5 @@ security:
 seo:
   system:
     request:
-      adapter: goods,shop,gdhotwd,sphotwd,category,categorys,caterev,sku,brand,brandrev
+      adapter: goods,shop,gdhotwd,sphotwd,category,categorys,caterev,sku,brand,brandrev,splitter
 debug: true

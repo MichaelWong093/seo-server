@@ -1,14 +1,14 @@
 spring:
   data:
     solr:
-      host: http://127.0.0.1:8080/solr/
+      host: http://127.0.0.1:9999/solr/
       repositories:
         enabled: false
 seo:
   task:
     syn: on
     app: solr
-    port: 8080
+    port: 9999
     server: 172.16.3.78
     collection:  goods,shop,category,categorys,caterev,sku,brand,brandrev
     address: /dataimport?command=full-import&clean=true&commit=true
