@@ -7,6 +7,6 @@ package com.berchina.seo.server.configloader.config.redis;
  * @Date 2017 上午9:51
  * @Version V1.0
  */
-public class RedisDatabaseConfiguration {
+public class RedisConfiguration {
 
 }
