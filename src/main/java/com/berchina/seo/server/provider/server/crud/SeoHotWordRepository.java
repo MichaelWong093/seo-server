@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Map;
 
+import com.berchina.seo.server.configloader.config.solr.SolrServerFactoryBean;
 import com.google.common.collect.Lists;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
@@ -17,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.berchina.seo.server.configloader.config.SolrServerFactoryBean;
 import com.berchina.seo.server.configloader.exception.SeoException;
 import com.berchina.seo.server.configloader.exception.server.ServerException;
 import com.berchina.seo.server.provider.client.SeoRequest;

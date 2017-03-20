@@ -1,6 +1,6 @@
 package com.berchina.seo.server.provider.server.crud;
 
-import com.berchina.seo.server.configloader.config.SolrServerFactoryBean;
+import com.berchina.seo.server.configloader.config.solr.SolrServerFactoryBean;
 import com.berchina.seo.server.provider.utils.Constants;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;

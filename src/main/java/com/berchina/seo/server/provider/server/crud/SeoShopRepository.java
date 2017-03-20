@@ -3,26 +3,21 @@ package com.berchina.seo.server.provider.server.crud;
 import java.io.IOException;
 import java.util.*;
 
-import com.berchina.seo.server.provider.utils.EnumUtils;
 import com.google.common.collect.Lists;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.berchina.seo.server.configloader.config.SolrServerFactoryBean;
 import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.model.SeoGoods;
 import com.berchina.seo.server.provider.model.SeoShop;
 import com.berchina.seo.server.provider.utils.SolrPageUtil;
 import com.berchina.seo.server.provider.utils.SolrUtils;
-import org.springframework.util.StringUtils;
 
 @Repository
 public class SeoShopRepository extends SeoAbstractRepository {

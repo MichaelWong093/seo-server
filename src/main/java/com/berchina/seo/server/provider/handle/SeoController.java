@@ -32,13 +32,10 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/seo")
-public class SeoHandle {
+public class SeoController {
 
     @Autowired
     private SeoServerFactory factory;
-
-    @Autowired
-    private StringRedisTemplate redisTemplate;
 
     @RequestMapping(value = "/{channel}")
     ResponseEntity<Response> seoGoods(HttpServletRequest request) {

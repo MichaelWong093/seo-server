@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * @Package com.berchina.seo.server.provider.handle
- * @Description: TODO (分词手动维护)
+ * @Description: TODO (分词维护)
  * @Author rxbyes
  * @Date 2017 下午10:33
  * @Version V1.0
