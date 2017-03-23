@@ -1,29 +1,22 @@
 package com.berchina.seo.server.provider.utils;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.google.common.collect.Sets;
+import com.alibaba.fastjson.JSON;
+import com.berchina.seo.server.configloader.exception.SeoException;
+import com.berchina.seo.server.configloader.exception.server.ServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import com.alibaba.fastjson.JSON;
-import com.berchina.seo.server.configloader.exception.SeoException;
-import com.berchina.seo.server.configloader.exception.server.ServerException;
-import sun.nio.ch.FileChannelImpl;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @Package com.berchina.seo.server.provider.utils
@@ -36,67 +29,67 @@ public class StringUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StringUtil.class);
 
-
-    /**
-     * 文件读取
-     *
-     * @param path 文件路径，绝对路径
-     * @return 字符流
-     */
-    public static Set<String> readBuffer(String path) {
-        Set<String> set = Sets.newLinkedHashSet();
-        long start = System.currentTimeMillis();
-        try {
-            RandomAccessFile file = new RandomAccessFile(path, "rw");
-            //  从 RandomAccessFile 获取文件通道 FileChannel
-            FileChannel channel = file.getChannel();
-            //  文件大小
-            long size = channel.size();
-            // 构建一个只读的MappedByteBuffer
-            MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, size);
-            int allocate = 1024;
-            // 文件内容大时，可以采用多次方式读取, 每次取 1M 数据
-            byte[] bytes = new byte[allocate];
-            long cycle = size / allocate;
-            int mode = (int) (size % allocate);
-            for (int i = 0; i < cycle; i++) {
-                byteBuffer.get(bytes);
-                set.add(new String(bytes, "UTF-8"));
-            }
-            if (mode > 0) {
-                bytes = new byte[mode];
-                byteBuffer.get(bytes);
-                set.add(new String(bytes, "UTF-8"));
-            }
-            LOGGER.info("文件大小 (b): {}，耗时 (ms): {}", size, System.currentTimeMillis() - start);
-            // 关闭通道和文件流
-            channel.close();
-            file.close();
-            byteBuffer.clear();
-            unmap(byteBuffer);
-            return set;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static void unmap(MappedByteBuffer buffer) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        // FileChannel在调用了map方法，进行内存映射得到MappedByteBuffer，但是没有提供unmap方法()，释放内存。
-        // 事实上，unmap方法是在FileChannelImpl类里实现的，是个私有方法。在finalize延迟的时候，unmap方法无法调用，
-        // 在删除文件的时候就会因为内存未释放而失败。不过可以通过显示的调用unmap方法来释放内存。
-        Method method = FileChannelImpl.class.getDeclaredMethod("unmap", MappedByteBuffer.class);
-        method.setAccessible(true);
-        method.invoke(FileChannelImpl.class, buffer);
-    }
+//
+//    /**
+//     * 文件读取
+//     *
+//     * @param path 文件路径，绝对路径
+//     * @return 字符流
+//     */
+//    public static Set<String> readBuffer(String path) {
+//        Set<String> set = Sets.newLinkedHashSet();
+//        long start = System.currentTimeMillis();
+//        try {
+//            RandomAccessFile file = new RandomAccessFile(path, "rw");
+//            //  从 RandomAccessFile 获取文件通道 FileChannel
+//            FileChannel channel = file.getChannel();
+//            //  文件大小
+//            long size = channel.size();
+//            // 构建一个只读的MappedByteBuffer
+//            MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, size);
+//            int allocate = 1024;
+//            // 文件内容大时，可以采用多次方式读取, 每次取 1M 数据
+//            byte[] bytes = new byte[allocate];
+//            long cycle = size / allocate;
+//            int mode = (int) (size % allocate);
+//            for (int i = 0; i < cycle; i++) {
+//                byteBuffer.get(bytes);
+//                set.add(new String(bytes, "UTF-8"));
+//            }
+//            if (mode > 0) {
+//                bytes = new byte[mode];
+//                byteBuffer.get(bytes);
+//                set.add(new String(bytes, "UTF-8"));
+//            }
+//            LOGGER.info("文件大小 (b): {}，耗时 (ms): {}", size, System.currentTimeMillis() - start);
+//            // 关闭通道和文件流
+//            channel.close();
+//            file.close();
+//            byteBuffer.clear();
+//            unmap(byteBuffer);
+//            return set;
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchMethodException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        } catch (InvocationTargetException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
+//
+//    private static void unmap(MappedByteBuffer buffer) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+//        // FileChannel在调用了map方法，进行内存映射得到MappedByteBuffer，但是没有提供unmap方法()，释放内存。
+//        // 事实上，unmap方法是在FileChannelImpl类里实现的，是个私有方法。在finalize延迟的时候，unmap方法无法调用，
+//        // 在删除文件的时候就会因为内存未释放而失败。不过可以通过显示的调用unmap方法来释放内存。
+//        Method method = FileChannelImpl.class.getDeclaredMethod("unmap", MappedByteBuffer.class);
+//        method.setAccessible(true);
+//        method.invoke(FileChannelImpl.class, buffer);
+//    }
 
 
     /**
