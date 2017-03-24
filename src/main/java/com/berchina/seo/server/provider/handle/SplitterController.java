@@ -1,6 +1,9 @@
 package com.berchina.seo.server.provider.handle;
 
+import com.alibaba.fastjson.JSON;
+import com.berchina.seo.server.provider.client.base.Response;
 import com.berchina.seo.server.provider.server.SplitterServer;
+import com.berchina.seo.server.provider.utils.SerialNumber;
 import com.hankcs.hanlp.seg.common.Term;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,11 +53,13 @@ public class SplitterController {
             }
     )
     @RequestMapping(value = "/splitter/v2/stop", method = RequestMethod.DELETE)
-    public ResponseEntity deleteStop(@RequestParam(value = "key") String key) {
+    public ResponseEntity<Response<String>> deleteStop(@RequestParam(value = "key") String key) {
 
         server.deleteStop(key);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(
+                new Response<String>(new Date().toString(), HttpStatus.OK.name(),
+                        "ok", SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
 
@@ -79,11 +85,13 @@ public class SplitterController {
             }
     )
     @RequestMapping(value = "/splitter/v2/custom", method = RequestMethod.DELETE)
-    public ResponseEntity deleteCustom(@RequestParam(value = "key") String key) {
+    public ResponseEntity<String> deleteCustom(@RequestParam(value = "key") String key) {
 
         server.deleteCustom(key);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(
+                new Response<String>(new Date().toString(), HttpStatus.OK.name(),
+                        "ok", SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
     /**
@@ -112,11 +120,13 @@ public class SplitterController {
             }
     )
     @RequestMapping(value = "/splitter/v2/stop", method = RequestMethod.PUT)
-    public ResponseEntity<StringBuilder> addStop(@RequestParam(value = "key") String key, @RequestParam(value = "value") String value) {
+    public ResponseEntity<Response<String>> addStop(@RequestParam(value = "key") String key, @RequestParam(value = "value") String value) {
 
         server.addStop(key, value);
 
-        return new ResponseEntity<>(new StringBuilder().append(key).append(" : ").append(value), HttpStatus.OK);
+        return new ResponseEntity(
+                new Response<String>(new Date().toString(), HttpStatus.OK.name(),
+                        new String().concat(key).concat(" : ").concat(value), SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
 
@@ -150,7 +160,9 @@ public class SplitterController {
 
         server.addCustom(key, value);
 
-        return new ResponseEntity<>(new StringBuilder().append(key).append(" : ").append(value), HttpStatus.OK);
+        return new ResponseEntity(
+                new Response<String>(new Date().toString(), HttpStatus.OK.name(),
+                        new String().concat(key).concat(" : ").concat(value), SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
     /**
@@ -179,11 +191,13 @@ public class SplitterController {
             }
     )
     @RequestMapping(value = "/splitter/v2/", method = RequestMethod.POST)
-    public List<Term> splitter(@RequestParam String keywords) {
+    public ResponseEntity<Response<List<Term>>> splitter(@RequestParam String keywords) {
 
         Assert.notNull(keywords, " keywords is not empty");
 
-        return server.splitter(keywords);
+        return new ResponseEntity(
+                new Response<String>(new Date().toString(), HttpStatus.OK.name(),
+                        JSON.toJSONString(server.splitter(keywords)), SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
 
@@ -218,6 +232,8 @@ public class SplitterController {
     @RequestMapping(value = "/splitter/v2/{keys}/{key}", method = RequestMethod.GET)
     public ResponseEntity<Map<String, String>> put(@PathVariable String keys, @PathVariable String key) {
 
-        return new ResponseEntity<>(server.put(keys, key), HttpStatus.OK);
+        return new ResponseEntity(
+                new Response<String>(new Date().toString(), HttpStatus.OK.name(),
+                        JSON.toJSONString(server.put(keys, key)), SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 }
