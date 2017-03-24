@@ -58,7 +58,7 @@ public class SplitterController {
         server.deleteStop(key);
 
         return new ResponseEntity(
-                new Response<String>(new Date().toString(), HttpStatus.OK.name(),
+                new Response<String>(new Date().toString(), HttpStatus.OK.value(),
                         "ok", SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
@@ -90,7 +90,7 @@ public class SplitterController {
         server.deleteCustom(key);
 
         return new ResponseEntity(
-                new Response<String>(new Date().toString(), HttpStatus.OK.name(),
+                new Response<String>(new Date().toString(), HttpStatus.OK.value(),
                         "ok", SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
@@ -125,7 +125,7 @@ public class SplitterController {
         server.addStop(key, value);
 
         return new ResponseEntity(
-                new Response<String>(new Date().toString(), HttpStatus.OK.name(),
+                new Response<String>(new Date().toString(), HttpStatus.OK.value(),
                         new String().concat(key).concat(" : ").concat(value), SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
@@ -161,7 +161,7 @@ public class SplitterController {
         server.addCustom(key, value);
 
         return new ResponseEntity(
-                new Response<String>(new Date().toString(), HttpStatus.OK.name(),
+                new Response<String>(new Date().toString(), HttpStatus.OK.value(),
                         new String().concat(key).concat(" : ").concat(value), SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
@@ -196,7 +196,7 @@ public class SplitterController {
         Assert.notNull(keywords, " keywords is not empty");
 
         return new ResponseEntity(
-                new Response<String>(new Date().toString(), HttpStatus.OK.name(),
+                new Response<String>(new Date().toString(), HttpStatus.OK.value(),
                         JSON.toJSONString(server.splitter(keywords)), SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
@@ -233,7 +233,7 @@ public class SplitterController {
     public ResponseEntity<Map<String, String>> put(@PathVariable String keys, @PathVariable String key) {
 
         return new ResponseEntity(
-                new Response<String>(new Date().toString(), HttpStatus.OK.name(),
+                new Response<String>(new Date().toString(), HttpStatus.OK.value(),
                         JSON.toJSONString(server.put(keys, key)), SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 }
