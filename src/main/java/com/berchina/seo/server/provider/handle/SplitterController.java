@@ -191,13 +191,11 @@ public class SplitterController {
             }
     )
     @RequestMapping(value = "/splitter/v2/", method = RequestMethod.POST)
-    public ResponseEntity<Response<List<Term>>> splitter(@RequestParam String keywords) {
+    public List<Term>splitter(@RequestParam String keywords) {
 
         Assert.notNull(keywords, " keywords is not empty");
 
-        return new ResponseEntity(
-                new Response<String>(new Date().toString(), HttpStatus.OK.value(),
-                        JSON.toJSONString(server.splitter(keywords)), SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
+        return server.splitter(keywords);
     }
 
 

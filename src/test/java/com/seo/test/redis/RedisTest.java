@@ -1,14 +1,17 @@
 package com.seo.test.redis;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.Assert;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -29,9 +32,48 @@ public class RedisTest implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 
-        ValueOperations<String, String> vOps = redisTemplate.opsForValue();
+        BoundHashOperations<String, String, String> boundOps = redisTemplate.boundHashOps("stop");
 
-        vOps.set("棒棒"," nz 234");
+        redisPageUtils(boundOps,1);
+
+
+        Map<String, String> map = boundOps.entries();
+
+
+        System.out.println(JSON.toJSON(map));
+
+//        vOps.set("棒棒"," nz 234");
+    }
+
+    private void redisPageUtils(BoundHashOperations<String, String, String> boundOps, int pageNumber) {
+        if (pageNumber <= 0) {
+            pageNumber = 1;
+        }
+
+        /**
+         * 总条数
+         */
+        int totalRow = Math.toIntExact(boundOps.size());
+
+        /**
+         * 每页大小
+         */
+        int pageSize = 10;
+
+        /**
+         * 总页数
+         */
+        int totalPage = totalRow / pageSize;
+
+        if (totalRow % pageSize != 0) {
+
+            totalPage++;
+        }
+        if (pageNumber > totalPage) {
+
+            pageNumber = totalPage;
+        }
+
     }
 
     private void appendKeyWordToRedis(ValueOperations<String, String> ops, String key, String value) {

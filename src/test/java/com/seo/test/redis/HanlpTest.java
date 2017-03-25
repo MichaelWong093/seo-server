@@ -37,6 +37,6 @@ public class HanlpTest implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 
-        hanlp();
+//        hanlp();
     }
 }

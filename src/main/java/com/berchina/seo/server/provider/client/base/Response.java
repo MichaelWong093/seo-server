@@ -1,7 +1,6 @@
 package com.berchina.seo.server.provider.client.base;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @Package com.berchina.seo.server.provider.client
@@ -10,7 +9,7 @@ import java.util.Date;
  * @Date 16/9/13 下午6:34
  * @Version V1.0
  */
-public class Response implements Serializable {
+public class Response<T> implements Serializable {
 
     private static final long serialVersionUID = 8527717000710486036L;
     /**
@@ -21,7 +20,7 @@ public class Response implements Serializable {
     /**
      * 响应状态
      */
-    private String code;
+    private Integer code;
 
     /**
      * 响应信息
@@ -36,7 +35,7 @@ public class Response implements Serializable {
     public Response() {
     }
 
-    public Response(String time, String code, String message, String serialNum) {
+    public Response(String time,  Integer code, String message, String serialNum) {
         this.time = time;
         this.code = code;
         this.message = message;
@@ -51,11 +50,11 @@ public class Response implements Serializable {
         this.time = time;
     }
 
-    public String getCode() {
+    public Integer getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(Integer code) {
         this.code = code;
     }
 
