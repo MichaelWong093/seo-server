@@ -299,4 +299,10 @@ public class Constants {
      * 商品 推荐 top 5
      */
     public static final Integer TOP_GOODS_RCM_NUM = 5;
+
+    public static final String SEO_KEY_CUSTOM = "seo.keywords.custom";
+    public static final String SEO_KEY_STOP = "seo.keywords.stop";
+    public static final String SEO_KEY_CORE = "seo.keywords.core";
+    public static final String SEO_KEY_TABLE = "seo.keywords.table";
+    public static final String SEO_KEY_NGRAM = "seo.keywords.ngram";
 }
