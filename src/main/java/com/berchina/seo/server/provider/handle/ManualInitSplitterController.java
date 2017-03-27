@@ -21,7 +21,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/seo")
-public class KeyWordsController {
+public class ManualInitSplitterController {
 
     @Autowired
     private KeyWordsSplitterServer spillterServer;
