@@ -111,13 +111,16 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
 
                 /** 类目搜索之后，搜索商品，过滤恶意搜索，减少服务器类目搜索, 或者是三级类目 */
                 if (StringUtil.notNull(cateGories) && cateGories.size() > 0) {
-                    /**
-                     * 类目相关属性
-                     */
-                    seoResponse.put("category", cateGories);
 
                     this.getSolrGoods(
                             CateUtils.setEndCategoryQueryString(cateGories), goods, seoResponse, request);
+
+                    if (StringUtil.notNull(goods) && goods.size() > 0) {
+                        /**
+                         * 类目相关属性
+                         */
+                        seoResponse.put("category", cateGories);
+                    }
                     /**
                      * 类目相关商品
                      */
