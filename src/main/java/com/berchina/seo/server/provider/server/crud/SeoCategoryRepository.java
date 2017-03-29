@@ -15,6 +15,7 @@ import org.apache.solr.common.SolrDocumentList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -363,13 +364,18 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
          */
         SolrUtils.query(getSolrCate(gories, request), query, request);
 
-        QueryResponse response = goodsClient.query(query);
+        QueryResponse response;
+
+        if (request.getType().equals("1")) {
+
+            response = goodsClient.query(query);
+        } else {
+            response = speClient.query(query);
+        }
 
         SolrDocumentList goodsDoc = response.getResults();
 
         SolrPageUtil.getPageInfo(seoResponse, request, goodsDoc);
-
-        SolrUtils.commit(goodsClient);
 
         SolrUtils.setSeoGoodsResponseInfo(goodses, goodsDoc);
 

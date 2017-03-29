@@ -119,6 +119,8 @@ public abstract class SeoAbstractRepository {
         skuClient = solrClient.get(Constants.SEO_SKU);
 
         goodsClient = solrClient.get(Constants.SEO_GOODS_);
+
+        speClient = solrClient.get(Constants.SEO_SPECIALTY);
     }
 
     /**
