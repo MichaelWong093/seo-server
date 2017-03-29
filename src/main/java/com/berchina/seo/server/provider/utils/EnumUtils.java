@@ -19,7 +19,7 @@ public enum EnumUtils {
 
     SEO_GOODSNAME(Constants.INDEX_GOODSNAME),
 
-    SEO_INDEX(Constants.SEO_INDEX),
+    SEO_TYPE(Constants.SEO_TYPE),
 
     SEO_TERMINAL(Constants.SEO_TERMINAL),
 

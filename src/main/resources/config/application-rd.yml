@@ -10,6 +10,12 @@ seo:
     app: solr
     port: 9999
     server: 172.16.3.78
-    collection:  goods,shop,category,categorys,caterev,sku,brand,brandrev
+    collection:  goods,shop,category,categorys,caterev,sku,brand,brandrev,characteristic
     address: /dataimport?command=full-import&clean=true&commit=true
     logs: /home/3demall/seo/seo-logs/suggest/
+  path: home/3demall/berchina/HanLP/
+  keywords:
+    stop: ${seo.path}data/dictionary/stopwords.txt
+    custom: ${seo.path}data/dictionary/custom/CustomDictionary.txt
+    table: ${seo.path}data/dictionary/other/CharTable.txt
+    core: ${seo.path}data/dictionary/CoreNatureDictionary.txt

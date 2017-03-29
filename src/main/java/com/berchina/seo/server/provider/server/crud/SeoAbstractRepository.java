@@ -76,6 +76,11 @@ public abstract class SeoAbstractRepository {
     public HttpSolrClient shopClient;
 
     /**
+     * 特产频道
+     */
+    public HttpSolrClient speClient;
+
+    /**
      * 商品相关 Solr 实例化
      */
     public void InitGoods() {
@@ -88,6 +93,8 @@ public abstract class SeoAbstractRepository {
         brandClient = solrClient.get(Constants.SEO_BRAND);
 
         skuClient = solrClient.get(Constants.SEO_SKU);
+
+        speClient = solrClient.get(Constants.SEO_SPECIALTY);
     }
 
     /**

@@ -101,6 +101,12 @@ public class Constants {
 
 
     /**
+     * 搜索商品类型，普通商品，特色频道
+     */
+    public final static String SEO_TYPE = "type";
+
+
+    /**
      * 设备来源
      */
     public final static String SEO_TERMINAL = "terminal";
@@ -149,6 +155,11 @@ public class Constants {
     public final static String SEO_CATEREV_SHOP_ = "caterev";
 
     public final static String SEO_BRANDREV_ = "brandrev";
+
+    /**
+     *  特产频道
+     */
+    public final static String SEO_SPECIALTY= "characteristic";
 
 
     /**

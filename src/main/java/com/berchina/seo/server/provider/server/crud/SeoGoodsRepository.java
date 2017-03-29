@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.ModifiableSolrParams;
@@ -42,11 +43,25 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
 
         SolrUtils.querys(request, params, false);
 
-        QueryResponse response = goodsClient.query(params);
+        QueryResponse response;
 
-        request.setCategory(response.getFacetFields().get(0).getValues().get(0).getName());
+        LinkedList<SeoGoods> seoGoodses;
+        /**
+         * 区分特色频道搜索，与普通商品搜索
+         */
+        if (request.getType().equals("1")) {
 
-        LinkedList<SeoGoods> seoGoodses = this.querySolrDocuments(goodsMap, request, params);
+            response = goodsClient.query(params);
+            seoGoodses = this.querySolrDocuments(goodsMap, request, params, goodsClient);
+        } else {
+            response = speClient.query(params);
+            seoGoodses = this.querySolrDocuments(goodsMap, request, params, speClient);
+        }
+
+        if (response.getFacetFields().get(0).getValues().get(0).getCount() > 0) {
+
+            request.setCategory(response.getFacetFields().get(0).getValues().get(0).getName());
+        }
 
         if (!StringUtils.isEmpty(seoGoodses) && seoGoodses.size() > 0) {
             goodsMap.put("goods", seoGoodses);
@@ -68,11 +83,11 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
      * @throws SolrServerException
      * @throws IOException
      */
-    private LinkedList<SeoGoods> querySolrDocuments(Map<String, Object> solrMap, SeoRequest request, ModifiableSolrParams params) throws SolrServerException, IOException {
+    private LinkedList<SeoGoods> querySolrDocuments(Map<String, Object> solrMap, SeoRequest request, ModifiableSolrParams params, HttpSolrClient solrClient) throws SolrServerException, IOException {
 
         SolrUtils.query(request, params);
 
-        QueryResponse response = goodsClient.query(params);
+        QueryResponse response = solrClient.query(params);
 
         SolrDocumentList documents = response.getResults();
 

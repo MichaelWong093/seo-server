@@ -88,6 +88,11 @@ public class SeoRequest extends Request implements Serializable {
      */
     private String latitude;
 
+    /**
+     * 普通商品搜索类型，0：普通商品，1：特色频道
+     */
+    private String type;
+
 
     public SeoRequest() {
     }
@@ -160,6 +165,11 @@ public class SeoRequest extends Request implements Serializable {
         this.setOther(StringUtil.StringConvert(map.get(EnumUtils.SEO_OTHER.getName())));
 
         /**
+         * 全站搜索区分商品来源，如：特色频道
+         */
+        this.setType(StringUtil.StringConvert(map.get(EnumUtils.SEO_TYPE.getName())));
+
+        /**
          * 分页结束条数
          */
         this.setRows(StringUtil.StringConvert(map.get(EnumUtils.SEO_ROWS.getName())));
@@ -213,6 +223,18 @@ public class SeoRequest extends Request implements Serializable {
             this.rule = Constants.DESC;
         }
         return rule;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        if (StringUtil.notNull(type)) {
+            this.type = type;
+        } else {
+            this.type = "1";
+        }
     }
 
     public void setRule(String rule) {
