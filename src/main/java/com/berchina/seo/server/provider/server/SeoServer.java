@@ -1,9 +1,6 @@
 package com.berchina.seo.server.provider.server;
 
 import com.berchina.seo.server.provider.client.base.Response;
-import org.apache.solr.client.solrj.SolrServerException;
-
-import java.io.IOException;
 
 /**
  * @Package com.berchina.seo.server.provider.server
@@ -20,6 +17,6 @@ public interface SeoServer {
      * @param args 关键字
      * @return 搜索商品信息
      */
-    Response seoGoods(Object... args) throws IOException, SolrServerException;
+    Response seoGoods(Object... args);
 
 }

@@ -6,6 +6,8 @@ import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.client.SeoResponse;
 import com.berchina.seo.server.provider.server.SeoServer;
 import com.berchina.seo.server.provider.server.crud.SeoCategoryRepository;
+import com.dianping.cat.Cat;
+import com.dianping.cat.message.Transaction;
 import com.google.common.collect.Maps;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.slf4j.Logger;
@@ -33,29 +35,44 @@ public class SeoCategoryServer implements SeoServer {
     private SeoCategoryRepository repository;
 
     @Override
-    public SeoResponse seoGoods(Object... args) throws IOException, SolrServerException {
+    public SeoResponse seoGoods(Object... args) {
 
+        Transaction t = Cat.newTransaction("SEO.Server", "SeoCategoryServer");
         /**
          * @ http://poshidi.com/java-create-jsontree  类目递归
          */
         Map<String, Object> category = Maps.newConcurrentMap();
-//        try {
-        Object objects = args[0];
-        if (!StringUtils.isEmpty(objects)) {
-            if (objects instanceof SeoRequest) {
-                SeoRequest seoRequest = (SeoRequest) objects;
-                this.repository.setSeoCategoryResponse(category, seoRequest);
-                return new SeoResponse(category, seoRequest);
+        try {
+            Object objects = args[0];
+            if (!StringUtils.isEmpty(objects)) {
+
+                if (objects instanceof SeoRequest) {
+
+                    SeoRequest seoRequest = (SeoRequest) objects;
+
+                    Cat.logEvent("SELECT", "seoCategory", Transaction.SUCCESS, seoRequest.toString());
+
+                    this.repository.setSeoCategoryResponse(category, seoRequest);
+
+                    SeoResponse response = new SeoResponse(category, seoRequest);
+
+                    t.setStatus(Transaction.SUCCESS);
+
+                    return response;
+                }
             }
-        }
-//        } catch (SolrServerException ex) {
-//            LOGGER.error(" 类目搜索商品异常 : {} ", ex.getMessage());
+        } catch (SolrServerException | IOException ex) {
+            t.setStatus(ex);
+            Cat.logError(ex);
+            LOGGER.error(ex.getMessage());
 //            throw new SeoException(ex.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
-//            Cat.logError("[ 类目搜索商品异常: ]", ex);
+
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //            Cat.logError("[ 读取配置文件异常: ]", e);
-//        }
+        } finally {
+            t.complete();
+        }
         throw new SeoException(ServerException.SEO_RESPONSE_HANDLE_ERROR);
     }
 }

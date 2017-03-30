@@ -299,4 +299,23 @@ public class SeoRequest extends Request implements Serializable {
     public void setCategory(String category) {
         this.category = category;
     }
+
+    @Override
+    public String toString() {
+        return "SeoRequest{" +
+                "brand='" + brand + '\'' +
+                ", sort='" + sort + '\'' +
+                ", rule='" + rule + '\'' +
+                ", category='" + category + '\'' +
+                ", attribute='" + attribute + '\'' +
+                ", other='" + other + '\'' +
+                ", start='" + start + '\'' +
+                ", rows='" + rows + '\'' +
+                ", goodsName='" + goodsName + '\'' +
+                ", region='" + region + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", latitude='" + latitude + '\'' +
+                ", type='" + type + '\'' +
+                '}';
+    }
 }

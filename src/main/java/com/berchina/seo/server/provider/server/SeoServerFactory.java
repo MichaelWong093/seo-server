@@ -1,14 +1,10 @@
 package com.berchina.seo.server.provider.server;
 
-import org.apache.solr.client.solrj.SolrServerException;
+import com.berchina.seo.server.provider.client.SeoRequest;
+import com.berchina.seo.server.provider.client.base.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-
-import com.berchina.seo.server.provider.client.SeoRequest;
-import com.berchina.seo.server.provider.client.base.Response;
-
-import java.io.IOException;
 
 
 /**
@@ -24,7 +20,7 @@ public class SeoServerFactory {
     @Autowired
     private ApplicationContext context;
 
-    public Response setSeoServer(SeoRequest request) throws IOException, SolrServerException {
+    public Response setSeoServer(SeoRequest request){
 
         SeoServer seoServer = (SeoServer) context.getBean(request.getInstance());
 

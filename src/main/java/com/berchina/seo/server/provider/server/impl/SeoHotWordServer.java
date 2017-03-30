@@ -1,9 +1,13 @@
 package com.berchina.seo.server.provider.server.impl;
 
-import java.io.IOException;
-import java.util.Map;
-
-
+import com.berchina.seo.server.configloader.exception.SeoException;
+import com.berchina.seo.server.configloader.exception.server.ServerException;
+import com.berchina.seo.server.provider.client.SeoRequest;
+import com.berchina.seo.server.provider.client.SeoResponse;
+import com.berchina.seo.server.provider.server.SeoServer;
+import com.berchina.seo.server.provider.server.crud.SeoHotWordRepository;
+import com.dianping.cat.Cat;
+import com.dianping.cat.message.Transaction;
 import com.google.common.collect.Maps;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.slf4j.Logger;
@@ -12,12 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.berchina.seo.server.configloader.exception.SeoException;
-import com.berchina.seo.server.configloader.exception.server.ServerException;
-import com.berchina.seo.server.provider.client.SeoRequest;
-import com.berchina.seo.server.provider.client.SeoResponse;
-import com.berchina.seo.server.provider.server.SeoServer;
-import com.berchina.seo.server.provider.server.crud.SeoHotWordRepository;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * @Package com.berchina.seo.server.provider.server.impl
@@ -37,24 +37,35 @@ public class SeoHotWordServer implements SeoServer {
     @Override
     public SeoResponse seoGoods(Object... args) {
 
+        Transaction t = Cat.newTransaction("SEO.Server", "SeoHotWordServer");
+
         Map<String, Object> hotwords = Maps.newConcurrentMap();
+
         try {
             Object objects = args[0];
             if (!StringUtils.isEmpty(objects)) {
                 if (objects instanceof SeoRequest) {
+
                     SeoRequest seoRequest = (SeoRequest) objects;
+
+                    Cat.logEvent("SELECT", "seoHotWords", Transaction.SUCCESS, seoRequest.toString());
 
                     repository.setSeoResponseInfo(hotwords, seoRequest);
 
-                    return new SeoResponse(hotwords, seoRequest);
+                    SeoResponse response = new SeoResponse(hotwords, seoRequest);
+
+                    t.setStatus(Transaction.SUCCESS);
+
+                    return response;
                 }
             }
-        } catch (SolrServerException e) {
-            LOGGER.error("[ 热词搜索异常 : {} ]", e.getMessage());
-            throw new SeoException(e.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
-        } catch (IOException e) {
-            LOGGER.error("[ 热词搜索异常 : {} ]", e.getMessage());
-            throw new SeoException(e.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
+        } catch (SolrServerException | IOException ex) {
+            t.setStatus(ex);
+            Cat.logError(ex);
+            LOGGER.error(ex.getMessage());
+//            throw new SeoException(e.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
+        }finally {
+            t.complete();
         }
         throw new SeoException(ServerException.SEO_RESPONSE_HANDLE_ERROR);
     }

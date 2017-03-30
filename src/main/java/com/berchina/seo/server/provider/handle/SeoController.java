@@ -3,8 +3,6 @@ package com.berchina.seo.server.provider.handle;
 import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.client.base.Response;
 import com.berchina.seo.server.provider.server.SeoServerFactory;
-import com.dianping.cat.Cat;
-import com.dianping.cat.message.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,17 +27,7 @@ public class SeoController {
 
     @RequestMapping(value = "/{channel}")
     ResponseEntity<Response> seoGoods(HttpServletRequest request) {
-        Transaction t = Cat.newTransaction("SEO", "Server");
-        ResponseEntity entity = null;
-        try {
-            entity = new ResponseEntity<>(factory.setSeoServer(new SeoRequest(request)), HttpStatus.OK);
-            t.setStatus(Transaction.SUCCESS);
-        } catch (Exception ex) {
-            t.setStatus(ex);
-            Cat.logError(ex);
-        } finally {
-            t.complete();
-        }
-        return entity;
+
+         return new ResponseEntity<>(factory.setSeoServer(new SeoRequest(request)), HttpStatus.OK);
     }
 }
