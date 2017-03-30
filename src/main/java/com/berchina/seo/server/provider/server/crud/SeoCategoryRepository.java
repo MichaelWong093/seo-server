@@ -3,7 +3,11 @@ package com.berchina.seo.server.provider.server.crud;
 import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.model.SeoCateGory;
 import com.berchina.seo.server.provider.model.SeoGoods;
-import com.berchina.seo.server.provider.utils.*;
+import com.berchina.seo.server.provider.utils.CateUtils;
+import com.berchina.seo.server.provider.utils.SolrPageUtil;
+import com.berchina.seo.server.provider.utils.SolrUtils;
+import com.berchina.seo.server.provider.utils.StringUtil;
+import com.dianping.cat.Cat;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -34,99 +38,103 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
 
     public void setSeoCategoryResponse(Map<String, Object> seoResponse, SeoRequest request) throws SolrServerException, IOException {
 
-        // 初始化类目搜索链接
-        super.InitCategory();
-        /**
-         *  保存商品集合
-         */
-        LinkedList<SeoGoods> goods = Lists.newLinkedList();
-        /**
-         *  @ 品牌搜索
-         */
-        if (StringUtil.notNull(request.getBrand())) {
-            /***
-             * 根据品牌搜索，展示商品属性，及商品信息
-             *
-             * 商品属性：搜索商品信息聚合商品 "属性"，"类目" 组装商品属性类目
-             */
-            QueryResponse response = this.getQueryCategoryAttr(request);
-
-            SolrDocumentList documents = response.getResults();
-
-            if (StringUtil.notNull(documents) && documents.size() > 0) {
-
-                /**
-                 *  商品属性聚合条件
-                 */
-                this.setFacetQuery(response);
-
-                /**
-                 * SKU 信息
-                 */
-                seoResponse.put("attribute", this.getShopPropertyCollection());
-
-                /**
-                 * 商品信息
-                 */
-                SolrUtils.setSeoGoodsResponseInfo(goods, documents);
-
-                seoResponse.put("goods", goods);
-                /**
-                 * 分页信息
-                 */
-                SolrPageUtil.getPageInfo(seoResponse, request, documents);
-            }
-        }
-
-        /**
-         * 类目搜索
-         */
-        if (StringUtil.notNull(request.getCategory())) {
+        try {
+            // 初始化类目搜索链接
+            super.InitCategory();
             /**
-             * 三级类目处理
+             *  保存商品集合
              */
-            if (!this.getCategoryLevel(request)) {
-
-                LinkedList<String> gories = Lists.newLinkedList();
-
-                gories.add(request.getCategory());
-
-                QueryResponse response = this.getSolrGoods(gories, goods, seoResponse, request);
-
-                seoResponse.put("goods", goods);
-                /**
-                 *  商品属性聚合条件
+            LinkedList<SeoGoods> goods = Lists.newLinkedList();
+            /**
+             *  @ 品牌搜索
+             */
+            if (StringUtil.notNull(request.getBrand())) {
+                /***
+                 * 根据品牌搜索，展示商品属性，及商品信息
+                 *
+                 * 商品属性：搜索商品信息聚合商品 "属性"，"类目" 组装商品属性类目
                  */
-                this.setFacetQuery(response);
+                QueryResponse response = this.getQueryCategoryAttr(request);
 
-                if (StringUtil.notNull(goods) && goods.size() > 0) {
+                SolrDocumentList documents = response.getResults();
 
+                if (StringUtil.notNull(documents) && documents.size() > 0) {
+
+                    /**
+                     *  商品属性聚合条件
+                     */
+                    this.setFacetQuery(response);
+
+                    /**
+                     * SKU 信息
+                     */
                     seoResponse.put("attribute", this.getShopPropertyCollection());
+
+                    /**
+                     * 商品信息
+                     */
+                    SolrUtils.setSeoGoodsResponseInfo(goods, documents);
+
+                    seoResponse.put("goods", goods);
+                    /**
+                     * 分页信息
+                     */
+                    SolrPageUtil.getPageInfo(seoResponse, request, documents);
                 }
-            } else {
+            }
+
+            /**
+             * 类目搜索
+             */
+            if (StringUtil.notNull(request.getCategory())) {
                 /**
-                 * 验证类目搜索是否是第三级类目，三级类目特殊化处理
+                 * 三级类目处理
                  */
-                LinkedList<SeoCateGory> cateGories = this.getSolrCategorys(request);
+                if (!this.getCategoryLevel(request)) {
 
-                /** 类目搜索之后，搜索商品，过滤恶意搜索，减少服务器类目搜索, 或者是三级类目 */
-                if (StringUtil.notNull(cateGories) && cateGories.size() > 0) {
+                    LinkedList<String> gories = Lists.newLinkedList();
 
-                    this.getSolrGoods(
-                            CateUtils.setEndCategoryQueryString(cateGories), goods, seoResponse, request);
+                    gories.add(request.getCategory());
+
+                    QueryResponse response = this.getSolrGoods(gories, goods, seoResponse, request);
+
+                    seoResponse.put("goods", goods);
+                    /**
+                     *  商品属性聚合条件
+                     */
+                    this.setFacetQuery(response);
 
                     if (StringUtil.notNull(goods) && goods.size() > 0) {
-                        /**
-                         * 类目相关属性
-                         */
-                        seoResponse.put("category", cateGories);
+
+                        seoResponse.put("attribute", this.getShopPropertyCollection());
                     }
+                } else {
                     /**
-                     * 类目相关商品
+                     * 验证类目搜索是否是第三级类目，三级类目特殊化处理
                      */
-                    seoResponse.put("goods", goods);
+                    LinkedList<SeoCateGory> cateGories = this.getSolrCategorys(request);
+
+                    /** 类目搜索之后，搜索商品，过滤恶意搜索，减少服务器类目搜索, 或者是三级类目 */
+                    if (StringUtil.notNull(cateGories) && cateGories.size() > 0) {
+
+                        this.getSolrGoods(
+                                CateUtils.setEndCategoryQueryString(cateGories), goods, seoResponse, request);
+
+                        if (StringUtil.notNull(goods) && goods.size() > 0) {
+                            /**
+                             * 类目相关属性
+                             */
+                            seoResponse.put("category", cateGories);
+                        }
+                        /**
+                         * 类目相关商品
+                         */
+                        seoResponse.put("goods", goods);
+                    }
                 }
             }
+        } catch (Exception ex) {
+            Cat.logError("[ 未知异常： ]", ex);
         }
     }
 

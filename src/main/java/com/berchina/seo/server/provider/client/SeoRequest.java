@@ -6,6 +6,8 @@ import com.berchina.seo.server.provider.utils.Constants;
 import com.berchina.seo.server.provider.utils.EnumUtils;
 import com.berchina.seo.server.provider.utils.SerialNumber;
 import com.berchina.seo.server.provider.utils.StringUtil;
+import com.dianping.cat.Cat;
+import com.dianping.cat.message.Transaction;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -104,100 +106,113 @@ public class SeoRequest extends Request implements Serializable {
      */
     public SeoRequest(HttpServletRequest request) {
 
-        /**
-         * 请求业务时间
-         */
-        super.setTime(format.format(new Date()));
+        Transaction t = Cat.newTransaction("URL.Parameter", this.getClass().getName());
 
-        /**
-         * 业务序列号
-         */
-        super.setSerialNum(SerialNumber.getInstance().generaterNextNumber());
+        try {
 
-        /**
-         * 请求数据转化为 map 对象
-         */
-        Map map = JSON.parseObject(StringUtil.requestDataConvert(request), Map.class);
+            /**
+             * 请求业务时间
+             */
+            super.setTime(format.format(new Date()));
 
-        /**
-         * 渠道实例
-         */
-        super.setInstance(StringUtil
-                .setBussinesRequestMethod(StringUtil.StringConvert(map.get(EnumUtils.SEO_CHANNEL.getName()))));
+            /**
+             * 业务序列号
+             */
+            super.setSerialNum(SerialNumber.getInstance().generaterNextNumber());
 
-        /**
-         * 全站搜索,处理请求的关键词
-         */
-        String hotWords = StringUtil.StringConvert(map.get(EnumUtils.SEO_HOTWORDS.getName()));
+            /**
+             * 请求数据转化为 map 对象
+             */
+            Map map = JSON.parseObject(StringUtil.requestDataConvert(request), Map.class);
 
-        if (!StringUtils.isEmpty(hotWords)) {
-            super.setHotwords(hotWords);
+            /**
+             * 渠道实例
+             */
+            super.setInstance(StringUtil
+                    .setBussinesRequestMethod(StringUtil.StringConvert(map.get(EnumUtils.SEO_CHANNEL.getName()))));
+
+            /**
+             * 全站搜索,处理请求的关键词
+             */
+            String hotWords = StringUtil.StringConvert(map.get(EnumUtils.SEO_HOTWORDS.getName()));
+
+            if (!StringUtils.isEmpty(hotWords)) {
+                super.setHotwords(hotWords);
+            }
+
+            /**
+             * Collection 实例名称
+             */
+            super.setChannel(StringUtil.getSolrInstance(StringUtil.StringConvert(map.get(EnumUtils.SEO_CHANNEL.getName()))));
+
+            /**
+             * 商品属性
+             */
+            this.setAttribute(StringUtil.StringConvert(map.get(EnumUtils.SEO_ATTRIBUTE.getName())));
+
+            /**
+             * 品牌
+             */
+            this.setBrand(StringUtil.StringConvert(map.get(EnumUtils.SEO_BRAND.getName())));
+
+            /**
+             * 类目
+             */
+            this.setCategory(StringUtil.StringConvert(map.get(EnumUtils.SEO_CATEGORY.getName())));
+
+            /**
+             * 排序
+             */
+            this.setSort(StringUtil.StringConvert(map.get(EnumUtils.SEO_SORT.getName())));
+
+            /**
+             * 其他
+             */
+            this.setOther(StringUtil.StringConvert(map.get(EnumUtils.SEO_OTHER.getName())));
+
+            /**
+             * 全站搜索区分商品来源，如：特色频道
+             */
+            this.setType(StringUtil.StringConvert(map.get(EnumUtils.SEO_TYPE.getName())));
+
+            /**
+             * 分页结束条数
+             */
+            this.setRows(StringUtil.StringConvert(map.get(EnumUtils.SEO_ROWS.getName())));
+
+            /**
+             * 分页起始条数
+             */
+            this.setStart(StringUtil.StringConvert(map.get(EnumUtils.SEO_START.getName())));
+
+            /**
+             * 排序规则
+             */
+            this.setRule(StringUtil.StringConvert(map.get(EnumUtils.SEO_RULE.getName())));
+
+            /**
+             * 设备来源
+             */
+            this.setTerminal(StringUtil.StringConvert(map.get(EnumUtils.SEO_TERMINAL.getName())));
+
+            /**
+             * 经度
+             */
+            this.setLongitude(StringUtil.StringConvert(map.get(EnumUtils.SEO_LONGITUDE.getName())));
+
+            /**
+             * 纬度
+             */
+            this.setLatitude(StringUtil.StringConvert(map.get(EnumUtils.SEO_LATITUDE.getName())));
+
+            t.setStatus(Transaction.SUCCESS);
+
+        } catch (Exception ex) {
+            t.setStatus(ex);
+            Cat.logError(ex);
+        } finally {
+            t.complete();
         }
-
-        /**
-         * Collection 实例名称
-         */
-        super.setChannel(StringUtil.getSolrInstance(StringUtil.StringConvert(map.get(EnumUtils.SEO_CHANNEL.getName()))));
-
-        /**
-         * 商品属性
-         */
-        this.setAttribute(StringUtil.StringConvert(map.get(EnumUtils.SEO_ATTRIBUTE.getName())));
-
-        /**
-         * 品牌
-         */
-        this.setBrand(StringUtil.StringConvert(map.get(EnumUtils.SEO_BRAND.getName())));
-
-        /**
-         * 类目
-         */
-        this.setCategory(StringUtil.StringConvert(map.get(EnumUtils.SEO_CATEGORY.getName())));
-
-        /**
-         * 排序
-         */
-        this.setSort(StringUtil.StringConvert(map.get(EnumUtils.SEO_SORT.getName())));
-
-        /**
-         * 其他
-         */
-        this.setOther(StringUtil.StringConvert(map.get(EnumUtils.SEO_OTHER.getName())));
-
-        /**
-         * 全站搜索区分商品来源，如：特色频道
-         */
-        this.setType(StringUtil.StringConvert(map.get(EnumUtils.SEO_TYPE.getName())));
-
-        /**
-         * 分页结束条数
-         */
-        this.setRows(StringUtil.StringConvert(map.get(EnumUtils.SEO_ROWS.getName())));
-
-        /**
-         * 分页起始条数
-         */
-        this.setStart(StringUtil.StringConvert(map.get(EnumUtils.SEO_START.getName())));
-
-        /**
-         * 排序规则
-         */
-        this.setRule(StringUtil.StringConvert(map.get(EnumUtils.SEO_RULE.getName())));
-
-        /**
-         * 设备来源
-         */
-        this.setTerminal(StringUtil.StringConvert(map.get(EnumUtils.SEO_TERMINAL.getName())));
-
-        /**
-         * 经度
-         */
-        this.setLongitude(StringUtil.StringConvert(map.get(EnumUtils.SEO_LONGITUDE.getName())));
-
-        /**
-         * 纬度
-         */
-        this.setLatitude(StringUtil.StringConvert(map.get(EnumUtils.SEO_LATITUDE.getName())));
     }
 
     public String getStart() {
@@ -243,14 +258,6 @@ public class SeoRequest extends Request implements Serializable {
 
     public void setRows(String rows) {
         this.rows = rows;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     public String getLongitude() {
@@ -307,13 +314,5 @@ public class SeoRequest extends Request implements Serializable {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public String getGoodsName() {
-        return goodsName;
-    }
-
-    public void setGoodsName(String goodsName) {
-        this.goodsName = goodsName;
     }
 }

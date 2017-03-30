@@ -4,8 +4,8 @@ import com.berchina.seo.server.configloader.exception.SeoException;
 import com.berchina.seo.server.configloader.exception.server.ServerException;
 import com.berchina.seo.server.provider.utils.Constants;
 import com.berchina.seo.server.provider.utils.StringUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.dianping.cat.Cat;
+import com.dianping.cat.message.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -28,8 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 @Configuration
 public class Adapter extends WebMvcConfigurerAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Adapter.class);
-
+    //    private static final Logger LOGGER = LoggerFactory.getLogger(Adapter.class);
     @Autowired
     private Environment env;
 
@@ -50,22 +49,30 @@ public class Adapter extends WebMvcConfigurerAdapter {
         public boolean preHandle(
                 HttpServletRequest httpServletRequest,
                 HttpServletResponse httpServletResponse, Object o) throws Exception {
+
+            Transaction t = Cat.newTransaction("System", "Adapter");
             try {
                 String uri = StringUtil.getRequestURI(httpServletRequest);
-                LOGGER.info("Customer request SEO service address : {} ", uri);
+//                LOGGER.info("Customer request SEO service address : {} ", uri);
                 if (!StringUtils.isEmpty(uri)) {
                     String[] args = env.getProperty(Constants.SEO_SYSTEM_REQUEST_ADAPTER).split(",");
                     for (String path : args) {
                         if (uri.contains(path))
                             return true;
                     }
-                    throw new SeoException(
-                            "SEO refused to consumers call, please contact the administrator authorization, thank you!",
-                            ServerException.SEO_REQUEST_ADAPTER);
+                    t.setStatus(new RuntimeException(ServerException.SEO_REQUEST_ADAPTER.getErroMssage()));
+//                    throw new SeoException(
+//                            "SEO refused to consumers call, please contact the administrator authorization, thank you!",
+//                            ServerException.SEO_REQUEST_ADAPTER);
                 }
+                t.setStatus(Transaction.SUCCESS); // 设置状态
             } catch (SeoException ex) {
-                LOGGER.error("Consumers request SEO service exception : {}", ex.getMessage());
-                httpServletResponse.sendError(ex.getSeo().getErrCode(), ex.getMessage());
+                t.setStatus(ex);  //  设置错误状态
+                Cat.logError(ex);
+//                LOGGER.error("Consumers request SEO service exception : {}", ex.getMessage());
+//                httpServletResponse.sendError(ex.getSeo().getErrCode(), ex.getMessage());
+            } finally {
+                t.complete();  // 结束Transaction
             }
             return false;
         }

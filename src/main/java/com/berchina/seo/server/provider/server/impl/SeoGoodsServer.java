@@ -6,17 +6,14 @@ import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.client.SeoResponse;
 import com.berchina.seo.server.provider.server.SeoServer;
 import com.berchina.seo.server.provider.server.crud.SeoGoodsRepository;
-import com.google.common.collect.Lists;
+import com.dianping.cat.Cat;
 import com.google.common.collect.Maps;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -29,8 +26,7 @@ import java.util.Map;
 @Service
 public class SeoGoodsServer implements SeoServer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SeoGoodsServer.class);
-
+//    private static final Logger LOGGER = LoggerFactory.getLogger(SeoGoodsServer.class);
     @Autowired
     private SeoGoodsRepository repository;
 
@@ -55,8 +51,9 @@ public class SeoGoodsServer implements SeoServer {
                 }
             }
         } catch (SolrServerException | IOException ex) {
-            LOGGER.error("[ 搜索商品异常 : {} ]", ex.getMessage());
-            throw new SeoException(ex.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
+            Cat.logError("[ 搜索商品异常:  ]", ex);
+//            LOGGER.error("[  : {} ]", ex.getMessage());
+//            throw new SeoException(ex.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
         }
         throw new SeoException(ServerException.SEO_RESPONSE_HANDLE_ERROR);
     }

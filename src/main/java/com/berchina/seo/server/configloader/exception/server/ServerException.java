@@ -17,6 +17,7 @@ public enum ServerException {
      * 方便自定义错误信息冲突,若有相同错误信息提示,可用之前其他人定义的错误信息,
      */
     SEO_NULL_ERROR(10000, "输入参数不能为空"),
+    SEO_SYSTEM(00000, "服务器异常"),
     SEO_REQ_STYLE_CONVERT_ERROR(10001, "请求数据格式转化异常"),
     SEO_REQUEST_ADAPTER(10002, "SEO 拒绝消费者调用,请联系管理员授权,谢谢!"),
     SEO_REQUEST_PARAMTER(10003, "系统参数异常"),

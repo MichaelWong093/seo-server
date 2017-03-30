@@ -6,6 +6,7 @@ import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.client.SeoResponse;
 import com.berchina.seo.server.provider.server.SeoServer;
 import com.berchina.seo.server.provider.server.crud.SeoCategoryRepository;
+import com.dianping.cat.Cat;
 import com.google.common.collect.Maps;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ public class SeoCategoryServer implements SeoServer {
 
     @Override
     public SeoResponse seoGoods(Object... args) {
+
         /**
          * @ http://poshidi.com/java-create-jsontree  类目递归
          */
@@ -47,11 +49,13 @@ public class SeoCategoryServer implements SeoServer {
                     return new SeoResponse(category, seoRequest);
                 }
             }
-        } catch (SolrServerException  ex) {
-            LOGGER.error(" 类目搜索商品异常 : {} ", ex.getMessage());
-            throw new SeoException(ex.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
+        } catch (SolrServerException ex) {
+//            LOGGER.error(" 类目搜索商品异常 : {} ", ex.getMessage());
+//            throw new SeoException(ex.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
+            Cat.logError("[ 类目搜索商品异常: ]", ex);
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            Cat.logError("[ 读取配置文件异常: ]", e);
         }
         throw new SeoException(ServerException.SEO_RESPONSE_HANDLE_ERROR);
     }

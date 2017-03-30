@@ -1,19 +1,17 @@
 package com.berchina.seo.server.provider.task;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.berchina.seo.server.provider.server.crud.SegmentIndexRepository;
+import com.berchina.seo.server.provider.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.berchina.seo.server.provider.server.crud.SegmentIndexRepository;
-import com.berchina.seo.server.provider.utils.Constants;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Package com.berchina.seo.server.provider.task
