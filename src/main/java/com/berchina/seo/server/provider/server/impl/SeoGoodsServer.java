@@ -1,5 +1,6 @@
 package com.berchina.seo.server.provider.server.impl;
 
+import com.berchina.seo.server.configloader.config.logger.LoggerConfigure;
 import com.berchina.seo.server.configloader.exception.SeoException;
 import com.berchina.seo.server.configloader.exception.server.ServerException;
 import com.berchina.seo.server.provider.client.SeoRequest;
@@ -32,6 +33,8 @@ public class SeoGoodsServer implements SeoServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(SeoGoodsServer.class);
     @Autowired
     private SeoGoodsRepository repository;
+    @Autowired
+    private LoggerConfigure Logger;
 
     public SeoResponse seoGoods(Object... args) {
 
@@ -66,8 +69,7 @@ public class SeoGoodsServer implements SeoServer {
         } catch (SolrServerException | IOException ex) {
             t.setStatus(ex);
             Cat.logError(ex);
-            LOGGER.error(ex.getMessage());
-//            throw new SeoException(ex.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
+            if (this.Logger.info()) LOGGER.error(ex.getMessage());
         } finally {
             t.complete();
         }

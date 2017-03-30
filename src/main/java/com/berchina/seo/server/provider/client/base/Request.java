@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @Date 16/9/13 下午6:33
  * @Version V1.0
  */
-public class Request implements Serializable {
+public class Request<T> implements Serializable {
 
     private static final long serialVersionUID = -6469424593529028045L;
     /**

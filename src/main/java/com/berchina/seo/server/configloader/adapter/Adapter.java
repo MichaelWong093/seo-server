@@ -46,7 +46,6 @@ public class Adapter extends WebMvcConfigurerAdapter {
         public boolean preHandle(
                 HttpServletRequest httpServletRequest,
                 HttpServletResponse httpServletResponse, Object o) throws Exception {
-
 //            Transaction t = Cat.newTransaction("System", "Adapter");
             try {
                 String uri = StringUtil.getRequestURI(httpServletRequest);
