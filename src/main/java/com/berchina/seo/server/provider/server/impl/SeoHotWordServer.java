@@ -39,7 +39,7 @@ public class SeoHotWordServer implements SeoServer {
     @Override
     public SeoResponse seoGoods(Object... args) {
 
-        Transaction t = Cat.newTransaction("SEO.SOLR", "words");
+        Transaction t = Cat.newTransaction("SEO.Solr", "words");
 
         Map<String, Object> hotwords = Maps.newConcurrentMap();
 

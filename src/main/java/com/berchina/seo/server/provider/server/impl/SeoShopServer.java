@@ -38,7 +38,7 @@ public class SeoShopServer implements SeoServer {
     @Override
     public SeoResponse seoGoods(Object... args) {
 
-        Transaction t = Cat.newTransaction("SEO.SOLR", "shop");
+        Transaction t = Cat.newTransaction("SEO.Solr", "shop");
 
         Map<String, Object> shops = Maps.newConcurrentMap();
         try {

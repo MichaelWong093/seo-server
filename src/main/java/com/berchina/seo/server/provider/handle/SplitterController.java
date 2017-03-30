@@ -56,7 +56,6 @@ public class SplitterController {
     public ResponseEntity<Response<String>> deleteStop(@RequestParam(value = "key") String key) {
 
         server.deleteStop(key);
-
         return new ResponseEntity(
                 new Response<String>(new Date().toString(), HttpStatus.OK.value(),
                         "ok", SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
@@ -69,8 +68,8 @@ public class SplitterController {
      * @param key 自定义热词
      * @return
      */
-    @ApiOperation(value = "删除自定义热词", response = String.class,
-            notes = "[ 删除自定义热词，输入热词名称 eg：key: 牛肉面")
+    @ApiOperation(value = "删除自定义分词", response = String.class,
+            notes = "[ 删除自定义分词，输入热词名称 eg：key: 牛肉面")
     @ApiImplicitParams(
             {
                     @ApiImplicitParam(name = "key", value = "停词名称",
@@ -137,11 +136,11 @@ public class SplitterController {
      * @param value 热词值  nz=12 词性=词频
      * @return
      */
-    @ApiOperation(value = "增加自定义热词", response = String.class,
+    @ApiOperation(value = "增加自定义分词", response = String.class,
             notes = "[ 增加自定义热词，键为关键词，值为词性等于词频，请注意输入格式， eg：key: 牛肉面, value: n=40")
     @ApiImplicitParams(
             {
-                    @ApiImplicitParam(name = "key", value = "热词名称",
+                    @ApiImplicitParam(name = "key", value = "分词名称",
                             required = true, defaultValue = "牛肉面", paramType = "query", dataType = "String"),
                     @ApiImplicitParam(name = "value", value = "词性与词频",
                             required = true, defaultValue = "n=40", paramType = "query", dataType = "String")
@@ -171,7 +170,7 @@ public class SplitterController {
      * @param keywords
      * @return
      */
-    @ApiOperation(value = "热词分词接口", response = String.class,
+    @ApiOperation(value = "分词接口", response = String.class,
             notes = "[ 该函数支持长尾词、商品名称、短语、等有效词分词，eg：牛肉面 —— 拆词：牛肉面、牛肉 ]")
     @ApiImplicitParams(
             {
@@ -191,7 +190,7 @@ public class SplitterController {
             }
     )
     @RequestMapping(value = "/splitter/v2/", method = RequestMethod.POST)
-    public List<Term>splitter(@RequestParam String keywords) {
+    public List<Term> splitter(@RequestParam String keywords) {
 
         Assert.notNull(keywords, " keywords is not empty");
 
@@ -206,13 +205,13 @@ public class SplitterController {
      * @param key
      * @return
      */
-    @ApiOperation(value = "查询热词、停词接口", response = String.class,
-            notes = "[ 根据热词类型或者停词类型（custom、stop）、热词名称（工程师、其他）查询热词是否存在，成功返回热词信息，失败返回 404 ]")
+    @ApiOperation(value = "查询分词、停词接口", response = String.class,
+            notes = "[ 根据分词类型或者停词类型（custom、stop）、分词名称（工程师、其他）查询分词是否存在，成功返回分词信息，失败返回 404 ]")
     @ApiImplicitParams(
             {
-                    @ApiImplicitParam(name = "keys", value = "热词类型或者停词类型",
+                    @ApiImplicitParam(name = "keys", value = "分词类型或者停词类型",
                             required = true, defaultValue = "custom", paramType = "path", dataType = "String"),
-                    @ApiImplicitParam(name = "key", value = "停词或者热词名称",
+                    @ApiImplicitParam(name = "key", value = "停词或者分词名称",
                             required = true, defaultValue = "工程师", paramType = "path", dataType = "String")
             }
     )

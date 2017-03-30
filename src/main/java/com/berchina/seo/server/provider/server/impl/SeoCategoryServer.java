@@ -39,7 +39,7 @@ public class SeoCategoryServer implements SeoServer {
     @Override
     public SeoResponse seoGoods(Object... args) {
 
-        Transaction t = Cat.newTransaction("SEO.SOLR", "category");
+        Transaction t = Cat.newTransaction("SEO.Solr", "category");
         /**
          * @ http://poshidi.com/java-create-jsontree  类目递归
          */

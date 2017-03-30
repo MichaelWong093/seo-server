@@ -1,7 +1,9 @@
 package com.berchina.seo.server.provider.server;
 
-import com.berchina.seo.server.configloader.exception.SeoException;
+import com.berchina.seo.server.configloader.config.logger.LoggerConfigure;
 import com.berchina.seo.server.provider.utils.StringUtil;
+import com.dianping.cat.Cat;
+import com.dianping.cat.message.Transaction;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.hankcs.hanlp.HanLP;
@@ -9,6 +11,8 @@ import com.hankcs.hanlp.dictionary.CustomDictionary;
 import com.hankcs.hanlp.dictionary.stopword.CoreStopWordDictionary;
 import com.hankcs.hanlp.seg.common.Term;
 import com.hankcs.hanlp.tokenizer.IndexTokenizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -33,61 +37,161 @@ public class SplitterServer {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    public void deleteStop(String key) throws SeoException {
+    @Autowired
+    private LoggerConfigure Logger;
 
-        Assert.notNull(key, "key is not empty");
+    private static final Logger LOGGER = LoggerFactory.getLogger(SplitterServer.class);
 
-        delHashOpsProperty("stop", key);
-
-        CoreStopWordDictionary.remove(key);
+    public void deleteStop(String key) {
+        Transaction t = Cat.newTransaction("SOLR.Splitter", "delete");
+        try {
+            if (this.Logger.info()) {
+                LOGGER.info("[ delete stop words,{} ]", key);
+            } else {
+                Cat.logEvent("Splitter", "delete", Transaction.SUCCESS, key);
+            }
+            delHashOpsProperty("stop", key);
+            CoreStopWordDictionary.remove(key);
+            t.setStatus(Transaction.SUCCESS);
+        } catch (Exception ex) {
+            if (this.Logger.info()) {
+                LOGGER.error(ex.getMessage());
+            } else {
+                Cat.logError(ex);
+            }
+            t.setStatus(ex);
+        } finally {
+            t.complete();
+        }
     }
 
-    public void deleteCustom(String key) throws SeoException {
-
-        Assert.notNull(key, "key is not empty");
-
-        delHashOpsProperty("custom", key);
-
-        CustomDictionary.remove(key);
+    public void deleteCustom(String key) {
+        Transaction t = Cat.newTransaction("SOLR.Splitter", "delete");
+        try {
+            if (this.Logger.info()) {
+                LOGGER.info("[ delete custom words,{} ]", key);
+            } else {
+                Cat.logEvent("Splitter", "delete", Transaction.SUCCESS, key);
+            }
+            delHashOpsProperty("custom", key);
+            CustomDictionary.remove(key);
+            t.setStatus(Transaction.SUCCESS);
+        } catch (Exception ex) {
+            if (this.Logger.info()) {
+                LOGGER.error(ex.getMessage());
+            } else {
+                Cat.logError(ex);
+            }
+            t.setStatus(ex);
+        } finally {
+            t.complete();
+        }
     }
 
-    public void addStop(String key, String value) throws SeoException {
-
-        setKVassert(key, value);
-
-        setHashOpsProperty("stop", key, value);
-
-        CoreStopWordDictionary.add(key);
+    public void addStop(String key, String value) {
+        Transaction t = Cat.newTransaction("SOLR.Splitter", "put");
+        try {
+            if (this.Logger.info()) {
+                LOGGER.info("[ add stop words key : {}, value: {} ]", key, value);
+            } else {
+                Cat.logEvent("Splitter", "add", Transaction.SUCCESS, key.concat(":").concat(value));
+            }
+            setKVassert(key, value);
+            setHashOpsProperty("stop", key, value);
+            CoreStopWordDictionary.add(key);
+            t.setStatus(Transaction.SUCCESS);
+        } catch (Exception ex) {
+            if (this.Logger.info()) {
+                LOGGER.error(ex.getMessage());
+            } else {
+                Cat.logError(ex);
+            }
+            t.setStatus(ex);
+        } finally {
+            t.complete();
+        }
     }
 
-    public void addCustom(String key, String value) throws SeoException {
-
-        setKVassert(key, value);
-
-        setHashOpsProperty("custom", key, value);
-        /**
-         *  必须增加到缓存中，否则不会立即生效，除非重启服务器才会生效
-         */
-        CustomDictionary.add(key);
+    public void addCustom(String key, String value) {
+        Transaction t = Cat.newTransaction("SOLR.Splitter", "put");
+        try {
+            if (this.Logger.info()) {
+                LOGGER.info("[ add custom words key : {}, value: {} ]", key, value);
+            } else {
+                Cat.logEvent("Splitter", "add", Transaction.SUCCESS, key.concat(":").concat(value));
+            }
+            setKVassert(key, value);
+            setHashOpsProperty("custom", key, value);
+            /**
+             *  必须增加到缓存中，否则不会立即生效，除非重启服务器才会生效
+             */
+            CustomDictionary.add(key);
+            t.setStatus(Transaction.SUCCESS);
+        } catch (Exception ex) {
+            if (this.Logger.info()) {
+                LOGGER.error(ex.getMessage());
+            } else {
+                Cat.logError(ex);
+            }
+            t.setStatus(ex);
+        } finally {
+            t.complete();
+        }
     }
 
-    public List<Term> splitter(@RequestParam String keywords) throws SeoException {
-        HanLP.Config.setRedisTemplate(redisTemplate);
-        List<Term> lists = IndexTokenizer.segment(keywords);
-        CoreStopWordDictionary.apply(lists);
-        return lists;
+    public List<Term> splitter(@RequestParam String keywords) {
+        Transaction t = Cat.newTransaction("SOLR.Splitter", "post");
+        try {
+            if (this.Logger.info()) {
+                LOGGER.info("[ keywords splitter result：,{} ]", keywords);
+            } else {
+                Cat.logEvent("Splitter", "post", Transaction.SUCCESS, keywords);
+            }
+            HanLP.Config.setRedisTemplate(redisTemplate);
+            List<Term> lists = IndexTokenizer.segment(keywords);
+            CoreStopWordDictionary.apply(lists);
+            t.setStatus(Transaction.SUCCESS);
+            return lists;
+        } catch (Exception ex) {
+            if (this.Logger.info()) {
+                LOGGER.error(ex.getMessage());
+            } else {
+                Cat.logError(ex);
+            }
+            t.setStatus(ex);
+        } finally {
+            t.complete();
+        }
+        return null;
     }
 
-    public Map<String, String> put(@PathVariable String keys, @PathVariable String key) throws SeoException {
+    public Map<String, String> put(@PathVariable String keys, @PathVariable String key) {
 
-        setVaildata(keys, key);
-
-        String val = getHashOperations().get(keys, key);
-
-        val = StringUtil.notNull(val) ?
-                key.concat(":").concat(Joiner.on(",").skipNulls().join(val.split("="))) : new String("404");
-
-        return ImmutableMap.of("result", val);
+        Transaction t = Cat.newTransaction("SOLR.Splitter", "put");
+        try {
+            if (this.Logger.info()) {
+                LOGGER.info("[ Get word keys according to word key：,{} ]", keys, key);
+            } else {
+                Cat.logEvent("Splitter", "put", Transaction.SUCCESS, keys.concat(":").concat(key));
+            }
+            setVaildata(keys, key);
+            String val = getHashOperations().get(keys, key);
+            val = StringUtil.notNull(val) ?
+                    key.concat(":").concat(Joiner.on(",").skipNulls().join(val.split("="))) : new String("404");
+            Map<String, String> map = ImmutableMap.of("result", val);
+            t.setStatus(Transaction.SUCCESS);
+            return map;
+        } catch (Exception ex) {
+            if (this.Logger.info()) {
+                LOGGER.error(ex.getMessage());
+            } else {
+                Cat.logError(ex);
+            }
+            t.setStatus(ex);
+        } finally {
+            t.complete();
+        }
+        return null;
     }
 
     private void setVaildata(@PathVariable String keys, @PathVariable String key) {
