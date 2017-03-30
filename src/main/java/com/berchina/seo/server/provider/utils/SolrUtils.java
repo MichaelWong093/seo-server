@@ -1,13 +1,15 @@
 package com.berchina.seo.server.provider.utils;
 
-import java.io.IOException;
-import java.util.*;
-
+import com.berchina.seo.server.configloader.exception.SeoException;
+import com.berchina.seo.server.configloader.exception.server.ServerException;
+import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.model.SeoCateGory;
 import com.berchina.seo.server.provider.model.SeoGoods;
 import com.berchina.seo.server.provider.model.SeoShop;
+import com.berchina.seo.server.provider.segment.EasySeg;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.hankcs.hanlp.dictionary.py.Pinyin;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
@@ -21,11 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import com.berchina.seo.server.configloader.exception.SeoException;
-import com.berchina.seo.server.configloader.exception.server.ServerException;
-import com.berchina.seo.server.provider.client.SeoRequest;
-import com.berchina.seo.server.provider.segment.EasySeg;
-import com.hankcs.hanlp.dictionary.py.Pinyin;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @Package com.berchina.seo.server.provider.utils
@@ -147,7 +146,7 @@ public class SolrUtils {
             }
             query.set("fq", new String(builder));
         }
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
 
@@ -163,7 +162,7 @@ public class SolrUtils {
         query.set("q", "*:*");
         setCollectSolrQuery(catList, query, builder, "propid");
         setStartAndRows(query);
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
 
@@ -173,7 +172,7 @@ public class SolrUtils {
         if (!StringUtils.isEmpty(var2)) {
             query.set("fq", getQueryQ("category", var2));
         }
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
     public static SolrQuery queryCategoryKey(SeoRequest request, SolrQuery query) {
@@ -185,8 +184,7 @@ public class SolrUtils {
 
         setStartAndRows(query);
 
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
-
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
         return query;
     }
 
@@ -203,7 +201,7 @@ public class SolrUtils {
 
         setStartAndRows(query);
 
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
     public static void querys(SeoRequest request, ModifiableSolrParams params, boolean flag) {
@@ -228,7 +226,7 @@ public class SolrUtils {
 
         params.add(query);
 
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
     /**
@@ -277,8 +275,7 @@ public class SolrUtils {
         setSolrPage(query, request);
 
         params.add(query);
-
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", params);
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", params);
     }
 
     private static void setHighlight(SolrQuery query) {
@@ -339,7 +336,7 @@ public class SolrUtils {
         query.set("q", "*:*");
         query.set("start", "0");
         query.set("rows", "500");
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
     public static void queryCategorys(SeoRequest request, SolrQuery query) {
@@ -354,7 +351,7 @@ public class SolrUtils {
         query.set("fl", "category,id");
         query.set("start", "0");
         query.set("rows", "260");
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
     public static void setStartAndRows(SolrQuery query) {
@@ -411,8 +408,6 @@ public class SolrUtils {
         setSolrPage(query, request);
 
         params.add(query);
-
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", params);
     }
 
     public static void setShopbyGoods(SeoRequest request, SolrQuery query) {
@@ -425,7 +420,7 @@ public class SolrUtils {
 //        setHighlight(query);
         query.set("start", "0");
         query.set("rows", "3");
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
     /**
@@ -441,7 +436,7 @@ public class SolrUtils {
         if (!StringUtils.isEmpty(request.getCategory())) {
             query.set("fq", getQueryQ("category", request.getCategory()));
         }
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
 
@@ -496,7 +491,7 @@ public class SolrUtils {
             query.set("sort", getSortRule(request));
         }
         setSolrPage(query, request);
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
     /**

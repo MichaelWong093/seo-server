@@ -1,12 +1,14 @@
 package com.berchina.seo.server.provider.server.crud;
 
-import com.alibaba.fastjson.JSON;
+import com.berchina.seo.server.configloader.config.logger.LoggerConfigure;
 import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.model.SeoCateGory;
 import com.berchina.seo.server.provider.model.SeoGoods;
 import com.berchina.seo.server.provider.utils.CateUtils;
 import com.berchina.seo.server.provider.utils.SolrPageUtil;
 import com.berchina.seo.server.provider.utils.SolrUtils;
+import com.dianping.cat.Cat;
+import com.dianping.cat.message.Transaction;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -17,11 +19,15 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @Package com.berchina.seo.server.provider.server.crud
@@ -35,7 +41,14 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeoGoodsRepository.class);
 
+    @Autowired
+    private LoggerConfigure Logger;
+
     public void seoGoodsRepository(Map<String, Object> goodsMap, SeoRequest request) throws IOException, SolrServerException {
+
+        QueryResponse response;
+
+        LinkedList<SeoGoods> seoGoodses;
 
         super.InitGoods();
 
@@ -43,18 +56,25 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
 
         SolrUtils.querys(request, params, false);
 
-        QueryResponse response;
+        if (Logger.info()) {
 
-        LinkedList<SeoGoods> seoGoodses;
+            LOGGER.info("[  SOLR SQL 语法: {}]", params.toQueryString());
+        } else {
+            Cat.logEvent("SOLR.Query", "seoGoodsRepository", Transaction.SUCCESS, params.toQueryString());
+        }
         /**
          * 区分特色频道搜索，与普通商品搜索
          */
         if (request.getType().equals("1")) {
 
             response = goodsClient.query(params);
+
             seoGoodses = this.querySolrDocuments(goodsMap, request, params, goodsClient);
+
         } else {
+
             response = speClient.query(params);
+
             seoGoodses = this.querySolrDocuments(goodsMap, request, params, speClient);
         }
 
@@ -87,6 +107,13 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
 
         SolrUtils.query(request, params);
 
+        if (Logger.info()) {
+
+            LOGGER.info("[  SOLR SQL 语法: {}]", params.toQueryString());
+        } else {
+
+            Cat.logEvent("SOLR.Query", "querySolrDocuments", Transaction.SUCCESS, params.toQueryString());
+        }
         QueryResponse response = solrClient.query(params);
 
         SolrDocumentList documents = response.getResults();
@@ -143,6 +170,13 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
          */
         SolrUtils.queryCategoryKey(request, query);
 
+        if (Logger.info())
+        {
+            LOGGER.info(" [ SOLR SQL 语法: {}]", query);
+        }else {
+            Cat.logEvent("SOLR.Query", "setCategoryAttribute", Transaction.SUCCESS, query.toQueryString());
+        }
+
         LinkedList<SeoCateGory> seoSku = Lists.newLinkedList();
 
         SolrUtils.setSku(seoSku, skuClient.query(query).getResults());
@@ -151,7 +185,7 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
 
         skuK.addAll(seoSku);
 
-        LOGGER.info(" 商品属性 KEY , {}", JSON.toJSON(skuK));
+//        LOGGER.info(" 商品属性 KEY , {}", JSON.toJSON(skuK));
 
         /**
          *
@@ -164,12 +198,18 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
 
         request.setAttribute(new String(builder));
 
+        if (Logger.info())
+        {
+            LOGGER.info(" [ SOLR SQL 语法: {}]", query);
+        }else {
+            Cat.logEvent("SOLR.Query", "setCategoryAttribute", Transaction.SUCCESS, query.toQueryString());
+        }
+
         SolrUtils.queryCategoryValue(request, query);
 
         SolrDocumentList skuV = skuClient.query(query).getResults();
 
-        LOGGER.info(" 商品属性  Value, {}", JSON.toJSON(skuV));
-
+//        LOGGER.info(" 商品属性  Value, {}", JSON.toJSON(skuV));
         /**
          *
          * @ 类目属性 KEY 对应 类目属性 Value 合并  @skus  《 - 》 @ skuV

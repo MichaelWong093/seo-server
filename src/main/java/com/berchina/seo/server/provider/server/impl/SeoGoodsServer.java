@@ -1,8 +1,6 @@
 package com.berchina.seo.server.provider.server.impl;
 
 import com.berchina.seo.server.configloader.config.logger.LoggerConfigure;
-import com.berchina.seo.server.configloader.exception.SeoException;
-import com.berchina.seo.server.configloader.exception.server.ServerException;
 import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.client.SeoResponse;
 import com.berchina.seo.server.provider.server.SeoServer;
@@ -38,7 +36,7 @@ public class SeoGoodsServer implements SeoServer {
 
     public SeoResponse seoGoods(Object... args) {
 
-        Transaction t = Cat.newTransaction("SEO.Server", "SeoGoodsServer");
+        Transaction t = Cat.newTransaction("SEO.SOLR", "goods");
         /**
          *  @ 热词搜索, 优先匹配自定义词库,是否进行分词操作,如果是自定义热词不进行拆分,否则相反
          *
@@ -53,10 +51,15 @@ public class SeoGoodsServer implements SeoServer {
             Object objects = args[0];
             if (!StringUtils.isEmpty(objects)) {
                 if (objects instanceof SeoRequest) {
+
                     SeoRequest seoRequest = (SeoRequest) objects;
 
-                    Cat.logEvent("SELECT", "seoGoods", Transaction.SUCCESS, seoRequest.toString());
-
+                    if (Logger.info())
+                    {
+                        LOGGER.info("[ SEO goods request parameter： {} ]", seoRequest.toString());
+                    } else {
+                        Cat.logEvent("SOLR.Query", "goods", Transaction.SUCCESS, seoRequest.toString());
+                    }
                     repository.seoGoodsRepository(goods, seoRequest);
 
                     SeoResponse response = new SeoResponse(goods, seoRequest);
@@ -73,6 +76,6 @@ public class SeoGoodsServer implements SeoServer {
         } finally {
             t.complete();
         }
-        throw new SeoException(ServerException.SEO_RESPONSE_HANDLE_ERROR);
+        return null;
     }
 }

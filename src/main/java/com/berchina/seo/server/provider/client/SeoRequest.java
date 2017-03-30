@@ -303,7 +303,8 @@ public class SeoRequest extends Request implements Serializable {
     @Override
     public String toString() {
         return "SeoRequest{" +
-                "brand='" + brand + '\'' +
+                "  request ='" + super.toString() + '\'' +
+                ", brand='" + brand + '\'' +
                 ", sort='" + sort + '\'' +
                 ", rule='" + rule + '\'' +
                 ", category='" + category + '\'' +

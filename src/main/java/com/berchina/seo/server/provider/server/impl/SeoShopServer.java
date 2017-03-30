@@ -1,7 +1,6 @@
 package com.berchina.seo.server.provider.server.impl;
 
-import com.berchina.seo.server.configloader.exception.SeoException;
-import com.berchina.seo.server.configloader.exception.server.ServerException;
+import com.berchina.seo.server.configloader.config.logger.LoggerConfigure;
 import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.client.SeoResponse;
 import com.berchina.seo.server.provider.server.SeoServer;
@@ -33,10 +32,13 @@ public class SeoShopServer implements SeoServer {
     @Autowired
     private SeoShopRepository repository;
 
+    @Autowired
+    private LoggerConfigure Logger;
+
     @Override
     public SeoResponse seoGoods(Object... args) {
 
-        Transaction t = Cat.newTransaction("SEO.Server", "SeoShopServer");
+        Transaction t = Cat.newTransaction("SEO.SOLR", "shop");
 
         Map<String, Object> shops = Maps.newConcurrentMap();
         try {
@@ -45,7 +47,12 @@ public class SeoShopServer implements SeoServer {
                 if (objects instanceof SeoRequest) {
                     SeoRequest seoRequest = (SeoRequest) objects;
 
-                    Cat.logEvent("SELECT", "seoShop", Transaction.SUCCESS, seoRequest.toString());
+                    if (this.Logger.info()) {
+
+                        LOGGER.info("[ SEO shop request parameter： {} ]", seoRequest.toString());
+                    } else {
+                        Cat.logEvent("SOLR.Query", "shop", Transaction.SUCCESS, seoRequest.toString());
+                    }
 
                     repository.querySolrDocuments(shops, seoRequest);
 
@@ -59,11 +66,10 @@ public class SeoShopServer implements SeoServer {
         } catch (SolrServerException | IOException ex) {
             LOGGER.error(ex.getMessage());
             t.setStatus(ex);
-            Cat.logError(ex);
-//            throw new SeoException(ex.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
-        }finally {
+            if (this.Logger.info()) Cat.logError(ex);
+        } finally {
             t.complete();
         }
-        throw new SeoException(ServerException.SEO_RESPONSE_HANDLE_ERROR);
+        return null;
     }
 }

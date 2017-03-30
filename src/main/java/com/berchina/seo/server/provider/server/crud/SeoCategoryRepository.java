@@ -1,5 +1,6 @@
 package com.berchina.seo.server.provider.server.crud;
 
+import com.berchina.seo.server.configloader.config.logger.LoggerConfigure;
 import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.model.SeoCateGory;
 import com.berchina.seo.server.provider.model.SeoGoods;
@@ -7,6 +8,8 @@ import com.berchina.seo.server.provider.utils.CateUtils;
 import com.berchina.seo.server.provider.utils.SolrPageUtil;
 import com.berchina.seo.server.provider.utils.SolrUtils;
 import com.berchina.seo.server.provider.utils.StringUtil;
+import com.dianping.cat.Cat;
+import com.dianping.cat.message.Transaction;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -17,6 +20,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -34,6 +38,9 @@ import java.util.stream.Collectors;
 public class SeoCategoryRepository extends SeoAbstractRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeoCategoryRepository.class);
+
+    @Autowired
+    private LoggerConfigure Logger;
 
     public void setSeoCategoryResponse(Map<String, Object> seoResponse, SeoRequest request) throws SolrServerException, IOException {
 
@@ -136,6 +143,11 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
 
     public LinkedList<SeoCateGory> getSolrCategorys(SeoRequest request) throws SolrServerException, IOException {
 
+        if (this.Logger.info()) {
+            LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+        } else {
+            Cat.logEvent("SOLR.Query", "getCategoryLevel", Transaction.SUCCESS, query.toQueryString());
+        }
         SolrUtils.queryCategorys(query);
 
         SolrDocumentList cateGoryDoc = categorysClient.query(query).getResults();
@@ -163,6 +175,11 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
         super.query.set("rows", "1");
         super.query.set("fq", SolrUtils.getQueryQ("id", request.getCategory()));
 
+        if (this.Logger.info()) {
+            LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+        } else {
+            Cat.logEvent("SOLR.Query", "getCategoryLevel", Transaction.SUCCESS, query.toQueryString());
+        }
         SolrDocumentList docs = categorysClient.query(query).getResults();
 
         if (StringUtil.notNull(docs) && docs.size() > 0) {
@@ -185,7 +202,11 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
         query.set("q", "*:*");
         query.set("fl", "id");
         query.set("fq", SolrUtils.getQueryQ("parentid", parentId));
-
+        if (this.Logger.info()) {
+            LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+        } else {
+            Cat.logEvent("SOLR.Query", "getCategoryByParentId", Transaction.SUCCESS, query.toQueryString());
+        }
         SolrDocumentList leves = categorysClient.query(query).getResults();
 
         return StringUtil.notNull(leves) && leves.size() > 0 ? true : false;
@@ -201,6 +222,11 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
      */
     public LinkedList<Map<String, Object>> getShopPropertyCollection() throws SolrServerException, IOException {
 
+        if (this.Logger.info()) {
+            LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+        } else {
+            Cat.logEvent("SOLR.Query", "getShopPropertyCollection", Transaction.SUCCESS, query.toQueryString());
+        }
         SolrDocumentList skuDoc = skuClient.query(query).getResults();
 
         Set<SeoCateGory> skuK = getSeoCateGories(skuDoc);
@@ -311,7 +337,11 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
         }
         super.query.set("fq", new String(atr));
         SolrUtils.setStartAndRows(super.query);
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", super.query);
+        if (this.Logger.info()) {
+            LOGGER.info(" [ SOLR SQL 语法: {}] ", super.query);
+        } else {
+            Cat.logEvent("SOLR.Query", "setFacetQuery", Transaction.SUCCESS, query.toQueryString());
+        }
     }
 
     /**
@@ -356,8 +386,12 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
 
         SolrUtils.setSolrPage(super.query, request);
 
-        LOGGER.info(" { 商品搜索过滤商品SKU，类目信息，{} } ", super.query);
+        if (this.Logger.info()) {
 
+            LOGGER.info(" { 商品搜索过滤商品SKU，类目信息，{} } ", super.query);
+        } else {
+            Cat.logEvent("SOLR.Query", "getQueryCategoryAttr", Transaction.SUCCESS, query.toQueryString());
+        }
         return goodsClient.query(super.query);
     }
 
@@ -370,6 +404,11 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
          */
         SolrUtils.query(getSolrCate(gories, request), query, request);
 
+        if (this.Logger.info()) {
+            LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+        } else {
+            Cat.logEvent("SOLR.Query", "getSolrGoods", Transaction.SUCCESS, query.toQueryString());
+        }
         QueryResponse response;
 
         if (request.getType().equals("1")) {
@@ -410,6 +449,12 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
          */
         SolrUtils.queryCategorys(request, query);
 
+        if (this.Logger.info()) {
+            LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+        } else {
+            Cat.logEvent("SOLR.Query", "getSolrCate", Transaction.SUCCESS, query.toQueryString());
+        }
+
         SolrDocumentList revDoc = caterevClient.query(query).getResults();
 
         List<String> catList = Lists.newArrayList();
@@ -429,6 +474,12 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
         request.setCategory(new String(bd));
 
         SolrUtils.queryCategorys(request, query);
+
+        if (this.Logger.info()) {
+            LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+        } else {
+            Cat.logEvent("SOLR.Query", "getSolrCate", Transaction.SUCCESS, query.toQueryString());
+        }
 
         SolrDocumentList categories = categoryClient.query(query).getResults();
 

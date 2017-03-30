@@ -115,4 +115,18 @@ public class Request<T> implements Serializable {
     public void setTerminal(String terminal) {
         this.terminal = terminal;
     }
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "time='" + time + '\'' +
+                ", serialNum='" + serialNum + '\'' +
+                ", channel='" + channel + '\'' +
+                ", terminal='" + terminal + '\'' +
+                ", instance='" + instance + '\'' +
+                ", hotwords='" + hotwords + '\'' +
+                ", page='" + page + '\'' +
+                ", pageSize='" + pageSize + '\'' +
+                '}';
+    }
 }

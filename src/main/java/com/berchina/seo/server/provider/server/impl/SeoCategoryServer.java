@@ -1,7 +1,6 @@
 package com.berchina.seo.server.provider.server.impl;
 
-import com.berchina.seo.server.configloader.exception.SeoException;
-import com.berchina.seo.server.configloader.exception.server.ServerException;
+import com.berchina.seo.server.configloader.config.logger.LoggerConfigure;
 import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.client.SeoResponse;
 import com.berchina.seo.server.provider.server.SeoServer;
@@ -34,10 +33,13 @@ public class SeoCategoryServer implements SeoServer {
     @Autowired
     private SeoCategoryRepository repository;
 
+    @Autowired
+    private LoggerConfigure Logger;
+
     @Override
     public SeoResponse seoGoods(Object... args) {
 
-        Transaction t = Cat.newTransaction("SEO.Server", "SeoCategoryServer");
+        Transaction t = Cat.newTransaction("SEO.SOLR", "category");
         /**
          * @ http://poshidi.com/java-create-jsontree  类目递归
          */
@@ -50,7 +52,12 @@ public class SeoCategoryServer implements SeoServer {
 
                     SeoRequest seoRequest = (SeoRequest) objects;
 
-                    Cat.logEvent("SELECT", "seoCategory", Transaction.SUCCESS, seoRequest.toString());
+                    if (this.Logger.info()) {
+
+                        LOGGER.info("[ SEO category request parameter： {} ]", seoRequest.toString());
+                    } else {
+                        Cat.logEvent("SOLR.Query", "category", Transaction.SUCCESS, seoRequest.toString());
+                    }
 
                     this.repository.setSeoCategoryResponse(category, seoRequest);
 
@@ -64,15 +71,10 @@ public class SeoCategoryServer implements SeoServer {
         } catch (SolrServerException | IOException ex) {
             t.setStatus(ex);
             Cat.logError(ex);
-            LOGGER.error(ex.getMessage());
-//            throw new SeoException(ex.getMessage(), ServerException.SEO_RESPONSE_HANDLE_ERROR);
-
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            Cat.logError("[ 读取配置文件异常: ]", e);
+            if (this.Logger.info()) LOGGER.error(ex.getMessage());
         } finally {
             t.complete();
         }
-        throw new SeoException(ServerException.SEO_RESPONSE_HANDLE_ERROR);
+        return null;
     }
 }

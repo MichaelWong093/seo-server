@@ -1,8 +1,13 @@
 package com.berchina.seo.server.provider.server.crud;
 
-import java.io.IOException;
-import java.util.*;
-
+import com.berchina.seo.server.configloader.config.logger.LoggerConfigure;
+import com.berchina.seo.server.provider.client.SeoRequest;
+import com.berchina.seo.server.provider.model.SeoGoods;
+import com.berchina.seo.server.provider.model.SeoShop;
+import com.berchina.seo.server.provider.utils.SolrPageUtil;
+import com.berchina.seo.server.provider.utils.SolrUtils;
+import com.dianping.cat.Cat;
+import com.dianping.cat.message.Transaction;
 import com.google.common.collect.Lists;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -11,18 +16,21 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.berchina.seo.server.provider.client.SeoRequest;
-import com.berchina.seo.server.provider.model.SeoGoods;
-import com.berchina.seo.server.provider.model.SeoShop;
-import com.berchina.seo.server.provider.utils.SolrPageUtil;
-import com.berchina.seo.server.provider.utils.SolrUtils;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class SeoShopRepository extends SeoAbstractRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeoShopRepository.class);
+
+    @Autowired
+    private LoggerConfigure Logger;
 
     public void querySolrDocuments(Map<String, Object> goods, SeoRequest seoRequest) throws SolrServerException, IOException {
 
@@ -40,6 +48,13 @@ public class SeoShopRepository extends SeoAbstractRepository {
         ModifiableSolrParams params = new ModifiableSolrParams();
 
         SolrUtils.queryShop(request, params);
+
+        if (this.Logger.info())
+        {
+            LOGGER.info(" [ SOLR SQL 语法: {}] ", params);
+        }else {
+            Cat.logEvent("SOLR.Query", "getShopCollection", Transaction.SUCCESS, query.toQueryString());
+        }
 
         QueryResponse response = shopClient.query(params);
 
@@ -74,6 +89,13 @@ public class SeoShopRepository extends SeoAbstractRepository {
         request.setAttribute(shop.getShopid());
 
         SolrUtils.setShopbyGoods(request, query);
+
+        if (this.Logger.info())
+        {
+            LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+        }else {
+            Cat.logEvent("SOLR.Query", "getShopByGoodsCollection", Transaction.SUCCESS, query.toQueryString());
+        }
 
         QueryResponse response = goodsClient.query(query);
 
