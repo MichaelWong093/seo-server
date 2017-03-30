@@ -1,11 +1,8 @@
 package com.berchina.seo.server.configloader.adapter;
 
 import com.berchina.seo.server.configloader.exception.SeoException;
-import com.berchina.seo.server.configloader.exception.server.ServerException;
 import com.berchina.seo.server.provider.utils.Constants;
 import com.berchina.seo.server.provider.utils.StringUtil;
-import com.dianping.cat.Cat;
-import com.dianping.cat.message.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -50,7 +47,7 @@ public class Adapter extends WebMvcConfigurerAdapter {
                 HttpServletRequest httpServletRequest,
                 HttpServletResponse httpServletResponse, Object o) throws Exception {
 
-            Transaction t = Cat.newTransaction("System", "Adapter");
+//            Transaction t = Cat.newTransaction("System", "Adapter");
             try {
                 String uri = StringUtil.getRequestURI(httpServletRequest);
 //                LOGGER.info("Customer request SEO service address : {} ", uri);
@@ -60,19 +57,19 @@ public class Adapter extends WebMvcConfigurerAdapter {
                         if (uri.contains(path))
                             return true;
                     }
-                    t.setStatus(new RuntimeException(ServerException.SEO_REQUEST_ADAPTER.getErroMssage()));
+//                    t.setStatus(new RuntimeException(ServerException.SEO_REQUEST_ADAPTER.getErroMssage()));
 //                    throw new SeoException(
 //                            "SEO refused to consumers call, please contact the administrator authorization, thank you!",
 //                            ServerException.SEO_REQUEST_ADAPTER);
                 }
-                t.setStatus(Transaction.SUCCESS); // 设置状态
+//                t.setStatus(Transaction.SUCCESS); // 设置状态
             } catch (SeoException ex) {
-                t.setStatus(ex);  //  设置错误状态
-                Cat.logError(ex);
+//                t.setStatus(ex);  //  设置错误状态
+//                Cat.logError(ex);
 //                LOGGER.error("Consumers request SEO service exception : {}", ex.getMessage());
 //                httpServletResponse.sendError(ex.getSeo().getErrCode(), ex.getMessage());
             } finally {
-                t.complete();  // 结束Transaction
+//                t.complete();  // 结束Transaction
             }
             return false;
         }

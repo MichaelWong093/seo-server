@@ -29,7 +29,7 @@ public class SeoController {
 
     @RequestMapping(value = "/{channel}")
     ResponseEntity<Response> seoGoods(HttpServletRequest request) {
-        Transaction t = Cat.newTransaction("SEO", "Controller");
+        Transaction t = Cat.newTransaction("SEO", "Server");
         ResponseEntity entity = null;
         try {
             entity = new ResponseEntity<>(factory.setSeoServer(new SeoRequest(request)), HttpStatus.OK);
