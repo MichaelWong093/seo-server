@@ -28,6 +28,14 @@ public class SeoController {
     @RequestMapping(value = "/{channel}")
     ResponseEntity<Response> seoGoods(HttpServletRequest request) {
 
-         return new ResponseEntity<>(factory.setSeoServer(new SeoRequest(request)), HttpStatus.OK);
+        return new ResponseEntity<>(factory.setSeoServer(new SeoRequest(request)), HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/v2/search/")
+    ResponseEntity<Response> search(HttpServletRequest request) {
+
+
+        return new ResponseEntity<Response>(HttpStatus.OK);
     }
 }

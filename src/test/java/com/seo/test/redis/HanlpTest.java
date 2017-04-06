@@ -1,12 +1,15 @@
 package com.seo.test.redis;
 
-import com.hankcs.hanlp.dictionary.stopword.CoreStopWordDictionary;
-import com.hankcs.hanlp.seg.common.Term;
-import com.hankcs.hanlp.tokenizer.IndexTokenizer;
+import com.hankcs.hanlp.HanLP;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import java.util.List;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
+import java.util.Set;
 
 /**
  * @Package com.seo.test.redis
@@ -19,24 +22,42 @@ import java.util.List;
 @SpringBootApplication
 public class HanlpTest implements CommandLineRunner {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(HanlpTest.class);
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
     public static void main(String[] args) {
 
-        SpringApplication.run(HanlpTest.class,args).close();
-    }
-
-    public void hanlp(){
-
-//        HanLP.Config.enableDebug();
-        List<Term> termList = IndexTokenizer.segment("棒棒糖");
-
-        CoreStopWordDictionary.apply(termList);
-
-        System.out.println(termList);
+        SpringApplication.run(HanlpTest.class, args).close();
     }
 
     @Override
     public void run(String... strings) throws Exception {
 
-//        hanlp();
+        hanlp();
+    }
+
+    String parameter = "三维e家";
+
+    public void hanlp() {
+
+        HanLP.Config.setRedisTemplate(redisTemplate);
+
+//        HanLP.Config.enableDebug();
+
+        HanlpAnalyseGoodsNameTest hanlpAnalyseGoods = new HanlpAnalyseGoodsNameTest();
+
+        Set<Object> set = hanlpAnalyseGoods.analyse(parameter);
+        for (Object obj : set
+                ) {
+
+            System.out.println(obj.toString());
+
+//            List keyWords = HanLP.extractKeyword((obj.toString()), 3);
+
+//            System.out.println(JSON.toJSON(keyWords));
+        }
+//        LOGGER.warn("搜索结果：{}", JSON.toJSON(set));
     }
 }

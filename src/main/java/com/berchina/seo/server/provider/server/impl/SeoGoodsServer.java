@@ -37,6 +37,7 @@ public class SeoGoodsServer implements SeoServer {
     public SeoResponse seoGoods(Object... args) {
 
         Transaction t = Cat.newTransaction("SEO.Solr", "goods");
+//        Cat.logMetricForCount("ReqCount");
         /**
          *  @ 热词搜索, 优先匹配自定义词库,是否进行分词操作,如果是自定义热词不进行拆分,否则相反
          *

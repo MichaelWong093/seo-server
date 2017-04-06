@@ -5,7 +5,6 @@ import com.google.common.base.Joiner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -21,7 +20,7 @@ import java.util.Set;
  * @Date 2017 下午5:07
  * @Version V1.0
  */
-@SpringBootApplication
+//@SpringBootApplication
 public class RedisTest implements CommandLineRunner {
 
     private static final String LINE_FEED = "\r\n";

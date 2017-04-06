@@ -42,7 +42,9 @@ public interface DefaultTest {
 
     static void main(String[] args) {
 
+    }
 
+    static void tet() {
         DefaultTest defaultTest = DefaultTest.create(DefaultTestImpl::new);
 
         System.out.println(defaultTest.hello());
@@ -50,6 +52,5 @@ public interface DefaultTest {
         DefaultTest test = DefaultTest.create(DefaultTestImpls::new);
 
         System.out.println(test.print());
-
     }
 }

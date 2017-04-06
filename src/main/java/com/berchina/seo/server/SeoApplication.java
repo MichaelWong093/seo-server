@@ -8,7 +8,7 @@ import org.springframework.web.WebApplicationInitializer;
 
 /**
  * @Package com.berchina.seo.server
- * @Description: TODO( SEO 启动入口 )
+ * @Description: TODO(SEO 启动入口)
  * @Author 任小斌  renxiaobin@berchin.com
  * @Date 15/12/1 下午1:14
  * @Version V1.0
