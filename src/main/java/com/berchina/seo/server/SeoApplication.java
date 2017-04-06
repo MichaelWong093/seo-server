@@ -13,7 +13,6 @@ import org.springframework.web.WebApplicationInitializer;
  * @Date 15/12/1 下午1:14
  * @Version V1.0
  */
-
 @SpringBootApplication
 public class SeoApplication extends SpringBootServletInitializer implements WebApplicationInitializer {
 
