@@ -1,11 +1,15 @@
 package com.berchina.seo.server.provider.server.crud;
 
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Map;
-
 import com.berchina.seo.server.configloader.config.solr.SolrServerFactoryBean;
+import com.berchina.seo.server.configloader.exception.SeoException;
+import com.berchina.seo.server.configloader.exception.server.ServerException;
+import com.berchina.seo.server.provider.client.SeoRequest;
+import com.berchina.seo.server.provider.model.SeoHotWords;
+import com.berchina.seo.server.provider.utils.Constants;
+import com.berchina.seo.server.provider.utils.IOUtills;
+import com.berchina.seo.server.provider.utils.SolrUtils;
 import com.google.common.collect.Lists;
+import com.hankcs.hanlp.corpus.util.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -18,14 +22,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.berchina.seo.server.configloader.exception.SeoException;
-import com.berchina.seo.server.configloader.exception.server.ServerException;
-import com.berchina.seo.server.provider.client.SeoRequest;
-import com.berchina.seo.server.provider.model.SeoHotWords;
-import com.berchina.seo.server.provider.utils.Constants;
-import com.berchina.seo.server.provider.utils.IOUtills;
-import com.berchina.seo.server.provider.utils.SolrUtils;
-import com.hankcs.hanlp.corpus.util.StringUtils;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * 热词搜索 处理逻辑
@@ -66,7 +65,7 @@ public class SeoHotWordRepository {
 
             for (int i = 0; i < args; i++) {
                 SeoHotWords hotwords = new SeoHotWords();
-                hotwords.setHotWord(SolrUtils.getParameter(docs, i, fieldName));//搜到的热词
+                hotwords.setKeyword(SolrUtils.getParameter(docs, i, fieldName));//搜到的热词
                 hotwords.setPinyin(SolrUtils.getParameter(docs, i, "pinyin"));//全拼
                 hotwords.setAbbre(SolrUtils.getParameter(docs, i, "abbre"));//缩写
                 hotwords.setFrequency(Long.parseLong(SolrUtils.getParameter(docs, i, "frequency")));

@@ -1,6 +1,6 @@
 package com.berchina.seo.server.provider.model;
 
-import com.berchina.seo.server.provider.server.crud.SeoGoodsRepository;
+import com.berchina.seo.server.provider.utils.StringUtil;
 import com.google.common.collect.Lists;
 import org.springframework.util.StringUtils;
 
@@ -77,19 +77,23 @@ public class SeoCateGory implements Serializable {
             SeoCateGory sku = (SeoCateGory) obj;
 //          if(user.id = this.id) return true; // 只比较id
             // 比较id和username 一致时才返回true 之后再去比较 hashCode
-            if (Objects.equals(sku.getKey(), this.key)
-                    && sku.getValue().equals(this.value)) return true;
+            if (StringUtil.notNull(sku.getKey()) && StringUtil.notNull(sku.getValue())){
+                if (Objects.equals(sku.getKey(), this.key)
+                        && sku.getValue().equals(this.value)) return true;
+            }
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return key.hashCode() * value.hashCode();
+        if (StringUtil.notNull(key) && StringUtil.notNull(value)) {
+            return key.hashCode() * value.hashCode();
+        }
+        return 0;
     }
 
-
-   public static class Brand {
+    public static class Brand {
 
         private String id;
 

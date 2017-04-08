@@ -23,7 +23,7 @@ public class LoggerConfigure {
     @Bean
     public boolean info() {
 
-        String leve = evn.getRequiredProperty("debug");
+        String leve = evn.getRequiredProperty("info");
 
         return StringUtil.notNull(leve) ? Boolean.parseBoolean(leve) : false;
     }

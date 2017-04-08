@@ -42,6 +42,8 @@ public interface DefaultTest {
 
     static void main(String[] args) {
 
+
+
     }
 
     static void tet() {

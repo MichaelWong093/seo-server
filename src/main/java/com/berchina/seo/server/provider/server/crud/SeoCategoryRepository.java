@@ -244,23 +244,22 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
             String key = cateGory.getKey();
             String value = cateGory.getValue();
 
-            for (SolrDocument doc : skuDoc) {
-                String propid = StringUtil.StringConvert(doc.get("propid"));
-                if (key.equals(propid)) {
-                    SeoCateGory gory = new SeoCateGory();
-                    gory.setKey(StringUtil.StringConvert(doc.get("vid")));
-                    gory.setValue(StringUtil.StringConvert(doc.get("prvName")));
-                    skuV.add(gory);
+            if (StringUtil.notNull(key)){
+                for (SolrDocument doc : skuDoc) {
+                    String propid = StringUtil.StringConvert(doc.get("propid"));
+                    if (key.equals(propid)) {
+                        SeoCateGory gory = new SeoCateGory();
+                        gory.setKey(StringUtil.StringConvert(doc.get("vid")));
+                        gory.setValue(StringUtil.StringConvert(doc.get("prvName")));
+                        skuV.add(gory);
+                    }
                 }
+                setSkuV.addAll(skuV);
+                seoCates.put("key", key);
+                seoCates.put("value", value);
+                seoCates.put("childs", setSkuV);
+                cateGories.add(seoCates);
             }
-
-            setSkuV.addAll(skuV);
-
-            seoCates.put("key", key);
-            seoCates.put("value", value);
-            seoCates.put("childs", setSkuV);
-
-            cateGories.add(seoCates);
         }
         return cateGories;
     }
@@ -299,48 +298,56 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
 
         List attrs = getFacetCollection(attr);
 
-        Collections.sort(attrs);
+        if (StringUtil.notNull(attrs) && attrs.size() > 0){
 
-        List cates = getFacetCollection(category);
+            Collections.sort(attrs);
 
-        Collections.sort(cates);
+            List cates = getFacetCollection(category);
 
-        StringBuilder atr = new StringBuilder();
+            Collections.sort(cates);
 
-        super.query.clear();
-        super.query.set("q", "*:*");
+            StringBuilder atr = new StringBuilder();
 
-        if (StringUtil.notNull(attrs) && attrs.size() > 0) {
-            atr.append("(");
-            int a = attrs.size();
-            for (int i = 0; i < a; i++) {
-                String vid = String.valueOf(attrs.get(i));
-                if (!vid.contains("-") && !vid.equals("0")) {
-                    atr.append("vid").append(":").append(vid);
-                    if (i < a - 1) {
-                        atr.append(" OR ");
+            super.query.clear();
+
+            super.query.set("q", "*:*");
+
+            String attrsV = (String) attrs.get(0);
+
+            if (!attrsV.contains("-") && attrs.size() != 0){
+                if (StringUtil.notNull(attrs) && attrs.size() > 0) {
+                    atr.append("(");
+                    int a = attrs.size();
+                    for (int i = 0; i < a; i++) {
+                        String vid = String.valueOf(attrs.get(i));
+                        if (!vid.contains("-") && !vid.equals("0")) {
+                            atr.append("vid").append(":").append(vid);
+                            if (i < a - 1) {
+                                atr.append(" OR ");
+                            }
+                        }
                     }
+                    atr.append(")");
                 }
-            }
-            atr.append(")");
-        }
-        if (StringUtil.notNull(cates) && cates.size() > 0) {
-            atr.append(" AND ").append("(");
-            int b = cates.size();
-            for (int i = 0; i < b; i++) {
-                atr.append("category").append(":").append(cates.get(i));
-                if (i < b - 1) {
-                    atr.append(" OR ");
+                if (StringUtil.notNull(cates) && cates.size() > 0) {
+                    atr.append(" AND ").append("(");
+                    int b = cates.size();
+                    for (int i = 0; i < b; i++) {
+                        atr.append("category").append(":").append(cates.get(i));
+                        if (i < b - 1) {
+                            atr.append(" OR ");
+                        }
+                    }
+                    atr.append(")");
                 }
+                super.query.set("fq", new String(atr));
             }
-            atr.append(")");
-        }
-        super.query.set("fq", new String(atr));
-        SolrUtils.setStartAndRows(super.query);
-        if (this.Logger.info()) {
-            LOGGER.info(" [ SOLR SQL 语法: {}] ", super.query);
-        } else {
-            Cat.logEvent("SOLR.Query", "setFacetQuery", Transaction.SUCCESS, query.toQueryString());
+            SolrUtils.setStartAndRows(super.query);
+            if (this.Logger.info()) {
+                LOGGER.info(" [ SOLR SQL 语法: {}] ", super.query);
+            } else {
+                Cat.logEvent("SOLR.Query", "setFacetQuery", Transaction.SUCCESS, query.toQueryString());
+            }
         }
     }
 
@@ -354,7 +361,8 @@ public class SeoCategoryRepository extends SeoAbstractRepository {
         List attrs = Lists.newLinkedList();
         for (int i = 0; i < attr.size(); i++) {
             FacetField.Count attrCount = attr.get(i);
-            if (attrCount.getCount() > 0) {
+            if (attrCount.getCount() > 0 &&
+                    !attrCount.getName().contains("-")) {
                 attrs.add(attrCount.getName());
             }
         }

@@ -33,6 +33,17 @@ public class SolrServerFactoryBean {
     @Autowired
     private Environment environment;
 
+    /**
+     * 创建 HttpSolrClient 实例
+     *
+     * @return HttpSolrClient
+     */
+    @Bean
+    public HttpSolrClient solrClient() {
+
+        return new HttpSolrClient.Builder(getBaseSolrUrl()).build();
+    }
+
     @Bean
     public Map<String, HttpSolrClient> httpSolrServer() {
 
