@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -43,24 +44,28 @@ public class SuggestServer {
      * @return
      */
     public Map<String, List<SeoHotWords>> search(String keyword) {
-
         Map<String, List<SeoHotWords>> maps = Maps.newLinkedHashMap();
-
-        List<SeoHotWords> words = Lists.newLinkedList();
         try {
-            if (this.Logger.info()) {
+            if (this.Logger.info())
+            {
                 LOGGER.info("suggest out info : {}", keyword);
             }
             SolrDocumentList list = repository.search(keyword).getResults();
+            if (!StringUtils.isEmpty(list) && list.size() > 0)
+            {
+                List<SeoHotWords> words = Lists.newLinkedList();
+                for (SolrDocument doc : list)
+                {
+                    SeoHotWords hotWord = new SeoHotWords();
 
-            if (!StringUtils.isEmpty(list) && list.size() > 0) {
-                for (SolrDocument doc : list
-                        ) {
-                    SeoHotWords word = new SeoHotWords();
+                    hotWord.setKeyword(StringUtil.StringConvert(doc.get("keyword")));
+                    String correlation = StringUtil.StringConvert(doc.get("correlation"));
 
-                    word.setKeyword(StringUtil.StringConvert(doc.get("goodsName")));
-
-                    words.add(word);
+                    if (StringUtil.notNull(correlation))
+                    {
+                        hotWord.setCorrelation(Arrays.asList(correlation.split(" ")));
+                    }
+                    words.add(hotWord);
                 }
                 maps.put("suggest", words);
             }

@@ -41,6 +41,6 @@ public class SerialNumber {
         Date date = new Date();
         Random r = new Random();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        return formatter.format(date) + Math.abs(r.nextInt() % 10000);
+        return formatter.format(date) + Math.abs(r.nextInt() % 100);
     }
 }

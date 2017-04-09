@@ -1,6 +1,7 @@
 package com.berchina.seo.server.provider.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Package com.berchina.seo.server.provider.model
@@ -24,11 +25,20 @@ public class SeoHotWords implements Serializable {
      * 热词缩写
      */
     private String abbre;
-
     /**
      * 出现的次数
      */
     private long frequency;
+
+    private List<String> correlation;
+
+    public List<String> getCorrelation() {
+        return correlation;
+    }
+
+    public void setCorrelation(List<String> correlation) {
+        this.correlation = correlation;
+    }
 
     public String getKeyword() {
         return keyword;

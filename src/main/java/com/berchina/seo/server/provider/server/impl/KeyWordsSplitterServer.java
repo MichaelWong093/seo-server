@@ -46,6 +46,9 @@ public class KeyWordsSplitterServer {
         } else if (pcpType.equals("table")) {
 
             putOpsForHash(environment.getProperty(Constants.SEO_KEY_TABLE), pcpType, "c", "=");
+        }else if (pcpType.equals("pinyin")){
+
+            putOpsForHash(environment.getProperty(Constants.SEO_KEY_PINYIN), pcpType, "c", "=");
         }
     }
 

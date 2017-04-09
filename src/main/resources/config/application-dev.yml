@@ -19,7 +19,8 @@ seo:
     address: /dataimport?command=full-import&clean=true&commit=true
     logs: /Users/rxbyes/Documents/IDEA/seo-server/seo-logs/suggest/
   keywords:
-    stop: /Users/rxbyes/Documents/IDEA/seo-server/data/dictionary/stopwords.txt 
+    stop: /Users/rxbyes/Downloads/data/dictionary/stopwords.txt
+    pinyin: /Users/rxbyes/Downloads/data/dictionary/pinyin/pinyin.txt
     custom: /Users/rxbyes/Documents/IDEA/seo-server/data/dictionary/custom/CustomDictionary.txt
     table:  /Users/rxbyes/Documents/IDEA/seo-server/data/dictionary/other/CharTable.txt
     core: /Users/rxbyes/Documents/IDEA/seo-server/data/dictionary/CoreNatureDictionary.txt

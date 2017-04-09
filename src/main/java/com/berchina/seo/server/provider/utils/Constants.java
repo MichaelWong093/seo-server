@@ -315,5 +315,6 @@ public class Constants {
     public static final String SEO_KEY_STOP = "seo.keywords.stop";
     public static final String SEO_KEY_CORE = "seo.keywords.core";
     public static final String SEO_KEY_TABLE = "seo.keywords.table";
+    public static final String SEO_KEY_PINYIN = "seo.keywords.pinyin";
     public static final String SEO_KEY_NGRAM = "seo.keywords.ngram";
 }
