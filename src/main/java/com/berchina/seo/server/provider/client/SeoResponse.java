@@ -1,10 +1,12 @@
 package com.berchina.seo.server.provider.client;
 
 import com.berchina.seo.server.provider.client.base.Response;
+import com.berchina.seo.server.provider.model.SeoHotWords;
 import com.google.common.collect.Maps;
 import org.apache.http.HttpStatus;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,17 +25,32 @@ public class SeoResponse extends Response implements Serializable {
      */
     private Map<String, Object> seoGoods = Maps.newHashMap();
 
-    public SeoResponse() {
+    private Map<String, List<SeoHotWords>> suggest = Maps.newHashMap();
+
+    public SeoResponse(Map<String, List<SeoHotWords>> maps)
+    {
+        this.suggest = maps;
     }
 
-    public SeoResponse(Map<String, Object> seoCateMap, SeoRequest seoRequest) {
+    public SeoResponse(Map<String, Object> seoCateMap, SeoRequest seoRequest)
+    {
         super.setTime(seoRequest.getTime());
         super.setCode(HttpStatus.SC_OK);
         super.setMessage("成功");
-        super.setSerialNum(seoRequest.getSerialNum());
+        if (null != seoRequest)
+        {
+            super.setSerialNum(seoRequest.getSerialNum());
+        }
         this.seoGoods = seoCateMap;
     }
 
+    public Map<String, List<SeoHotWords>> getSuggest() {
+        return suggest;
+    }
+
+    public void setSuggest(Map<String, List<SeoHotWords>> suggest) {
+        this.suggest = suggest;
+    }
 
     public Map<String, Object> getSeoGoods() {
         return seoGoods;

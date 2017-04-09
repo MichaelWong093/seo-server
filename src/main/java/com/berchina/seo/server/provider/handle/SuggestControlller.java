@@ -1,10 +1,13 @@
 package com.berchina.seo.server.provider.handle;
 
 import com.berchina.seo.server.provider.server.SuggestServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 /**
  * @Package com.berchina.seo.server.provider.handle
@@ -25,21 +28,21 @@ public class SuggestControlller {
     private SuggestServer suggestServer;
 
     @RequestMapping(value = "/suggest/search/v2/{keyword}", method = RequestMethod.GET)
-    public ResponseEntity search(@PathVariable String keyword) {
+    public ResponseEntity search(@PathVariable String keyword) throws IOException, SolrServerException {
 
         return new ResponseEntity(suggestServer.search(keyword), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/suggest/post/v2", method = RequestMethod.POST)
-    public ResponseEntity add(@RequestParam String keyword, @RequestParam String correlation) {
+    public ResponseEntity add(@RequestParam String keyword, @RequestParam String correlation) throws IOException, SolrServerException {
 
         return new ResponseEntity(suggestServer.add(keyword, correlation), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/suggest/del/v2/{keyword}", method = RequestMethod.DELETE)
-    public ResponseEntity delete(@PathVariable String keyword) {
+    @RequestMapping(value = "/suggest/del/v2/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity delete(@PathVariable String id) throws IOException, SolrServerException {
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(suggestServer.delete(id),HttpStatus.OK);
     }
 
     @RequestMapping(value = "/suggest/put/v2/{keyword}", method = RequestMethod.PUT)

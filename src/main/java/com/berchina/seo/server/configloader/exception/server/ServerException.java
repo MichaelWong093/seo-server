@@ -24,7 +24,13 @@ public enum ServerException {
     SEO_SERVER_URL_ERROR(10004, "搜索服务器地址不存在"),
     SEO_SERVER_URL_CONNECT_ERROR(10005, "搜索服务器连接异常"),
     SEO_RESPONSE_HANDLE_ERROR(10006, "搜索服务数据响应异常"),
+
+    SEO_SUGGEST_ADD_FAIL_ERROR(210, "新增联想词已经存在"),
+    SEO_SUGGEST_DEL_FAIL_ERROR(211, "联想词已经被删除"),
+    SEO_SUGGEST_NULL(211, "暂无数据"),
+
     SEO_FILE_CANNOT_WRITE(30100, "文件没有写入的权限"),;
+
 
     /**
      * 错误码

@@ -1,17 +1,25 @@
 package com.berchina.seo.server.provider.server;
 
 import com.berchina.seo.server.configloader.config.logger.LoggerConfigure;
+import com.berchina.seo.server.configloader.exception.server.ServerException;
 import com.berchina.seo.server.provider.model.SeoHotWords;
 import com.berchina.seo.server.provider.server.crud.SuggestRepository;
+import com.berchina.seo.server.provider.utils.SerialNumber;
 import com.berchina.seo.server.provider.utils.StringUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.hankcs.hanlp.HanLP;
+import org.apache.http.HttpStatus;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -35,44 +43,43 @@ public class SuggestServer {
     @Autowired
     private LoggerConfigure Logger;
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SuggestServer.class);
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SuggestServer.class);
     /**
      * 联想词查询
      *
      * @param keyword
      * @return
      */
-    public Map<String, List<SeoHotWords>> search(String keyword) {
+    public Map<String,List<SeoHotWords>> search(String keyword) throws IOException, SolrServerException {
+
         Map<String, List<SeoHotWords>> maps = Maps.newLinkedHashMap();
-        try {
-            if (this.Logger.info())
+
+        if (this.Logger.info())
+        {
+            LOGGER.info("suggest out info : {}", keyword);
+        }
+        SolrDocumentList list = repository.search(keyword).getResults();
+
+        if (!StringUtils.isEmpty(list) && list.size() > 0)
+        {
+            List<SeoHotWords> words = Lists.newLinkedList();
+            for (SolrDocument doc : list)
             {
-                LOGGER.info("suggest out info : {}", keyword);
-            }
-            SolrDocumentList list = repository.search(keyword).getResults();
-            if (!StringUtils.isEmpty(list) && list.size() > 0)
-            {
-                List<SeoHotWords> words = Lists.newLinkedList();
-                for (SolrDocument doc : list)
+                SeoHotWords hotWord = new SeoHotWords();
+
+                hotWord.setKeyword(StringUtil.StringConvert(doc.get("keyword")));
+                String correlation = StringUtil.StringConvert(doc.get("correlation"));
+
+                if (StringUtil.notNull(correlation))
                 {
-                    SeoHotWords hotWord = new SeoHotWords();
-
-                    hotWord.setKeyword(StringUtil.StringConvert(doc.get("keyword")));
-                    String correlation = StringUtil.StringConvert(doc.get("correlation"));
-
-                    if (StringUtil.notNull(correlation))
-                    {
-                        hotWord.setCorrelation(Arrays.asList(correlation.split(" ")));
-                    }
-                    words.add(hotWord);
+                    hotWord.setCorrelation(Arrays.asList(correlation.split(" ")));
                 }
-                maps.put("suggest", words);
+                words.add(hotWord);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SolrServerException e) {
-            e.printStackTrace();
+            maps.put("suggest", words);
         }
         return maps;
     }
@@ -83,27 +90,68 @@ public class SuggestServer {
      * @param keyword
      * @return
      */
-    public boolean add(String keyword, String correlation) {
+    public  Map<String,Object> add(String keyword, String correlation) throws IOException, SolrServerException {
 
-        try {
-            return repository.add(keyword, correlation);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SolrServerException e) {
-            e.printStackTrace();
+        Map<String,Object> maps = Maps.newHashMap();
+
+        SolrInputDocument doc = new SolrInputDocument();
+
+        Assert.notNull("keyword is not empty ", keyword);
+
+        if (repository.isCheckKeyWordsBe(keyword) == 0)
+        {
+            HanLP.Config.setRedisTemplate(redisTemplate);
+
+            String pinyin = HanLP.convertToPinyinString(keyword, "", true);
+            String py = HanLP.convertToPinyinFirstCharString(keyword, "", true);
+
+            doc.addField("keyword", keyword);
+            doc.addField("id", SerialNumber.getInstance().generaterNextNumber());
+            doc.addField("frequency", 0);
+            if (StringUtil.notNull(pinyin))
+            {
+                doc.addField("pinyin", pinyin);
+            }
+            if (StringUtil.notNull(py))
+            {
+                doc.addField("abbre", py);
+            }
+            if (StringUtil.notNull(correlation))
+            {
+                doc.addField("correlation", correlation);
+            }
+            UpdateResponse response = repository.add(doc);
+            if (response.getStatus() == 0)
+            {
+                return this.setResult(maps,HttpStatus.SC_OK,"Success");
+            }
         }
-        return false;
+        return this.setResult(maps,ServerException.SEO_SUGGEST_ADD_FAIL_ERROR.getErrCode(),ServerException.SEO_SUGGEST_ADD_FAIL_ERROR.getErroMssage());
+    }
+
+    public Map<String, Object> setResult(Map<String, Object> maps,Integer code, String message)
+    {
+        maps.put("code",code);
+        maps.put("message",message);
+        return maps;
     }
 
     /**
      * 删除联想词
      *
-     * @param keyword
+     * @param id
      * @return
      */
-    public void delete(String keyword) {
+    public Map<String, Object> delete(String id) throws IOException, SolrServerException {
 
-        repository.delete(keyword);
+        Map<String, Object> maps  = Maps.newHashMap();
+        UpdateResponse response = repository.delete(id);
+
+        if (response.getStatus() == 0)
+        {
+            return this.setResult(maps, HttpStatus.SC_OK,"Success");
+        }
+        return this.setResult(maps,ServerException.SEO_SUGGEST_DEL_FAIL_ERROR.getErrCode(),ServerException.SEO_SUGGEST_DEL_FAIL_ERROR.getErroMssage());
     }
 
     /**
@@ -112,8 +160,12 @@ public class SuggestServer {
      * @param keyword
      * @return
      */
-    public void update(String keyword) {
+    public Map<String, String> update(String keyword) {
+
+        Map<String, String> maps  = Maps.newHashMap();
 
         repository.update(keyword);
+
+        return maps;
     }
 }
