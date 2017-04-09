@@ -27,6 +27,7 @@ public enum ServerException {
 
     SEO_SUGGEST_ADD_FAIL_ERROR(210, "新增联想词已经存在"),
     SEO_SUGGEST_DEL_FAIL_ERROR(211, "联想词已经被删除"),
+    SEO_SUGGEST_MOD_FAIL_ERROR(212, "联想词更新失败"),
     SEO_SUGGEST_NULL(211, "暂无数据"),
 
     SEO_FILE_CANNOT_WRITE(30100, "文件没有写入的权限"),;

@@ -54,32 +54,23 @@ public class SuggestServer {
      * @return
      */
     public Map<String,List<SeoHotWords>> search(String keyword) throws IOException, SolrServerException {
-
         Map<String, List<SeoHotWords>> maps = Maps.newLinkedHashMap();
-
-        if (this.Logger.info())
-        {
-            LOGGER.info("suggest out info : {}", keyword);
-        }
         SolrDocumentList list = repository.search(keyword).getResults();
-
         if (!StringUtils.isEmpty(list) && list.size() > 0)
         {
             List<SeoHotWords> words = Lists.newLinkedList();
             for (SolrDocument doc : list)
             {
                 SeoHotWords hotWord = new SeoHotWords();
-
                 hotWord.setKeyword(StringUtil.StringConvert(doc.get("keyword")));
                 String correlation = StringUtil.StringConvert(doc.get("correlation"));
-
                 if (StringUtil.notNull(correlation))
                 {
                     hotWord.setCorrelation(Arrays.asList(correlation.split(" ")));
                 }
                 words.add(hotWord);
             }
-            maps.put("suggest", words);
+            maps.put("message", words);
         }
         return maps;
     }
@@ -93,9 +84,7 @@ public class SuggestServer {
     public  Map<String,Object> add(String keyword, String correlation) throws IOException, SolrServerException {
 
         Map<String,Object> maps = Maps.newHashMap();
-
         SolrInputDocument doc = new SolrInputDocument();
-
         Assert.notNull("keyword is not empty ", keyword);
 
         if (repository.isCheckKeyWordsBe(keyword) == 0)
@@ -143,10 +132,8 @@ public class SuggestServer {
      * @return
      */
     public Map<String, Object> delete(String id) throws IOException, SolrServerException {
-
         Map<String, Object> maps  = Maps.newHashMap();
         UpdateResponse response = repository.delete(id);
-
         if (response.getStatus() == 0)
         {
             return this.setResult(maps, HttpStatus.SC_OK,"Success");
@@ -160,12 +147,17 @@ public class SuggestServer {
      * @param keyword
      * @return
      */
-    public Map<String, String> update(String keyword) {
+    public Map<String, Object> update(String id, String keyword,String correlation) throws IOException, SolrServerException {
+        Map<String, Object> maps  = Maps.newHashMap();
 
-        Map<String, String> maps  = Maps.newHashMap();
+        Map<String,Object> delSuggest = this.delete(id);
+        Map<String,Object> addSuggest = this.add(keyword,correlation);
 
-        repository.update(keyword);
-
-        return maps;
+        if (StringUtil.StringConvert(delSuggest.get("code")).equals(StringUtil.StringConvert(HttpStatus.SC_OK))
+                && StringUtil.StringConvert(addSuggest.get("code")).equals(StringUtil.StringConvert(HttpStatus.SC_OK)))
+        {
+            return this.setResult(maps,HttpStatus.SC_OK,"Success");
+        }
+        return this.setResult(maps,ServerException.SEO_SUGGEST_MOD_FAIL_ERROR.getErrCode(),ServerException.SEO_SUGGEST_MOD_FAIL_ERROR.getErroMssage());
     }
 }

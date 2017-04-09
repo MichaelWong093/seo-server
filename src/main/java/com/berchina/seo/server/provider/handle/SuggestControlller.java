@@ -42,12 +42,12 @@ public class SuggestControlller {
     @RequestMapping(value = "/suggest/del/v2/{id}", method = RequestMethod.DELETE)
     public ResponseEntity delete(@PathVariable String id) throws IOException, SolrServerException {
 
-        return new ResponseEntity(suggestServer.delete(id),HttpStatus.OK);
+        return new ResponseEntity(suggestServer.delete(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/suggest/put/v2/{keyword}", method = RequestMethod.PUT)
-    public ResponseEntity update(@PathVariable String keyword) {
+    @RequestMapping(value = "/suggest/put/v2", method = RequestMethod.PUT)
+    public ResponseEntity update(@RequestParam String id, @RequestParam String keyword, @RequestParam String correlation) throws IOException, SolrServerException {
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(suggestServer.update(id, keyword, correlation), HttpStatus.OK);
     }
 }

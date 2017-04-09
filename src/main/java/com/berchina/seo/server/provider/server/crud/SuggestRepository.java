@@ -1,7 +1,6 @@
 package com.berchina.seo.server.provider.server.crud;
 
 import com.berchina.seo.server.configloader.config.solr.SolrServerFactoryBean;
-import com.berchina.seo.server.configloader.exception.SeoException;
 import com.berchina.seo.server.provider.utils.Constants;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -71,10 +70,5 @@ public class SuggestRepository {
         UpdateResponse response = solrClient.deleteById(this.COLLECTION_NAME,id);
         solrClient.commit(this.COLLECTION_NAME);
         return response;
-    }
-
-    public void update(String keyword) throws SeoException {
-
-
     }
 }
