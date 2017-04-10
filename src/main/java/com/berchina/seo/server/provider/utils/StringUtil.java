@@ -159,6 +159,14 @@ public class StringUtil {
     }
 
 
+    public static boolean notNull(List object){
+        if (null != object && object.size() > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * 类型转化
      *

@@ -21,7 +21,7 @@ import java.io.IOException;
  * @Version V1.0
  */
 @RestController
-@RequestMapping("seo")
+@RequestMapping("/seo")
 public class SuggestControlller {
 
     @Autowired

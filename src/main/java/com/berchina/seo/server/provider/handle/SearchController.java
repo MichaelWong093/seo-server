@@ -1,8 +1,8 @@
 package com.berchina.seo.server.provider.handle;
 
 import com.berchina.seo.server.provider.client.SeoRequest;
-import com.berchina.seo.server.provider.client.base.Response;
-import com.berchina.seo.server.provider.server.SeoServerFactory;
+import com.berchina.seo.server.provider.server.SearchServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,24 +10,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * @Package com.berchina.seo.server.provider.handle
- * @Description: TODO ( SEO 服务入口 )
- * @Author 任小斌  renxiaobin@berchin.com
- * @Date 16/8/30 上午11:31
+ * @Description: TODO ( 商品搜索 )
+ * @Author rxbyes
+ * @Date 2017 下午7:51
  * @Version V1.0
  */
 @RestController
 @RequestMapping("/seo")
-public class SeoController {
+public class SearchController {
 
     @Autowired
-    private SeoServerFactory factory;
+    private SearchServer search;
 
-    @RequestMapping(value = "/{channel}")
-    ResponseEntity<Response> seoGoods(HttpServletRequest request) {
+    @RequestMapping(value = "/search/v2")
+    ResponseEntity search(HttpServletRequest request) throws IOException, SolrServerException {
 
-        return new ResponseEntity<>(factory.setSeoServer(new SeoRequest(request)), HttpStatus.OK);
+        return new ResponseEntity(search.search(new SeoRequest(request)), HttpStatus.OK);
     }
 }
