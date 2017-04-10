@@ -3,6 +3,7 @@ package com.berchina.seo.server.provider.utils;
 import com.alibaba.fastjson.JSON;
 import com.berchina.seo.server.configloader.exception.SeoException;
 import com.berchina.seo.server.configloader.exception.server.ServerException;
+import com.google.common.base.Splitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +30,11 @@ import java.util.regex.Pattern;
 public class StringUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StringUtil.class);
+
+    public static List<String> correlationToSplitter(String splitter, String correlation) {
+
+        return Splitter.on(splitter).omitEmptyStrings().omitEmptyStrings().trimResults().splitToList(correlation);
+    }
 
 //
 //    /**

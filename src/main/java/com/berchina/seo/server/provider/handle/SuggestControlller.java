@@ -27,8 +27,14 @@ public class SuggestControlller {
     @Autowired
     private SuggestServer suggestServer;
 
-    @RequestMapping(value = "/suggest/search/v2/{keyword}", method = RequestMethod.GET)
-    public ResponseEntity search(@PathVariable String keyword) throws IOException, SolrServerException {
+    @RequestMapping(value = "/suggest/search/v2/{start}/{rows}", method = RequestMethod.GET)
+    public ResponseEntity search(@PathVariable int start, @PathVariable int rows) throws IOException, SolrServerException {
+
+        return new ResponseEntity(suggestServer.search(start, rows), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/suggest/search/v2", method = RequestMethod.GET)
+    public ResponseEntity search(@RequestParam String keyword) throws IOException, SolrServerException {
 
         return new ResponseEntity(suggestServer.search(keyword), HttpStatus.OK);
     }

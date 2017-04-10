@@ -1,5 +1,11 @@
 package com.seo.test.nio;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
+
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -11,17 +17,17 @@ import java.util.function.Supplier;
  */
 public interface DefaultTest {
 
-    static DefaultTest create(Supplier<DefaultTest> testSupplier){
+    static DefaultTest create(Supplier<DefaultTest> testSupplier) {
         return testSupplier.get();
     }
 
-    default String hello(){
+    default String hello() {
         return "hello liming";
     }
 
     String print();
 
-    class  DefaultTestImpl implements  DefaultTest{
+    class DefaultTestImpl implements DefaultTest {
 
         @Override
         public String print() {
@@ -29,21 +35,47 @@ public interface DefaultTest {
         }
     }
 
-    class  DefaultTestImpls implements  DefaultTest{
+    class DefaultTestImpls implements DefaultTest {
         @Override
-        public String hello(){
+        public String hello() {
             return "你好啊？";
         }
+
         @Override
-        public String print(){
-           return "are you ok!";
+        public String print() {
+            return "are you ok!";
         }
     }
 
     static void main(String[] args) {
 
+        String var1 = "brands : 165 : 正林 , brands : 2346 : 香辣, brands: 2134 : 食品";
+        Map<String, Object> maps = Maps.newHashMap();
+        List<String> list = Splitter.on(",").omitEmptyStrings().omitEmptyStrings().splitToList(var1);
+        for (String var : list)
+        {
+            Map<String, String> map = Maps.newHashMap();
+            List<String> corr = Splitter.on(":").omitEmptyStrings().omitEmptyStrings().splitToList(var);
+            map.put(corr.get(1), corr.get(2));
+            maps.put(corr.get(0), map);
+        }
+        System.out.println(JSON.toJSON(maps));
+    }
 
+    static void test1() {
 
+        String var = "'brand':'正林','sku':'香辣','category':'食品'";
+
+        List<String> correlation = Splitter.on(",").omitEmptyStrings().omitEmptyStrings().splitToList(var);
+
+        Map<String, String> map = Maps.newHashMap();
+
+        for (String str : correlation) {
+            List<String> list = Splitter.on(":").omitEmptyStrings().omitEmptyStrings().splitToList(str);
+
+            map.put(list.get(0), list.get(1));
+        }
+        System.out.println(JSON.toJSON(map));
     }
 
     static void tet() {

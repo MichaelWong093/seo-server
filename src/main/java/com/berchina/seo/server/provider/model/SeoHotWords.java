@@ -1,7 +1,7 @@
 package com.berchina.seo.server.provider.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @Package com.berchina.seo.server.provider.model
@@ -30,13 +30,13 @@ public class SeoHotWords implements Serializable {
      */
     private long frequency;
 
-    private List<String> correlation;
+    private Map<String,Object> correlation;
 
-    public List<String> getCorrelation() {
+    public Map<String, Object> getCorrelation() {
         return correlation;
     }
 
-    public void setCorrelation(List<String> correlation) {
+    public void setCorrelation(Map<String, Object> correlation) {
         this.correlation = correlation;
     }
 

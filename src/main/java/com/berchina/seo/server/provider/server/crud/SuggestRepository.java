@@ -28,13 +28,20 @@ public class SuggestRepository {
     @Autowired
     private SolrServerFactoryBean factoryBean;
 
-
-
     private ModifiableSolrParams params = new ModifiableSolrParams();
 
     private SolrQuery query = new SolrQuery();
 
     private static final String COLLECTION_NAME = "sphotwd";
+
+    public QueryResponse search(int start,int rows) throws IOException, SolrServerException {
+        clearQuery();
+        query.setQuery(Constants.ASTERISK);
+        query.setStart(start);
+        query.setRows(rows);
+        params.add(query);
+        return factoryBean.solrClient().query(this.COLLECTION_NAME,params);
+    }
 
     public QueryResponse search(String keyword) throws IOException, SolrServerException {
         clearQuery();
