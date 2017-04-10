@@ -1,7 +1,9 @@
 package com.seo.test.nio;
 
 import com.alibaba.fastjson.JSON;
+import com.berchina.seo.server.provider.utils.StringUtil;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.List;
@@ -50,6 +52,33 @@ public interface DefaultTest {
     static void main(String[] args) {
 
         String var1 = "brands : 165 : 正林 , brands : 2346 : 香辣, brands: 2134 : 食品";
+
+        List<String> list = Splitter.on(",").omitEmptyStrings().omitEmptyStrings().splitToList(var1);
+
+        Map<String,Object> maps = Maps.newHashMap();
+
+        List<Map<String,String>> lists = Lists.newLinkedList();
+        for (String attr : list)
+        {
+            List<String> tres = StringUtil.correlationToSplitter(":",attr);
+            Map<String,String> map = Maps.newHashMap();
+            for (int i = 0; i < 1; i++)
+            {
+                map.put("type",tres.get(0));
+                map.put("id",tres.get(1));
+                map.put("name",tres.get(2));
+            }
+            lists.add(map);
+        }
+        maps.put("corr",lists);
+
+        System.out.println(JSON.toJSON(maps));
+
+//        setSuggest(var1);
+    }
+
+    static void setSuggest(String var1) {
+        //        { "corr":{ "brands0":{ "165":"正林" },"categories2":{ "2134":"食品" },"skus1":{ "2346":"香辣" } },"keyword":"牛肉干" },
         Map<String, Object> maps = Maps.newHashMap();
         List<String> list = Splitter.on(",").omitEmptyStrings().omitEmptyStrings().splitToList(var1);
         for (String var : list)

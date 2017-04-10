@@ -7,11 +7,14 @@ import com.berchina.seo.server.provider.utils.StringUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.CommonParams;
+import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.MultiMapSolrParams;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -30,19 +33,16 @@ import java.util.*;
  */
 public class HttpSolrSearchTest {
 
-
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpSolrSearchTest.class);
 
     public static final String SEO_CATEGORYS = "http://127.0.0.1:8983/solr/categorys";
-    public static final String SEO_GOODS = "http://127.0.0.1:8983/solr/goods";
+    public static final String SEO_GOODS = "http://127.0.0.1:8983/solr/";
 
     public static final String SEO_CATEREV = "http://127.0.0.1:8983/solr/caterev";
 
     @Test
-    public void search() {
-        /**
-         * 获取分类实例
-         */
+    public void search() throws IOException, SolrServerException {
+
         HttpSolrClient categoryClient = new HttpSolrClient.Builder(SEO_CATEGORYS).build();
 
         HttpSolrClient goodsClient = new HttpSolrClient.Builder(SEO_GOODS).build();
@@ -50,6 +50,68 @@ public class HttpSolrSearchTest {
         HttpSolrClient cateRevClient = new HttpSolrClient.Builder(SEO_CATEREV).build();
 
         String keywords = "牛肉面";
+
+        ModifiableSolrParams params = new ModifiableSolrParams();
+
+        SolrQuery query = new SolrQuery();
+
+        query.setQuery(keywords);
+        query.add(CommonParams.DF,"hotwords");
+
+        params.add(query);
+
+        LOGGER.info(params.toQueryString());
+
+        QueryResponse response =  goodsClient.query("goods",params);
+
+        LOGGER.warn(JSON.toJSONString(response.getResults()));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        setGoods(categoryClient, goodsClient, cateRevClient, keywords);
+    }
+
+    public static void setCollectSolrQuery(List catList, Map<String, String[]> params, String category) {
+        StringBuilder builder = new StringBuilder();
+        int a = catList.size();
+
+        if (catList instanceof SolrDocumentList) {
+            SolrDocumentList docs = (SolrDocumentList) catList;
+            for (int j = 0; j < a; j++) {
+                SolrDocument cateDoc = docs.get(j);
+                builder.append(category).append(":").append(cateDoc.get("category"));
+                if (j < a - 1) {
+                    builder.append(" OR ");
+                }
+            }
+            params.put("fq", new String[]{builder.toString()});
+        } else {
+            if (!StringUtils.isEmpty(catList) && a > 0) {
+                for (int i = 0; i < a; i++) {
+                    builder.append(category).append(":").append(catList.get(i));
+                    if (i < a - 1) {
+                        builder.append(" OR ");
+                    }
+                }
+                params.put("fq", new String[]{builder.toString()});
+            }
+        }
+    }
+
+
+    @Deprecated
+    public void setGoods(HttpSolrClient categoryClient, HttpSolrClient goodsClient, HttpSolrClient cateRevClient, String keywords) {
         /**
          * 创建分类搜索条件
          */
@@ -163,33 +225,6 @@ public class HttpSolrSearchTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    public static void setCollectSolrQuery(List catList, Map<String, String[]> params, String category) {
-        StringBuilder builder = new StringBuilder();
-        int a = catList.size();
-
-        if (catList instanceof SolrDocumentList) {
-            SolrDocumentList docs = (SolrDocumentList) catList;
-            for (int j = 0; j < a; j++) {
-                SolrDocument cateDoc = docs.get(j);
-                builder.append(category).append(":").append(cateDoc.get("category"));
-                if (j < a - 1) {
-                    builder.append(" OR ");
-                }
-            }
-            params.put("fq", new String[]{builder.toString()});
-        } else {
-            if (!StringUtils.isEmpty(catList) && a > 0) {
-                for (int i = 0; i < a; i++) {
-                    builder.append(category).append(":").append(catList.get(i));
-                    if (i < a - 1) {
-                        builder.append(" OR ");
-                    }
-                }
-                params.put("fq", new String[]{builder.toString()});
-            }
-        }
-    }
 }

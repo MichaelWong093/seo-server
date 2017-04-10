@@ -46,7 +46,7 @@ public class SuggestServer {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SuggestServer.class);
 
-    public List<Map<String,Object>>  search(int start, int rows) throws IOException, SolrServerException {
+    public List<Map<String,Object>> search(int start, int rows) throws IOException, SolrServerException {
         return this.suggestCollection(repository.search(start, rows).getResults());
     }
 
@@ -61,36 +61,35 @@ public class SuggestServer {
         return suggestCollection(repository.search(keyword).getResults());
     }
 
-    public List<Map<String,Object>> suggestCollection(SolrDocumentList list) {
-//        Map<String, List<SeoHotWords>> maps = Maps.newLinkedHashMap();
-
-        List<Map<String,Object>> suggests = Lists.newLinkedList();
-
-        if (!StringUtils.isEmpty(list) && list.size() > 0)
+    public List<Map<String,Object>> suggestCollection(SolrDocumentList documents) {
+        List<Map<String,Object>> suggest = Lists.newLinkedList();
+        if (!StringUtils.isEmpty(documents) && documents.size() > 0)
         {
-            for (SolrDocument doc : list)
+            for (SolrDocument doc : documents)
             {
                 Map<String,Object> maps = Maps.newHashMap();
                 String correlation = StringUtil.StringConvert(doc.get("correlation"));
-                maps.put("keyword",StringUtil.StringConvert(doc.get("keyword")));
                 if (StringUtil.notNull(correlation))
                 {
+                    List<Map<String,String>> lists = Lists.newLinkedList();
                     correlation = correlation.replace("[", "").replace("]", "");
-                    Map<String, Object> tres = Maps.newHashMap();
-                    List<String> lists = StringUtil.correlationToSplitter(",", correlation);
-                    for (int i =0; i < lists.size(); i++)
+                    List<String> correlations = StringUtil.correlationToSplitter(",",correlation);
+                    for (String attr : correlations)
                     {
-                        Map<String, String> map = Maps.newHashMap();
-                        List<String> corr = StringUtil.correlationToSplitter(":", lists.get(i));
-                        map.put(corr.get(1), corr.get(2));
-                        tres.put(corr.get(0)+i, map);
+                        List<String> tres = StringUtil.correlationToSplitter(":",attr);
+                        Map<String,String> map = Maps.newHashMap();
+                        map.put("type",tres.get(0));
+                        map.put("id",tres.get(1));
+                        map.put("name",tres.get(2));
+                        lists.add(map);
                     }
-                    maps.put("corr",tres);
+                    maps.put("corr",lists);
                 }
-                suggests.add(maps);
+                maps.put("keyword",StringUtil.StringConvert(doc.get("keyword")));
+                suggest.add(maps);
             }
         }
-        return suggests;
+        return suggest;
     }
 
     /**

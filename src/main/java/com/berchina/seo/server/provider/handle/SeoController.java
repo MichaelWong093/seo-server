@@ -32,7 +32,7 @@ public class SeoController {
     }
 
 
-    @RequestMapping(value = "/v2/search/")
+    @RequestMapping(value = "/search/v2/")
     ResponseEntity<Response> search(HttpServletRequest request) {
 
 
