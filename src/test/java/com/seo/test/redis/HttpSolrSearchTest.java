@@ -86,11 +86,11 @@ public class HttpSolrSearchTest {
         /**
          *  配送方式
          */
-        List<String> logger = setfacet(facetFields.get(1).getValues());
-        System.out.println(JSON.toJSON(logger));
+        List<String> logisticsFacet = setfacet(facetFields.get(1).getValues());
+        System.out.println(JSON.toJSON(logisticsFacet));
 
         Map<String,String> map = Maps.newTreeMap();
-        for (String log : logger)
+        for (String log : logisticsFacet)
         {
             List<String> logistics = StringUtil.splitter(",",log);
             for (String var : logistics)
