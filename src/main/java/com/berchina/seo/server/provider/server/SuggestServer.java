@@ -73,10 +73,10 @@ public class SuggestServer {
                 {
                     List<Map<String,String>> lists = Lists.newLinkedList();
                     correlation = correlation.replace("[", "").replace("]", "");
-                    List<String> correlations = StringUtil.correlationToSplitter(",",correlation);
+                    List<String> correlations = StringUtil.splitter(",",correlation);
                     for (String attr : correlations)
                     {
-                        List<String> tres = StringUtil.correlationToSplitter(":",attr);
+                        List<String> tres = StringUtil.splitter(":",attr);
                         Map<String,String> map = Maps.newHashMap();
                         map.put("type",tres.get(0));
                         map.put("id",tres.get(1));
@@ -122,7 +122,7 @@ public class SuggestServer {
             }
             if (StringUtil.notNull(correlation))
             {
-                List<String> correlations = StringUtil.correlationToSplitter(",", correlation);
+                List<String> correlations = StringUtil.splitter(",", correlation);
                 for (int i = 0; i < correlations.size(); i++)
                 {
                     doc.addField("correlation", correlations.get(i));

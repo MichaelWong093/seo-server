@@ -60,7 +60,7 @@ public interface DefaultTest {
         List<Map<String,String>> lists = Lists.newLinkedList();
         for (String attr : list)
         {
-            List<String> tres = StringUtil.correlationToSplitter(":",attr);
+            List<String> tres = StringUtil.splitter(":",attr);
             Map<String,String> map = Maps.newHashMap();
             for (int i = 0; i < 1; i++)
             {

@@ -32,9 +32,12 @@ public class CategoryServer {
             List<String> list = Lists.newArrayList();
             for (FacetField.Count count : counts)
             {
-                list.add(count.getName());
+                if (count.getCount() > 0)
+                {
+                    list.add(count.getName());
+                }
             }
-           return repository.search(list);
+           return repository.category(list);
         }
         return null;
     }

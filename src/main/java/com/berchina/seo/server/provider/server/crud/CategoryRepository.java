@@ -37,22 +37,22 @@ public class CategoryRepository {
     private ModifiableSolrParams params = new ModifiableSolrParams();
     private SolrQuery query = new SolrQuery();
 
-    public List<Object> search(List<String> ids) throws IOException, SolrServerException {
+    public List<Object> category(List<String> ids) throws IOException, SolrServerException {
         clean();
 
         query.setQuery(Constants.COLON_ASTERISK);
         query.setFields(CAT_NAME,CAT_ID);
 
-        search(ids,query,CAT_ID);
+        category(ids,query,CAT_ID);
         params.add(query);
 
         LOGGER.warn("[ 类目搜索 Query 指令：{} ]", params.toQueryString());
 
-        return search(solrClient.solrClient().query("category",params).getResults());
+        return category(solrClient.solrClient().query("category",params).getResults());
     }
 
-
-    public List<Object> search(SolrDocumentList documents) {
+    /* "category": [ { "id": "1020341,2353", "name": "小菜" },{ "id": "1020342,2352", "name": "牛肉" } ]*/
+    public List<Object> category(SolrDocumentList documents) {
         List<Object> lists = Lists.newLinkedList();
         boolean flag = true;
         for (SolrDocument doc : documents)
@@ -92,15 +92,15 @@ public class CategoryRepository {
         params.clear();
     }
 
-    public  void search(List catList, SolrQuery query, String category) {
+    public void category(List catList, SolrQuery query, String category) {
         setSolrQuery(catList, query, category);
     }
 
-    public  void search(List catList, Map<String, String[]> params, String category) {
+    public void category(List catList, Map<String, String[]> params, String category) {
         setSolrQuery(catList, params, category);
     }
 
-    public  void setSolrQuery(List catList, Object object, String category) {
+    public void setSolrQuery(List catList, Object object, String category) {
         boolean flag = true;
         Map<String, String[]> params = Maps.newConcurrentMap();
         if (object instanceof Map) {

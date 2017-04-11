@@ -31,7 +31,7 @@ public class StringUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StringUtil.class);
 
-    public static List<String> correlationToSplitter(String splitter, String correlation) {
+    public static List<String> splitter(String splitter, String correlation) {
 
         return Splitter.on(splitter).omitEmptyStrings().omitEmptyStrings().trimResults().splitToList(correlation);
     }
