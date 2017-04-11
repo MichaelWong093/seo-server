@@ -296,7 +296,7 @@ public class SolrUtils {
      * @param builder
      * @param var     搜索属性名称
      */
-    private static String setBrandQuery(String var1, StringBuilder builder, String var) {
+    public static String setBrandQuery(String var1, StringBuilder builder, String var) {
         String[] args = var1.split(",");
         for (int i = 0; i < args.length; i++) {
             builder.append(var).append(":").append(args[i]);
@@ -307,6 +307,28 @@ public class SolrUtils {
         return new String(builder);
     }
 
+    /**
+     *  改造
+     * @param brvDocs Solr Collection
+     * @param key   solr fq key
+     * @param value solr document value
+     * @return query
+     */
+    public static String setBrandQuery(SolrDocumentList brvDocs, String key,String value)
+    {
+        StringBuffer builder = new StringBuffer();
+        for (int i = 0; i < brvDocs.size(); i++)
+        {
+            SolrDocument doc = brvDocs.get(i);
+            builder.append(key)
+                    .append(":").append(StringUtil.StringConvert(doc.get(value)));
+            if (i < brvDocs.size() -1)
+            {
+                builder.append(" OR ");
+            }
+        }
+        return new String(builder);
+    }
 
     public static void setSolrPage(SolrQuery query, SeoRequest request) {
         if (StringUtils.isEmpty(request.getStart())

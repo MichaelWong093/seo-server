@@ -2,8 +2,10 @@ package com.seo.test.redis;
 
 import com.alibaba.fastjson.JSON;
 import com.berchina.seo.server.provider.server.CategoryServer;
+import com.berchina.seo.server.provider.server.SearchServer;
 import com.berchina.seo.server.provider.server.crud.CategoryRepository;
 import com.berchina.seo.server.provider.utils.Constants;
+import com.berchina.seo.server.provider.utils.SolrUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
@@ -44,20 +46,32 @@ public class HttpSolrSearchTest {
 
         HttpSolrClient solrClient = new HttpSolrClient.Builder(SOLR_HOME).build();
 
+        SearchServer server = new SearchServer();
+
 //        HttpSolrClient cateRevClient = new HttpSolrClient.Builder(SEO_CATEREV).build();
         String keywords = "牛肉面";
         ModifiableSolrParams params = new ModifiableSolrParams();
         SolrQuery query = new SolrQuery();
         query.setQuery(keywords);
         query.add(CommonParams.DF, "hotwords");
-        query.setFields("hotwords", "category");
+//        query.setFields("hotwords", "category");
+
         query.addFacetField("category", "logistics");
         query.setFacet(true);
         query.setFacetLimit(10);
         params.add(query);
 
         System.out.println(params.toQueryString());
+
         QueryResponse goodsRsp = solrClient.query("goods", params);
+
+        System.out.println("商品商量：" + goodsRsp.getResults().getNumFound());
+
+        List<Object> goodsList = server.setGoodsDoc(goodsRsp.getResults());
+
+        System.out.println("商品信息：" + JSON.toJSON(goodsList));
+
+
         List<FacetField> facetFields = goodsRsp.getFacetFields();
 
         query.clear();
@@ -65,12 +79,12 @@ public class HttpSolrSearchTest {
         query.setFields("catname", "category");
 
 
-        CategoryServer server = new CategoryServer();
+        CategoryServer categoryServer = new CategoryServer();
 
         /**
          *  系统类目
          */
-        List<String> category = server.setfacet(facetFields.get(0).getValues());
+        List<String> category = categoryServer.setfacet(facetFields.get(0).getValues());
 
         System.out.println(JSON.toJSON(category));
 
@@ -87,15 +101,49 @@ public class HttpSolrSearchTest {
         /**
          *  配送方式
          */
-        List<String> logisticsFacet = server.setfacet(facetFields.get(1).getValues());
+        List<String> logisticsFacet = categoryServer.setfacet(facetFields.get(1).getValues());
         System.out.println(JSON.toJSON(logisticsFacet));
 
-        List logistics = server.setLogistics(logisticsFacet);
+        List logistics = categoryServer.setLogistics(logisticsFacet);
 
         System.out.println(JSON.toJSON(logistics));
 
         /**
          *  品牌
+         *
+         *  {!join fromIndex=brand from=id to=brand}id:165
+         *
+         *  {!join fromIndex=category from=category to=category}category:2356
+         *
          */
+        params.clear();
+        String fq = query.get(CommonParams.FQ);
+        query.remove(CommonParams.FQ);
+        query.setFields("brand");
+        query.setStart(0);
+        query.setRows(1024);
+        query.addFilterQuery("{!join fromIndex=category from=category to=category}".concat(fq));
+
+        System.out.println(query);
+
+        SolrDocumentList brvDocs = solrClient.query("brandrev", query).getResults();
+
+        String brands = SolrUtils.setBrandQuery(brvDocs, "id", "brand");
+
+        System.out.println(brands);
+
+        query.remove(CommonParams.FQ);
+        query.remove(CommonParams.FL);
+        query.addFilterQuery(brands);
+        query.setFields("id", "chineseName", "brandLogo");
+
+        System.out.println(query);
+
+        QueryResponse brdRsp = solrClient.query("brand", query);
+
+        CategoryServer.Brand brand = new CategoryServer.Brand();
+
+        System.out.println(JSON.toJSON(brand.brand(brdRsp.getResults())));
+
     }
 }
