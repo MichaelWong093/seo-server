@@ -36,7 +36,7 @@ public class SearchRepository {
         query.setQuery(request.getHotwords());
         query.add(CommonParams.DF, "hotwords");
 //        query.setFields("hotwords", "category");
-        query.addFacetField("category");
+        query.addFacetField("category","logistics");
         query.setFacet(true);
         query.setFacetLimit(10);
 

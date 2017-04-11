@@ -1,12 +1,9 @@
 package com.seo.test.redis;
 
 import com.alibaba.fastjson.JSON;
+import com.berchina.seo.server.provider.server.CategoryServer;
 import com.berchina.seo.server.provider.server.crud.CategoryRepository;
 import com.berchina.seo.server.provider.utils.Constants;
-import com.berchina.seo.server.provider.utils.LogisticsEnum;
-import com.berchina.seo.server.provider.utils.StringUtil;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
@@ -21,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Package com.seo.test.redis
@@ -66,16 +62,21 @@ public class HttpSolrSearchTest {
 
         query.clear();
         query.setQuery(Constants.COLON_ASTERISK);
-        query.setFields("catname", "id");
+        query.setFields("catname", "category");
 
 
-        List<String> category = setfacet(facetFields.get(0).getValues());
+        CategoryServer server = new CategoryServer();
+
+        /**
+         *  系统类目
+         */
+        List<String> category = server.setfacet(facetFields.get(0).getValues());
 
         System.out.println(JSON.toJSON(category));
 
         CategoryRepository repository = new CategoryRepository();
 
-        repository.category(category, query, "id");
+        repository.category(category, query, "category");
         System.out.println("系统类目：" + query.toQueryString());
         QueryResponse categoryRsp = solrClient.query("category", query);
         SolrDocumentList categoryDoc = categoryRsp.getResults();
@@ -86,40 +87,15 @@ public class HttpSolrSearchTest {
         /**
          *  配送方式
          */
-        List<String> logisticsFacet = setfacet(facetFields.get(1).getValues());
+        List<String> logisticsFacet = server.setfacet(facetFields.get(1).getValues());
         System.out.println(JSON.toJSON(logisticsFacet));
 
-        Map<String,String> map = Maps.newTreeMap();
-        for (String log : logisticsFacet)
-        {
-            List<String> logistics = StringUtil.splitter(",",log);
-            for (String var : logistics)
-            {
-                if (var.equals(LogisticsEnum.WDZT.getCode())){
-                    map.put(var,LogisticsEnum.WDZT.getName());
-                }
-                if (var.equals(LogisticsEnum.SHSM.getCode())){
-                    map.put(var,LogisticsEnum.SHSM.getName());
-                }
-                if(var.equals(LogisticsEnum.WLPS.getCode()))
-                {
-                    map.put(var,LogisticsEnum.WLPS.getName());
-                }
-            }
-        }
-        System.out.println(JSON.toJSON(map));
-    }
+        List logistics = server.setLogistics(logisticsFacet);
 
+        System.out.println(JSON.toJSON(logistics));
 
-    public List<String> setfacet(List<FacetField.Count> counts) {
-        List<String> objects = Lists.newArrayList();
-        if (StringUtil.notNull(counts)) {
-            for (FacetField.Count count : counts) {
-                if (count.getCount() > 0) {
-                    objects.add(count.getName());
-                }
-            }
-        }
-        return objects;
+        /**
+         *  品牌
+         */
     }
 }

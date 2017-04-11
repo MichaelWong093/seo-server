@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @Package com.berchina.seo.server.provider.server
@@ -53,11 +54,15 @@ public class SearchServer {
         {
             maps.put("goods",seoGoods);
             // 查询分类，该功能只取系统类目
-            List<Object> categories = categoryServer.search(response);
+            Map<String,Object> map = categoryServer.search(response);
 
-            if (StringUtil.notNull(categories))
+            Set<Map.Entry<String, Object>> set = map.entrySet();
+            if (!set.isEmpty())
             {
-                maps.put("category",categories);
+                for (Map.Entry entry : set )
+                {
+                    maps.put((String) entry.getKey(),entry.getValue());
+                }
             }
         }
         return maps;

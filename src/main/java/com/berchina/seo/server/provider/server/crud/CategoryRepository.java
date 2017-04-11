@@ -48,7 +48,7 @@ public class CategoryRepository {
 
         LOGGER.warn("[ 类目搜索 Query 指令：{} ]", params.toQueryString());
 
-        return category(solrClient.solrClient().query("category",params).getResults());
+        return category(solrClient.solrClient().query(CAT_ID,params).getResults());
     }
 
     /* "category": [ { "id": "1020341,2353", "name": "小菜" },{ "id": "1020342,2352", "name": "牛肉" } ]*/
@@ -58,26 +58,26 @@ public class CategoryRepository {
         for (SolrDocument doc : documents)
         {
             Map<String,String> map = Maps.newTreeMap();
-            String name = StringUtil.StringConvert(doc.get("catname"));
-            String id = StringUtil.StringConvert(doc.get("id"));
+            String name = StringUtil.StringConvert(doc.get(CAT_NAME));
+            String id = StringUtil.StringConvert(doc.get(CAT_ID));
             for (int i =0 ; i < lists.size(); i ++)
             {
                 Map<String,String> val = (Map<String, String>) lists.get(i);
-                String key = val.get("name");
+                String key = val.get(CAT_NAME);
                 if (key.equals(name))
                 {
                     flag = false;
-                    String k = val.get("id").concat(",").concat(id);
-                    map.put("name",name);
-                    map.put("id",k);
+                    String k = val.get(CAT_ID).concat(",").concat(id);
+                    map.put(CAT_NAME,name);
+                    map.put(CAT_ID,k);
                     lists.add(map);
                     lists.remove(lists.get(i));
                     break;
                 }
             }
             if (flag){
-                map.put("name",name);
-                map.put("id",id);
+                map.put(CAT_NAME,name);
+                map.put(CAT_ID,id);
                 lists.add(map);
             }
         }
@@ -85,7 +85,7 @@ public class CategoryRepository {
     }
 
     private static String CAT_NAME = "catname";
-    private static String CAT_ID = "id";
+    private static String CAT_ID = "category";
 
     public void clean() {
         query.clear();
