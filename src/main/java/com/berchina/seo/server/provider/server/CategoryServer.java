@@ -29,7 +29,6 @@ import java.util.Map;
 @Service
 public class CategoryServer {
 
-
     @Autowired private CategoryRepository categoryRepository;
 
     @Autowired private BrandRepository brandRepository;
