@@ -45,44 +45,32 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
     @Autowired
     private LoggerConfigure Logger;
 
-    @Autowired private SearchRepository repository;
-
     public void seoGoodsRepository(Map<String, Object> goodsMap, SeoRequest request) throws IOException, SolrServerException {
-
         super.InitGoods();
-
         ModifiableSolrParams params = new ModifiableSolrParams();
-
-//        SolrUtils.querys(request, params, false);
-
-        if (Logger.info()) {
-
+        SolrUtils.querys(request, params, false);
+        if (Logger.info())
+        {
             LOGGER.info("[  SOLR SQL 语法: {}]", params.toQueryString());
         } else {
             Cat.logEvent("SOLR.Query", "seoGoodsRepository", Transaction.SUCCESS, params.toQueryString());
         }
 
-        repository.search(request,params);
+        final QueryResponse response;
 
-        QueryResponse response = goodsClient.query(params);
-
-        LinkedList<SeoGoods> seoGoodses = this.querySolrDocuments(goodsMap, request, params, goodsClient);
+        final LinkedList<SeoGoods> seoGoodses;
 
         /**
          * 区分特色频道搜索，与普通商品搜索 type eq 0 : 特产频道
          */
-//        if (request.getType().equals("1")) {
-//
-//            response = goodsClient.query(params);
-//
-//            seoGoodses = this.querySolrDocuments(goodsMap, request, params, goodsClient);
-//
-//        } else {
-//
-//            response = speClient.query(params);
-//
-//            seoGoodses = this.querySolrDocuments(goodsMap, request, params, speClient);
-//        }
+        if (request.getType().equals("1"))
+        {
+            response = goodsClient.query(params);
+            seoGoodses = this.querySolrDocuments(goodsMap, request, params, goodsClient);
+        } else {
+            response = speClient.query(params);
+            seoGoodses = this.querySolrDocuments(goodsMap, request, params, speClient);
+        }
 
         if (response.getFacetFields().get(0).getValues().get(0).getCount() > 0) {
 
@@ -176,10 +164,9 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
          */
         SolrUtils.queryCategoryKey(request, query);
 
-        if (Logger.info())
-        {
+        if (Logger.info()) {
             LOGGER.info(" [ SOLR SQL 语法: {}]", query);
-        }else {
+        } else {
             Cat.logEvent("SOLR.Query", "setCategoryAttribute", Transaction.SUCCESS, query.toQueryString());
         }
 
@@ -203,14 +190,11 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
         SolrUtils.setCollectSolrQuery(skuK, query, builder, "propid", request.getCategory());
 
         request.setAttribute(new String(builder));
-
-        if (Logger.info())
-        {
-            LOGGER.info(" [ SOLR SQL 语法: {}]", query);
-        }else {
-            Cat.logEvent("SOLR.Query", "setCategoryAttribute", Transaction.SUCCESS, query.toQueryString());
-        }
-
+//        if (Logger.info()) {
+//            LOGGER.info(" [ SOLR SQL 语法: {}]", query);
+//        } else {
+//            Cat.logEvent("SOLR.Query", "setCategoryAttribute", Transaction.SUCCESS, query.toQueryString());
+//        }
         SolrUtils.queryCategoryValue(request, query);
 
         SolrDocumentList skuV = skuClient.query(query).getResults();

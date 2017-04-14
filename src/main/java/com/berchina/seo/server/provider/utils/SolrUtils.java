@@ -17,6 +17,7 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.params.DisMaxParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 
 /**
@@ -35,7 +37,7 @@ import java.util.*;
  */
 public class SolrUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SolrUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final long rows = 10;
 
@@ -94,8 +96,7 @@ public class SolrUtils {
         query.addFacetField("category");
 
         setSolrPage(query, request);
-
-        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
+//        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
 
@@ -204,29 +205,29 @@ public class SolrUtils {
 //        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
-    @Deprecated
     public static void querys(SeoRequest request, ModifiableSolrParams params, boolean flag) {
-
         SolrQuery query = new SolrQuery();
-
-        if (flag) {
+        if (flag)
+        {
             query.set("q", getQueryQs(request));
         } else {
             query.set("q", getQueryQ(request));
         }
-
         query.set("fl", "category");
 
         query.setFacet(true);
 
         query.addFacetField("category");
 
+        query.add("defType","edismax");
+
+        query.add(DisMaxParams.MM,"60%");
+
         query.set("start", "0");
 
         query.set("rows", "1");
 
         params.add(query);
-
 //        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
@@ -272,6 +273,10 @@ public class SolrUtils {
 
             query.addFilterQuery("source:" + request.getOther());
         }
+
+        query.add("defType","edismax");
+
+        query.add(DisMaxParams.MM,"60%");
 
         setSolrPage(query, request);
 

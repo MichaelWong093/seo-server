@@ -21,7 +21,6 @@ public class SeoApplication extends SpringBootServletInitializer implements WebA
         return application.sources(SeoApplication.class);
     }
 
-
     public static void main(String[] args) throws Exception {
         SpringApplication.run(SeoApplication.class, args);
     }

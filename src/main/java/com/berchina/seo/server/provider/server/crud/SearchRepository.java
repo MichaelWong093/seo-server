@@ -3,7 +3,6 @@ package com.berchina.seo.server.provider.server.crud;
 import com.berchina.seo.server.configloader.config.solr.SolrServerFactoryBean;
 import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.utils.SolrUtils;
-import com.berchina.seo.server.provider.utils.StringUtil;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -77,10 +76,6 @@ public class SearchRepository {
      */
     private QueryResponse search(String type) throws IOException, SolrServerException
     {
-        if (StringUtil.notNull(type) && type.equals("0"))
-        {
-            return solrClient.solrClient().query("characteristic",params);
-        }
-      return solrClient.solrClient().query("goods",params);
+        return solrClient.solrClient().query("goods",params);
     }
 }
