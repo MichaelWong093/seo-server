@@ -3,6 +3,7 @@ package com.berchina.seo.server.provider.server;
 import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.model.SeoGoods;
 import com.berchina.seo.server.provider.server.crud.SearchRepository;
+import com.berchina.seo.server.provider.utils.SolrPageUtil;
 import com.berchina.seo.server.provider.utils.StringUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +32,7 @@ import java.util.Set;
 @Service
 public class SearchServer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired private SearchRepository repository;
 
@@ -52,6 +54,8 @@ public class SearchServer {
 
         if (StringUtil.notNull(seoGoods))
         {
+            SolrPageUtil.getPageInfo(maps, request, documents);
+
             maps.put("goods",seoGoods);
             // 查询分类，该功能只取系统类目
             Map<String,Object> map = this.categoryServer.search(response);

@@ -10,10 +10,13 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 /**
  * @Package com.berchina.seo.server.provider.server.crud
@@ -25,6 +28,8 @@ import java.io.IOException;
 @Repository
 public class SuggestRepository {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     @Autowired
     private SolrServerFactoryBean factoryBean;
 
@@ -32,7 +37,7 @@ public class SuggestRepository {
 
     private SolrQuery query = new SolrQuery();
 
-    private static final String COLLECTION_NAME = "sphotwd";
+    private static final String COLLECTION_NAME = "apphwd";
 
     public QueryResponse search(int start,int rows) throws IOException, SolrServerException {
         clearQuery();

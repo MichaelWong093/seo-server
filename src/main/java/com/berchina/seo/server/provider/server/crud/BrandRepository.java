@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 /**
  * @Package com.berchina.seo.server.provider.server.crud
@@ -25,7 +26,7 @@ import java.io.IOException;
 @Repository
 public class BrandRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
     private SolrServerFactoryBean bean;

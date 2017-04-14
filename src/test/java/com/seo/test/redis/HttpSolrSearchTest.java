@@ -31,25 +31,42 @@ import java.util.List;
 public class HttpSolrSearchTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpSolrSearchTest.class);
-
     public static final String SEO_CATEGORYS = "http://127.0.0.1:8983/solr/categorys";
     public static final String SEO_GOODS = "http://127.0.0.1:8983/solr/";
+    public static final String SEO_CATEREV = "http://127.0.0.1:8983/solr/caterev";
 
     public static final String SOLR_HOME = "http://127.0.0.1:8983/solr/";
 
-    public static final String SEO_CATEREV = "http://127.0.0.1:8983/solr/caterev";
 
     @Test
     public void search() throws IOException, SolrServerException {
 
-//        HttpSolrClient categoryClient = new HttpSolrClient.Builder(SEO_CATEGORYS).build();
-
         HttpSolrClient solrClient = new HttpSolrClient.Builder(SOLR_HOME).build();
+//        String keywords = "黑加仑葡萄干500g 仅限网点自提";
+//        SolrQuery query = new SolrQuery();
+//        query.setQuery(keywords);
+//        query.add(CommonParams.DF,"hotwords");
+//        query.setStart(0);
+//        query.setRows(100);
+//        query.addField("hotwords");
+//
+//        QueryResponse response = solrClient.query("goods",query);
+//
+//        SolrDocumentList documents = response.getResults();
+//
+//        System.out.println(query.toQueryString());
+//
+//        for (SolrDocument doc : documents)
+//        {
+//            System.out.println(doc.get("hotwords"));
+//        }
+        setGoods(solrClient);
+    }
 
+    public void setGoods(HttpSolrClient solrClient) throws SolrServerException, IOException {
         SearchServer server = new SearchServer();
-
 //        HttpSolrClient cateRevClient = new HttpSolrClient.Builder(SEO_CATEREV).build();
-        String keywords = "牛肉面";
+        String keywords = "【三维e家】草莓 1kg(±2%)仅限网点自提";
         ModifiableSolrParams params = new ModifiableSolrParams();
         SolrQuery query = new SolrQuery();
         query.setQuery(keywords);
@@ -144,6 +161,5 @@ public class HttpSolrSearchTest {
         CategoryServer.Brand brand = new CategoryServer.Brand();
 
         System.out.println(JSON.toJSON(brand.brand(brdRsp.getResults())));
-
     }
 }

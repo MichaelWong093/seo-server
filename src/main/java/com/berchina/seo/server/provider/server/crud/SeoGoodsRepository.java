@@ -24,6 +24,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ import java.util.Set;
 
 /**
  * @Package com.berchina.seo.server.provider.server.crud
- * @Description: TODO ( 搜索持久类 )
+ * @Description: 搜索持久类
  * @Author 任小斌  renxiaobin@berchin.com
  * @Date 16/9/5 下午2:22
  * @Version V1.0
@@ -39,22 +40,20 @@ import java.util.Set;
 @Repository
 public class SeoGoodsRepository extends SeoAbstractRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SeoGoodsRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
     private LoggerConfigure Logger;
 
+    @Autowired private SearchRepository repository;
+
     public void seoGoodsRepository(Map<String, Object> goodsMap, SeoRequest request) throws IOException, SolrServerException {
-
-        QueryResponse response;
-
-        LinkedList<SeoGoods> seoGoodses;
 
         super.InitGoods();
 
         ModifiableSolrParams params = new ModifiableSolrParams();
 
-        SolrUtils.querys(request, params, false);
+//        SolrUtils.querys(request, params, false);
 
         if (Logger.info()) {
 
@@ -62,21 +61,28 @@ public class SeoGoodsRepository extends SeoAbstractRepository {
         } else {
             Cat.logEvent("SOLR.Query", "seoGoodsRepository", Transaction.SUCCESS, params.toQueryString());
         }
+
+        repository.search(request,params);
+
+        QueryResponse response = goodsClient.query(params);
+
+        LinkedList<SeoGoods> seoGoodses = this.querySolrDocuments(goodsMap, request, params, goodsClient);
+
         /**
-         * 区分特色频道搜索，与普通商品搜索
+         * 区分特色频道搜索，与普通商品搜索 type eq 0 : 特产频道
          */
-        if (request.getType().equals("1")) {
-
-            response = goodsClient.query(params);
-
-            seoGoodses = this.querySolrDocuments(goodsMap, request, params, goodsClient);
-
-        } else {
-
-            response = speClient.query(params);
-
-            seoGoodses = this.querySolrDocuments(goodsMap, request, params, speClient);
-        }
+//        if (request.getType().equals("1")) {
+//
+//            response = goodsClient.query(params);
+//
+//            seoGoodses = this.querySolrDocuments(goodsMap, request, params, goodsClient);
+//
+//        } else {
+//
+//            response = speClient.query(params);
+//
+//            seoGoodses = this.querySolrDocuments(goodsMap, request, params, speClient);
+//        }
 
         if (response.getFacetFields().get(0).getValues().get(0).getCount() > 0) {
 

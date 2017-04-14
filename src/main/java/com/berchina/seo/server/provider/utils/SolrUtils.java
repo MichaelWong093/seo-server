@@ -204,6 +204,7 @@ public class SolrUtils {
 //        LOGGER.info(" [ SOLR SQL 语法: {}] ", query);
     }
 
+    @Deprecated
     public static void querys(SeoRequest request, ModifiableSolrParams params, boolean flag) {
 
         SolrQuery query = new SolrQuery();

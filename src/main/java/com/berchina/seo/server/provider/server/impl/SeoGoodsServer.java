@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.Map;
 
 /**
@@ -28,7 +29,7 @@ import java.util.Map;
 @Service
 public class SeoGoodsServer implements SeoServer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SeoGoodsServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     @Autowired
     private SeoGoodsRepository repository;
     @Autowired
