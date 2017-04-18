@@ -37,12 +37,16 @@
                     <artifactId>assertj-core</artifactId>
                     <groupId>org.assertj</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>asm</artifactId>
+                    <groupId>org.ow2.asm</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-solrj</artifactId>
-            <version>6.4.2</version>
+            <version>6.5.0</version>
             <exclusions>
                 <exclusion>
                     <artifactId>guava</artifactId>
@@ -129,7 +133,33 @@
             <groupId>com.dianping.cat</groupId>
             <artifactId>cat-client</artifactId>
             <version>1.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+        <!--<dependency>
+            <groupId>com.github.healthonnet</groupId>
+            <artifactId>hon-lucene-synonyms</artifactId>
+            <version>5.0.6-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>solr-solrj</artifactId>
+                    <groupId>org.apache.solr</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>lucene-sandbox</artifactId>
+                    <groupId>org.apache.lucene</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>-->
     </dependencies>
     <build>
         <plugins>

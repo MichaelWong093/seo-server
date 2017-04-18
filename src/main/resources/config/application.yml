@@ -20,4 +20,4 @@ seo:
   system:
     request:
       adapter: goods,shop,gdhotwd,sphotwd,category,categorys,caterev,sku,brand,brandrev,splitter,characteristic,suggest,keywords,search
-debug: false
+debug: true

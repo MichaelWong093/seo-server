@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +19,7 @@ import java.util.Map;
  * @Date 2016年9月16日 下午3:05:28
  * @Version V1.0
  */
-@Component
+//@Component
 public class SolrIndexSheduleTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(SolrIndexSheduleTask.class);
 

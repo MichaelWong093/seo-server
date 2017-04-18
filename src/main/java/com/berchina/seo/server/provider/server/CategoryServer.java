@@ -45,6 +45,8 @@ public class CategoryServer {
             maps.put("logistic",setLogistics(this.setfacet(response.getFacetFields().get(1).getValues())));
 
             maps.put("brand",new Brand().brand(brandRepository.brand(brandRepository.brand(query),query).getResults()));
+
+
         }
         return maps;
     }

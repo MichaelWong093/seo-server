@@ -42,6 +42,8 @@ public class SearchRepository {
 
     public QueryResponse search(SeoRequest request) throws IOException, SolrServerException {
 
+//        df=hotwords&fl=hotwords&indent=on&q=苹果手机&wt=json&defType=synonym_edismax&synonyms=true&rows=20
+
         query.clear();
         params.clear();
 
@@ -52,8 +54,9 @@ public class SearchRepository {
         query.setFacet(true);
         query.setFacetLimit(10);
 
-        query.add("defType","edismax");
-        query.add(DisMaxParams.MM,"60%");
+        query.add("synonyms","true");
+        query.add("defType","synonym_edismax");
+        query.add(DisMaxParams.MM,"100%");
 
 
         query.setStart(Integer.valueOf(request.getStart()));
