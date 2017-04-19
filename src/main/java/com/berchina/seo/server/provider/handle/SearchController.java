@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,5 +31,11 @@ public class SearchController {
     ResponseEntity search(HttpServletRequest request) throws IOException, SolrServerException {
 
         return new ResponseEntity(search.search(new SeoRequest(request)), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/search/change/v2")
+    ResponseEntity change(@RequestParam String category) throws IOException, SolrServerException {
+
+        return new ResponseEntity(search.change(category),HttpStatus.OK);
     }
 }

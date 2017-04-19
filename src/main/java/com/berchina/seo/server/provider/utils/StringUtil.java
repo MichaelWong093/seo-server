@@ -348,5 +348,4 @@ public class StringUtil {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(new Date());
     }
-
 }

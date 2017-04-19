@@ -1,6 +1,7 @@
 package com.berchina.seo.server.provider.server;
 
 import com.berchina.seo.server.provider.client.SeoRequest;
+import com.berchina.seo.server.provider.model.SeoCateGory;
 import com.berchina.seo.server.provider.model.SeoGoods;
 import com.berchina.seo.server.provider.server.crud.SearchRepository;
 import com.berchina.seo.server.provider.utils.SolrPageUtil;
@@ -37,6 +38,22 @@ public class SearchServer {
     @Autowired private SearchRepository repository;
 
     @Autowired private CategoryServer categoryServer;
+
+    /**
+     *  筛选入口
+     * @param category
+     * @return
+     * @throws IOException
+     * @throws SolrServerException
+     */
+    public Set<SeoCateGory> change(String category) throws IOException, SolrServerException {
+
+//        Assert.isNull(category,"category is not null");
+
+//        category = "fq=id:57+OR+id:29+OR+id:29+OR+id:54+OR+id:165+OR+id:185";
+        return categoryServer.change(category);
+    }
+
     /**
      * 商品搜索
      *

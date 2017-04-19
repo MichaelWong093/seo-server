@@ -1,26 +1,19 @@
 package com.berchina.seo.server.provider.utils;
 
-import com.berchina.seo.server.provider.client.SeoRequest;
 import com.berchina.seo.server.provider.model.SeoCateGory;
-import com.berchina.seo.server.provider.model.SeoGoods;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.FacetField;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @Package com.berchina.seo.server.provider.utils
@@ -149,5 +142,46 @@ public class CateUtils {
             }
         }
         return gories;
+    }
+
+
+    public static List<Map<String,String>> setLogistics(List<String> logisticsFacet) {
+        Map<String,String> map = Maps.newTreeMap();
+        for (String log : logisticsFacet)
+        {
+            List<String> logistics = StringUtil.splitter(",",log);
+            for (String var : logistics)
+            {
+                if (var.equals(LogisticsEnum.WDZT.getCode()))
+                {
+                    map.put(var,LogisticsEnum.WDZT.getName());
+                }
+                if (var.equals(LogisticsEnum.SHSM.getCode()))
+                {
+                    map.put(var,LogisticsEnum.SHSM.getName());
+                }
+                if(var.equals(LogisticsEnum.WLPS.getCode()))
+                {
+                    map.put(var,LogisticsEnum.WLPS.getName());
+                }
+            }
+        }
+        return org.assertj.core.util.Lists.newArrayList(map);
+    }
+
+
+    public static List<String> setfacet(List<FacetField.Count> counts) {
+        List<String> objects = org.assertj.core.util.Lists.newArrayList();
+        if (StringUtil.notNull(counts))
+        {
+            for (FacetField.Count count : counts)
+            {
+                if (count.getCount() > 0)
+                {
+                    objects.add(count.getName());
+                }
+            }
+        }
+        return objects;
     }
 }

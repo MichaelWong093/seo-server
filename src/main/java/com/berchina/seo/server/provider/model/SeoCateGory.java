@@ -20,6 +20,11 @@ public class SeoCateGory implements Serializable {
     private static final long serialVersionUID = 7648758068108775837L;
 
     /**
+     * 父级编号
+     */
+    private String id;
+
+    /**
      * 类目编号
      */
     private String key;
@@ -38,6 +43,24 @@ public class SeoCateGory implements Serializable {
     public SeoCateGory() {
     }
 
+    public SeoCateGory(String id, String key, String value) {
+        this.id = id;
+        this.key = key;
+        this.value = value;
+    }
+
+    public SeoCateGory(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getKey() {
         return key;
