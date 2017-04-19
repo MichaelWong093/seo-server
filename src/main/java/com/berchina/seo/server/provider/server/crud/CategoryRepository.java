@@ -50,9 +50,9 @@ public class CategoryRepository {
 
         query.clear();
         query.setQuery(Constants.COLON_ASTERISK);
-        query.setFields("revname", "parentid", "id", "revlevel");
+        query.setFields(this.REVNAME, this.PARENTID, this.ID, this.REVLEVEL);
         query.setRows(1024);
-        category(this.getCategoryRev(solrQuery,query), query, "id");
+        category(this.getCategoryRev(solrQuery,query), query, this.ID);
 
         LOGGER.warn("[ 展示类目 Query 指令：{} ]", query.toQueryString());
 
@@ -70,9 +70,9 @@ public class CategoryRepository {
         {
             query.clear();
             query.setQuery(solrQuery);
-            query.setFields("revid","category");
+            query.setFields(this.REVID,this.CATEGORY);
             query.setFacet(true);
-            query.addFacetField("revid");
+            query.addFacetField(this.REVID);
             query.setFacetLimit(20);
             query.setRows(1);
 
@@ -101,7 +101,7 @@ public class CategoryRepository {
         List<SeoCateGory> lists = Lists.newLinkedList();
 
         response.getResults().forEach(document -> lists.add(
-                new SeoCateGory(StringUtil.StringConvert(document.get("id")),StringUtil.StringConvert(document.get("revname")))));
+                new SeoCateGory(StringUtil.StringConvert(document.get(this.ID)),StringUtil.StringConvert(document.get(this.REVNAME)))));
         return lists;
     }
 
@@ -109,12 +109,12 @@ public class CategoryRepository {
 
         query.clear();
         query.setQuery(Constants.COLON_ASTERISK);
-        query.setFilterQueries("revlevel:1");
+        query.setFilterQueries(this.REVLEVEL_1);
         query.setRows(1024);
 
         LOGGER.warn("[ 展示类目二级类目搜索 Query 指令：{} ]", query.toQueryString());
 
-        return bean.solrClient().query("categorys",query);
+        return bean.solrClient().query(this.SORL_HOME_CATEGORYS,query);
     }
 
 
@@ -144,9 +144,9 @@ public class CategoryRepository {
             LinkedList<SeoCateGory> childs = Lists.newLinkedList();
             for (SolrDocument doc : threeCategories
                     ) {
-                String id = StringUtil.StringConvert(doc.get("parentid")),
-                        key = StringUtil.StringConvert(doc.get("id")),
-                        val = StringUtil.StringConvert(doc.get("revname"));
+                String id = StringUtil.StringConvert(doc.get(this.PARENTID)),
+                        key = StringUtil.StringConvert(doc.get(this.ID)),
+                        val = StringUtil.StringConvert(doc.get(this.REVNAME));
                 if (cateGory.getKey().equals(id))
                 {
                     childs.add(new SeoCateGory(id,key,val));
@@ -198,9 +198,25 @@ public class CategoryRepository {
     }
 
     private final String CAT_NAME = "catname";
+
     private final String CAT_ID = "category";
 
+    private final String REVNAME = "revname";
+
+    private final String PARENTID = "parentid";
+
+    private final String CATEGORY = "category";
+
+    private final String REVID = "revid";
+
+    private final String REVLEVEL_1 = "revlevel:1";
+
+    private final String REVLEVEL = "revlevel";
+
+    private final String SORL_HOME_CATEGORYS = "categorys";
+
     private final String ID = "id";
+
     private final String NAME = "name";
 
     public void category(List catList, SolrQuery query, String category) {

@@ -49,8 +49,6 @@ public class SearchServer {
     public Set<SeoCateGory> change(String category) throws IOException, SolrServerException {
 
 //        Assert.isNull(category,"category is not null");
-
-//        category = "fq=id:57+OR+id:29+OR+id:29+OR+id:54+OR+id:165+OR+id:185";
         return categoryServer.change(category);
     }
 
