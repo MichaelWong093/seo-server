@@ -1,16 +1,13 @@
 package com.berchina.seo.server.provider.server;
 
 import com.berchina.seo.server.provider.client.SeoRequest;
-import com.berchina.seo.server.provider.model.SeoCateGory;
-import com.berchina.seo.server.provider.model.SeoGoods;
 import com.berchina.seo.server.provider.server.crud.SearchRepository;
+import com.berchina.seo.server.provider.utils.CateUtils;
 import com.berchina.seo.server.provider.utils.SolrPageUtil;
 import com.berchina.seo.server.provider.utils.StringUtil;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +43,7 @@ public class SearchServer {
      * @throws IOException
      * @throws SolrServerException
      */
-    public Set<SeoCateGory> change(String category) throws IOException, SolrServerException {
+    public List<Object> change(String category) throws IOException, SolrServerException {
 
         if (StringUtil.notNull(category))
         {
@@ -66,9 +63,10 @@ public class SearchServer {
         Map<String,Object> maps = Maps.newConcurrentMap();
 
         QueryResponse response = this.repository.search(request);
+
         SolrDocumentList documents = response.getResults();
 
-        List<Object> seoGoods = setGoodsDoc(documents);
+        List<Object> seoGoods = CateUtils.setGoodsDoc(documents);
 
         if (StringUtil.notNull(seoGoods))
         {
@@ -89,34 +87,4 @@ public class SearchServer {
         }
         return maps;
     }
-
-    // 解析 Goods 信息
-    public List<Object> setGoodsDoc(SolrDocumentList documents) {
-        List<Object> seoGoods = Lists.newLinkedList();
-        for (SolrDocument doc : documents) {
-            SeoGoods goods = new SeoGoods();
-            goods.setHotwords(StringUtil.StringConvert(doc.get(this.HOTWORDS)));
-            goods.setPrices(StringUtil.StringConvert(doc.get(this.PICTURE)));
-            goods.setPicture(StringUtil.StringConvert(doc.get(this.PRICES)));
-            goods.setShopName(StringUtil.StringConvert(doc.get(this.SHOPID)));
-            goods.setSales(StringUtil.StringConvert(doc.get(this.SALES)));
-            goods.setGoodsId(StringUtil.StringConvert(doc.get(this.ID)));
-            String integral = StringUtil.StringConvert(doc.get(this.INTEGRAL));
-            goods.setIntegralflag(StringUtil.notNull(integral) ? StringUtil.StringConvert(integral) : 0);
-            goods.setSource(StringUtil.StringConvert(doc.get(this.SOURCE)));
-            goods.setType(StringUtil.StringConvert(doc.get(this.SOURCES)));
-            seoGoods.add(goods);
-        }
-        return seoGoods;
-    }
-
-    private final String PICTURE = "picture";
-    private final String INTEGRAL = "integralflag";
-    private final String PRICES = "prices";
-    private final String SHOPID = "shopid";
-    private final String SALES = "sales";
-    private final String HOTWORDS = "hotwords";
-    private final String SOURCE = "source";
-    private final String SOURCES = "sources";
-    private final String ID = "id";
 }

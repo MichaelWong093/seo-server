@@ -1,6 +1,7 @@
 package com.berchina.seo.server.provider.utils;
 
 import com.berchina.seo.server.provider.model.SeoCateGory;
+import com.berchina.seo.server.provider.model.SeoGoods;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -143,6 +144,36 @@ public class CateUtils {
         }
         return gories;
     }
+
+    // 解析 Goods 信息
+    public static List<Object> setGoodsDoc(SolrDocumentList documents) {
+        List<Object> seoGoods = Lists.newLinkedList();
+        for (SolrDocument doc : documents) {
+            SeoGoods goods = new SeoGoods();
+            goods.setHotwords(StringUtil.StringConvert(doc.get(HOTWORDS)));
+            goods.setPrices(StringUtil.StringConvert(doc.get(PICTURE)));
+            goods.setPicture(StringUtil.StringConvert(doc.get(PRICES)));
+            goods.setShopName(StringUtil.StringConvert(doc.get(SHOPID)));
+            goods.setSales(StringUtil.StringConvert(doc.get(SALES)));
+            goods.setGoodsId(StringUtil.StringConvert(doc.get(ID)));
+            String integral = StringUtil.StringConvert(doc.get(INTEGRAL));
+            goods.setIntegralflag(StringUtil.notNull(integral) ? StringUtil.StringConvert(integral) : 0);
+            goods.setSource(StringUtil.StringConvert(doc.get(SOURCE)));
+            goods.setType(StringUtil.StringConvert(doc.get(SOURCES)));
+            seoGoods.add(goods);
+        }
+        return seoGoods;
+    }
+
+    private final static String PICTURE = "picture";
+    private final static String INTEGRAL = "integralflag";
+    private final static String PRICES = "prices";
+    private final static String SHOPID = "shopid";
+    private final static String SALES = "sales";
+    private final static String HOTWORDS = "hotwords";
+    private final static String SOURCE = "source";
+    private final static String SOURCES = "sources";
+    private final static String ID = "id";
 
 
     public static List<Map<String,String>> setLogistics(List<String> logisticsFacet) {

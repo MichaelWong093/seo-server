@@ -161,7 +161,7 @@ public class CategoryRepository {
                         key = StringUtil.StringConvert(doc.get(this.CATEGORY)),
                         val = StringUtil.StringConvert(doc.get(this.REVNAME));
                 if (cateGory.getKey().equals(id)) {
-                    childs.add(new SeoCateGory(id, key, val));
+                    childs.add(new SeoCateGory(key, val));
                     flag = true;
                 }
             }
