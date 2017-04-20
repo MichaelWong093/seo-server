@@ -5,12 +5,14 @@ import com.berchina.seo.server.provider.server.crud.BrandRepository;
 import com.berchina.seo.server.provider.server.crud.CategoryRepository;
 import com.berchina.seo.server.provider.utils.CateUtils;
 import com.berchina.seo.server.provider.utils.StringUtil;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.CommonParams;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,19 +45,25 @@ public class CategoryServer {
      */
     public Set<SeoCateGory> change(String category) throws IOException, SolrServerException {
 
-//        return categoryRepository.category(category,query);
+        query.clear();
 
-        return null;
+        categoryRepository.category(
+                Splitter.on(",").trimResults().omitEmptyStrings().splitToList(category),query,"category");
+
+        return categoryRepository.changeCategory(
+                categoryRepository.getCategoryRev(query.get(CommonParams.FQ),query),query,"category");
     }
 
     public Map<String ,Object> search(QueryResponse response) throws IOException, SolrServerException {
 
         Map<String ,Object> maps = Maps.newConcurrentMap();
         {
-            maps.put("category",categoryRepository.category(
-                    CateUtils.setfacet(
-                            response.getFacetFields().get(0).getValues()),query)
-            );
+            List<String> facet = CateUtils.setfacet(response.getFacetFields().get(0).getValues());
+
+            maps.put("category",categoryRepository.category(facet,query));
+
+            maps.put("categories",facet);
+
             maps.put("logistic",CateUtils.setLogistics(CateUtils.setfacet(response.getFacetFields().get(1).getValues())));
 
             maps.put("brand",new Brand().brand(brandRepository.brand(brandRepository.brand(query),query).getResults()));

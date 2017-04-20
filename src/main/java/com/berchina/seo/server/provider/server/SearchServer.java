@@ -48,8 +48,11 @@ public class SearchServer {
      */
     public Set<SeoCateGory> change(String category) throws IOException, SolrServerException {
 
-//        Assert.isNull(category,"category is not null");
-        return categoryServer.change(category);
+        if (StringUtil.notNull(category))
+        {
+            return categoryServer.change(category);
+        }
+        throw new NullPointerException("category is not empty, data structure eg：1,2,3,5");
     }
 
     /**

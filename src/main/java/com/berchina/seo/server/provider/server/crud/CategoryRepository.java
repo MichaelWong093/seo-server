@@ -51,6 +51,7 @@ public class CategoryRepository {
 
     /**
      * 展示类目二级类目所有数据
+     *
      * @param query
      * @return
      * @throws IOException
@@ -71,40 +72,35 @@ public class CategoryRepository {
             query.setFacetLimit(20);
             query.setRows(1);
             LOGGER.warn("[ 系统类目与展示类目关联 Query 指令：{} ]", query.toQueryString());
-            return response("caterev",query);
+            return response("caterev", query);
         }
         throw new SolrServerException(" unknow error");
     }
 
-    public QueryResponse response(String collection,SolrQuery query) throws IOException, SolrServerException {
-        if (null == solrClient)
-        {
-            return bean.solrClient().query(collection,query);
-        }else {
-            return solrClient.query(collection,query);
+    public QueryResponse response(String collection, SolrQuery query) throws IOException, SolrServerException {
+        if (null == solrClient) {
+            return bean.solrClient().query(collection, query);
+        } else {
+            return solrClient.query(collection, query);
         }
     }
 
-    public Set<SeoCateGory> category(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
 
-        return this.getSeoCateGories(this.twoCategories(query), this.categories(solrQuery, query));
+    public Set<SeoCateGory> changeCategory(List<String> list, SolrQuery query, String alias) throws IOException, SolrServerException {
+
+        return this.getSeoCateGories(this.twoCategories(query), this.categories(list, query, alias));
     }
 
-    public SolrDocumentList categories(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
-
+    public SolrDocumentList categories(List<String> list, SolrQuery query, String alias) throws IOException, SolrServerException {
         query.clear();
         query.setQuery(Constants.COLON_ASTERISK);
-        query.setFields(this.REVNAME, this.PARENTID, this.ID, this.REVLEVEL);
+        query.setFields(this.REVNAME, this.PARENTID, this.CATEGORY, this.REVLEVEL);
         query.setRows(1024);
-
-//        this.category(revCategory,query,"category");
-
-        category(this.getCategoryRev(solrQuery, query), query, this.ID);
-
+        alias = StringUtil.notNull(alias) ? alias : this.CATEGORY;
+        category(list, query, alias);
         LOGGER.warn("[ 展示类目 Query 指令：{} ]", query.toQueryString());
-        return response("categorys",query).getResults();
+        return response("categorys", query).getResults();
     }
-
 
     public List<String> getCategoryRev(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
 
@@ -123,20 +119,27 @@ public class CategoryRepository {
         query.setQuery(Constants.COLON_ASTERISK);
         query.setFilterQueries(this.REVLEVEL_1);
         query.setRows(1024);
-
         LOGGER.warn("[ 展示类目二级类目搜索 Query 指令：{} ]", query.toQueryString());
-        return response(this.SORL_HOME_CATEGORYS,query);
+        return response(this.SORL_HOME_CATEGORYS, query);
     }
 
 
+    /**
+     * 系统展示类目在结果页展示分类区域 @ 与 筛选类目无关
+     *
+     * @param ids
+     * @param query
+     * @return
+     * @throws IOException
+     * @throws SolrServerException
+     */
     public List<Object> category(List<String> ids, SolrQuery query) throws IOException, SolrServerException {
         query.clear();
         query.setQuery(Constants.COLON_ASTERISK);
         query.setFields(this.CAT_NAME, this.CAT_ID);
         category(ids, query, this.CAT_ID);
-
         LOGGER.warn("[ 类目搜索 Query 指令：{} ]", query.toQueryString());
-        return category(response(this.CAT_ID,query).getResults());
+        return category(response(this.CAT_ID, query).getResults());
     }
 
     /**

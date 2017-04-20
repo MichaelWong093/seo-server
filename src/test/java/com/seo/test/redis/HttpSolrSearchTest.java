@@ -3,12 +3,12 @@ package com.seo.test.redis;
 import com.alibaba.fastjson.JSON;
 import com.berchina.seo.server.provider.model.SeoCateGory;
 import com.berchina.seo.server.provider.server.CategoryServer;
-import com.berchina.seo.server.provider.server.SearchServer;
 import com.berchina.seo.server.provider.server.crud.CategoryRepository;
 import com.berchina.seo.server.provider.utils.CateUtils;
 import com.berchina.seo.server.provider.utils.Constants;
 import com.berchina.seo.server.provider.utils.SolrUtils;
 import com.berchina.seo.server.provider.utils.StringUtil;
+import com.google.common.collect.Maps;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -39,35 +40,13 @@ public class HttpSolrSearchTest {
 
     public static final String SOLR_HOME = "http://127.0.0.1:8983/solr/";
 
-    private String categoryQuery;
-
+    private Map<String,String> categoryQuery = Maps.newConcurrentMap();
 
     @Test
     public void search() throws IOException, SolrServerException {
 
-//        IntStream is = IntStream.builder().add(10).add(20).add(-2).build();
-
-//        is.filter(e -> e > 0).forEach(System.out::println);
-
         HttpSolrClient solrClient = new HttpSolrClient.Builder(SOLR_HOME).build();
-//        String keywords = "黑加仑葡萄干500g 仅限网点自提";
-//        SolrQuery query = new SolrQuery();
-//        query.setQuery(keywords);
-//        query.add(CommonParams.DF,"hotwords");
-//        query.setStart(0);
-//        query.setRows(100);
-//        query.addField("hotwords");
-//
-//        QueryResponse response = solrClient.query("goods",query);
-//
-//        SolrDocumentList documents = response.getResults();
-//
-//        System.out.println(query.toQueryString());
-//
-//        for (SolrDocument doc : documents)
-//        {
-//            System.out.println(doc.get("hotwords"));
-//        }
+
         setGoods(solrClient);
     }
 
@@ -75,7 +54,6 @@ public class HttpSolrSearchTest {
 
         CategoryRepository repository = new CategoryRepository(solrClient);
 
-        SearchServer server = new SearchServer();
         String keywords = "柠檬";
         ModifiableSolrParams params = new ModifiableSolrParams();
         SolrQuery query = new SolrQuery();
@@ -84,10 +62,9 @@ public class HttpSolrSearchTest {
 
         System.out.println("商品商量：" + goodsRsp.getResults().getNumFound());
 
-//        List<Object> goodsList = server.setGoodsDoc(goodsRsp.getResults());
-//        System.out.println("商品信息：" + JSON.toJSON(goodsList));
-
         List<FacetField> facetFields = getGoodsFacetFields(solrClient, repository, query, goodsRsp);
+
+
         /**
          *  配送方式
          */
@@ -109,74 +86,36 @@ public class HttpSolrSearchTest {
         /**
          * 高级刷选
          */
+
         /**
          *  根据展示三级类目获取父级类目
          *
          *  一次行读取 二级类目、遍历查找父级类目下的叶子类目
          */
+        setChange(repository, query);
+
+    }
+
+    public void setChange(CategoryRepository repository, SolrQuery query) throws IOException, SolrServerException {
         if (StringUtil.notNull(categoryQuery))
         {
-//            query.clear();
-//            query.setQuery(Constants.COLON_ASTERISK);
-//            query.setFilterQueries("revlevel:1");
-//            query.setRows(1204);
-//
-//            List<SeoCateGory> twoCategories = Lists.newLinkedList();
-//
-//            SolrDocumentList categoryList = solrClient.query("categorys", query).getResults();
-//
-//            for (SolrDocument doc : categoryList
-//                    ) {
-//                twoCategories.add(new SeoCateGory(StringUtil.StringConvert(doc.get("category")),
-//                        StringUtil.StringConvert(doc.get("revname"))));
-//            }
             List<SeoCateGory> twoCategories = repository.twoCategories(query);
 
             System.out.println(JSON.toJSON(twoCategories));
 
-            List<String> revCategory = repository.getCategoryRev(categoryQuery,query);
+            List<String> revCategory = repository.getCategoryRev(categoryQuery.get("categories"),query);
 
             System.out.println(revCategory);
 
-//            query.clear();
-//            query.setQuery(categoryQuery);
-//            query.setFields("revid", "category");
-//            query.setFacet(true);
-//            query.addFacetField("revid");
-//            query.setFacetLimit(20);
-//            query.setRows(1);
-//            System.out.println("系统类目与展示类目关联：" + query);
-//            List<FacetField> revList = solrClient.query("caterev", query).getFacetFields();
-//            List<String> revCategory = CateUtils.setfacet(revList.get(0).getValues());
-//
-//            System.out.println(revCategory);
-
-
             if (StringUtil.notNull(revCategory))
             {
-
-                /**
-                 * 展示类目
-                 */
-                query.clear();
-                query.setQuery(Constants.COLON_ASTERISK);
-                query.setFilterQueries("revlevel:2");
-                query.setFields("revname", "parentid", "category", "revlevel");
-                query.setRows(1024);
-                repository.category(revCategory, query, "category");
-
-                System.out.println("展示类目：" + query);
-
-                SolrDocumentList threeCategories = solrClient.query("categorys", query).getResults();
-
-                System.out.println("三级展示类目："+JSON.toJSON(threeCategories));
-
-                Set<SeoCateGory> set = repository.getSeoCateGories(twoCategories, threeCategories);
+                Set<SeoCateGory> set = repository.changeCategory(revCategory,query,"category");
 
                 System.out.println(JSON.toJSON(set));
             }
         }
     }
+
 
     public void setBrand(HttpSolrClient solrClient, ModifiableSolrParams params, SolrQuery query) throws SolrServerException, IOException {
         params.clear();
@@ -228,7 +167,6 @@ public class HttpSolrSearchTest {
         query.clear();
         query.setQuery(Constants.COLON_ASTERISK);
         query.setFields("catname", "category");
-
         /**
          *  系统类目
          */
@@ -240,7 +178,8 @@ public class HttpSolrSearchTest {
             repository.category(category, query, "category");
 
             if (StringUtil.notNull(category)) {
-                categoryQuery = query.get(CommonParams.FQ);
+
+                categoryQuery.put("categories",query.get(CommonParams.FQ));
             }
             System.out.println("系统类目：" + query);
             QueryResponse categoryRsp = solrClient.query("category", query);
