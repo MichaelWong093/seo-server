@@ -823,7 +823,7 @@ public class SolrUtils {
     public static String getNameByHWChannel(String channel) {
         switch (channel) {//根据 入参的类型 判别 排序的字段名称
             case Constants.SEO_GOODS_HOTWD_:
-                return Constants.INDEX_GOODSNAME;
+                return Constants.INDEX_KEYWORD;
             case Constants.SEO_SHOP_HOTWD_:
                 return Constants.INDEX_SHOPNAME;
             default:

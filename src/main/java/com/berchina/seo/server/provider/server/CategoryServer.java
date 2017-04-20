@@ -51,7 +51,6 @@ public class CategoryServer {
 
         query.clear();
 
-
         /**
          *  商品类型
          */
@@ -68,8 +67,6 @@ public class CategoryServer {
         );
 
         list.add(map_shop);
-
-
 
 
         /**
@@ -89,8 +86,6 @@ public class CategoryServer {
 
         list.add(map_prices);
 
-
-
         /**
          *  配送方式
          */
@@ -108,8 +103,6 @@ public class CategoryServer {
 
         list.add(map_delivery);
 
-
-
         /**
          *  全部分类
          */
@@ -122,7 +115,6 @@ public class CategoryServer {
         map_category.put("category_val","1111");
 
         list.add(map_category);
-
 
         /**
          * 商品分类
@@ -193,6 +185,7 @@ public class CategoryServer {
             maps.put("logistic", CateUtils.setLogistics(CateUtils.setfacet(response.getFacetFields().get(1).getValues())));
 
             maps.put("brand", new Brand().brand(brandRepository.brand(brandRepository.brand(query), query).getResults()));
+
         }
         return maps;
     }

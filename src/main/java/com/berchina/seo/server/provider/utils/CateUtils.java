@@ -197,12 +197,12 @@ public class CateUtils {
                 }
             }
         }
-        return org.assertj.core.util.Lists.newArrayList(map);
+        return Lists.newArrayList(map);
     }
 
 
     public static List<String> setfacet(List<FacetField.Count> counts) {
-        List<String> objects = org.assertj.core.util.Lists.newArrayList();
+        List<String> objects = Lists.newArrayList();
         if (StringUtil.notNull(counts))
         {
             for (FacetField.Count count : counts)

@@ -248,6 +248,8 @@ public class Constants {
      */
     public static final String INDEX_GOODSNAME = "goodsName";
 
+    public static final String INDEX_KEYWORD = "keyword";
+
     /*
      * solr 建立的索引字段 店铺名称
      */
