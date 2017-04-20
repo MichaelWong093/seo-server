@@ -43,7 +43,9 @@ public class CategoryServer {
      */
     public Set<SeoCateGory> change(String category) throws IOException, SolrServerException {
 
-        return categoryRepository.category(category,query);
+//        return categoryRepository.category(category,query);
+
+        return null;
     }
 
     public Map<String ,Object> search(QueryResponse response) throws IOException, SolrServerException {

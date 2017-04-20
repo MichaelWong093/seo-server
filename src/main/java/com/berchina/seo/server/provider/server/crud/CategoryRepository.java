@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -41,25 +42,23 @@ public class CategoryRepository {
     @Autowired
     private SolrServerFactoryBean bean;
 
-    public Set<SeoCateGory> category(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
+    private HttpSolrClient solrClient;
 
-        return this.getSeoCateGories(this.twoCategories(solrQuery, query), this.categories(solrQuery, query));
+    public CategoryRepository(HttpSolrClient solrClient) {
+
+        this.solrClient = solrClient;
     }
 
-    public SolrDocumentList categories(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
-        query.clear();
-        query.setQuery(Constants.COLON_ASTERISK);
-        query.setFields(this.REVNAME, this.PARENTID, this.ID, this.REVLEVEL);
-        query.setRows(1024);
-        category(this.getCategoryRev(solrQuery, query), query, this.ID);
-        LOGGER.warn("[ 展示类目 Query 指令：{} ]", query.toQueryString());
-        return bean.solrClient().query("categorys", query).getResults();
-    }
+    /**
+     * 展示类目二级类目所有数据
+     * @param query
+     * @return
+     * @throws IOException
+     * @throws SolrServerException
+     */
+    public List<SeoCateGory> twoCategories(SolrQuery query) throws IOException, SolrServerException {
 
-
-    public List<String> getCategoryRev(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
-
-        return CateUtils.setfacet(this.categoryRev(solrQuery, query).getFacetFields().get(0).getValues());
+        return twoCategories(twoCategory(query));
     }
 
     public QueryResponse categoryRev(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
@@ -72,39 +71,61 @@ public class CategoryRepository {
             query.setFacetLimit(20);
             query.setRows(1);
             LOGGER.warn("[ 系统类目与展示类目关联 Query 指令：{} ]", query.toQueryString());
-            return bean.solrClient().query("caterev", query);
+            return response("caterev",query);
         }
-        return null;
+        throw new SolrServerException(" unknow error");
     }
 
-    /**
-     * 展示类目二级类目所有数据
-     *
-     * @param category fq=id:57+OR+id:29+OR+id:29+OR+id:54+OR+id:165+OR+id:185
-     * @param query
-     * @return
-     * @throws IOException
-     * @throws SolrServerException
-     */
-    public List<SeoCateGory> twoCategories(String category, SolrQuery query) throws IOException, SolrServerException {
+    public QueryResponse response(String collection,SolrQuery query) throws IOException, SolrServerException {
+        if (null == solrClient)
+        {
+            return bean.solrClient().query(collection,query);
+        }else {
+            return solrClient.query(collection,query);
+        }
+    }
 
-        return twoCategories(twoCategories(query));
+    public Set<SeoCateGory> category(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
+
+        return this.getSeoCateGories(this.twoCategories(query), this.categories(solrQuery, query));
+    }
+
+    public SolrDocumentList categories(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
+
+        query.clear();
+        query.setQuery(Constants.COLON_ASTERISK);
+        query.setFields(this.REVNAME, this.PARENTID, this.ID, this.REVLEVEL);
+        query.setRows(1024);
+
+//        this.category(revCategory,query,"category");
+
+        category(this.getCategoryRev(solrQuery, query), query, this.ID);
+
+        LOGGER.warn("[ 展示类目 Query 指令：{} ]", query.toQueryString());
+        return response("categorys",query).getResults();
+    }
+
+
+    public List<String> getCategoryRev(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
+
+        return CateUtils.setfacet(this.categoryRev(solrQuery, query).getFacetFields().get(0).getValues());
     }
 
     public List<SeoCateGory> twoCategories(QueryResponse response) {
         List<SeoCateGory> lists = Lists.newLinkedList();
         response.getResults().forEach(document -> lists.add(
-                new SeoCateGory(StringUtil.StringConvert(document.get(this.ID)), StringUtil.StringConvert(document.get(this.REVNAME)))));
+                new SeoCateGory(StringUtil.StringConvert(document.get(this.CAT_ID)), StringUtil.StringConvert(document.get(this.REVNAME)))));
         return lists;
     }
 
-    public QueryResponse twoCategories(SolrQuery query) throws IOException, SolrServerException {
+    public QueryResponse twoCategory(SolrQuery query) throws IOException, SolrServerException {
         query.clear();
         query.setQuery(Constants.COLON_ASTERISK);
         query.setFilterQueries(this.REVLEVEL_1);
         query.setRows(1024);
+
         LOGGER.warn("[ 展示类目二级类目搜索 Query 指令：{} ]", query.toQueryString());
-        return bean.solrClient().query(this.SORL_HOME_CATEGORYS, query);
+        return response(this.SORL_HOME_CATEGORYS,query);
     }
 
 
@@ -113,8 +134,9 @@ public class CategoryRepository {
         query.setQuery(Constants.COLON_ASTERISK);
         query.setFields(this.CAT_NAME, this.CAT_ID);
         category(ids, query, this.CAT_ID);
+
         LOGGER.warn("[ 类目搜索 Query 指令：{} ]", query.toQueryString());
-        return category(bean.solrClient().query(this.CAT_ID, query).getResults());
+        return category(response(this.CAT_ID,query).getResults());
     }
 
     /**
@@ -133,7 +155,7 @@ public class CategoryRepository {
             for (SolrDocument doc : threeCategories
                     ) {
                 String id = StringUtil.StringConvert(doc.get(this.PARENTID)),
-                        key = StringUtil.StringConvert(doc.get(this.ID)),
+                        key = StringUtil.StringConvert(doc.get(this.CATEGORY)),
                         val = StringUtil.StringConvert(doc.get(this.REVNAME));
                 if (cateGory.getKey().equals(id)) {
                     childs.add(new SeoCateGory(id, key, val));

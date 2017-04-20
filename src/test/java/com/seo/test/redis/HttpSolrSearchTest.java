@@ -73,7 +73,7 @@ public class HttpSolrSearchTest {
 
     public void setGoods(HttpSolrClient solrClient) throws SolrServerException, IOException {
 
-        CategoryRepository repository = new CategoryRepository();
+        CategoryRepository repository = new CategoryRepository(solrClient);
 
         SearchServer server = new SearchServer();
         String keywords = "柠檬";
@@ -130,24 +130,31 @@ public class HttpSolrSearchTest {
 //                twoCategories.add(new SeoCateGory(StringUtil.StringConvert(doc.get("category")),
 //                        StringUtil.StringConvert(doc.get("revname"))));
 //            }
-            List<SeoCateGory> twoCategories = repository.twoCategories(null,query);
+            List<SeoCateGory> twoCategories = repository.twoCategories(query);
 
             System.out.println(JSON.toJSON(twoCategories));
 
-            query.clear();
-            query.setQuery(categoryQuery);
-            query.setFields("revid", "category");
-            query.setFacet(true);
-            query.addFacetField("revid");
-            query.setFacetLimit(20);
-            query.setRows(1);
-            System.out.println("系统类目与展示类目关联：" + query);
-            List<FacetField> revList = solrClient.query("caterev", query).getFacetFields();
-            List<String> revCategory = CateUtils.setfacet(revList.get(0).getValues());
+            List<String> revCategory = repository.getCategoryRev(categoryQuery,query);
+
+            System.out.println(revCategory);
+
+//            query.clear();
+//            query.setQuery(categoryQuery);
+//            query.setFields("revid", "category");
+//            query.setFacet(true);
+//            query.addFacetField("revid");
+//            query.setFacetLimit(20);
+//            query.setRows(1);
+//            System.out.println("系统类目与展示类目关联：" + query);
+//            List<FacetField> revList = solrClient.query("caterev", query).getFacetFields();
+//            List<String> revCategory = CateUtils.setfacet(revList.get(0).getValues());
+//
+//            System.out.println(revCategory);
 
 
             if (StringUtil.notNull(revCategory))
             {
+
                 /**
                  * 展示类目
                  */
