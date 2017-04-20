@@ -41,104 +41,92 @@ public class CategoryRepository {
     @Autowired
     private SolrServerFactoryBean bean;
 
-    public Set<SeoCateGory> category(String solrQuery,SolrQuery query) throws IOException, SolrServerException {
+    public Set<SeoCateGory> category(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
 
-        return this.getSeoCateGories(this.twoCategories(solrQuery,query),this.categories(solrQuery,query));
+        return this.getSeoCateGories(this.twoCategories(solrQuery, query), this.categories(solrQuery, query));
     }
 
-    public SolrDocumentList categories(String solrQuery,SolrQuery query) throws IOException, SolrServerException {
-
+    public SolrDocumentList categories(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
         query.clear();
         query.setQuery(Constants.COLON_ASTERISK);
         query.setFields(this.REVNAME, this.PARENTID, this.ID, this.REVLEVEL);
         query.setRows(1024);
-        category(this.getCategoryRev(solrQuery,query), query, this.ID);
-
+        category(this.getCategoryRev(solrQuery, query), query, this.ID);
         LOGGER.warn("[ 展示类目 Query 指令：{} ]", query.toQueryString());
-
-       return bean.solrClient().query("categorys",query).getResults();
+        return bean.solrClient().query("categorys", query).getResults();
     }
 
 
-    public List<String> getCategoryRev(String solrQuery,SolrQuery query) throws IOException, SolrServerException {
+    public List<String> getCategoryRev(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
 
-        return CateUtils.setfacet(this.categoryRev(solrQuery,query).getFacetFields().get(0).getValues());
+        return CateUtils.setfacet(this.categoryRev(solrQuery, query).getFacetFields().get(0).getValues());
     }
 
-    public QueryResponse categoryRev(String solrQuery,SolrQuery query) throws IOException, SolrServerException {
-        if (StringUtil.notNull(solrQuery))
-        {
+    public QueryResponse categoryRev(String solrQuery, SolrQuery query) throws IOException, SolrServerException {
+        if (StringUtil.notNull(solrQuery)) {
             query.clear();
             query.setQuery(solrQuery);
-            query.setFields(this.REVID,this.CATEGORY);
+            query.setFields(this.REVID, this.CATEGORY);
             query.setFacet(true);
             query.addFacetField(this.REVID);
             query.setFacetLimit(20);
             query.setRows(1);
-
             LOGGER.warn("[ 系统类目与展示类目关联 Query 指令：{} ]", query.toQueryString());
-
-            return bean.solrClient().query("caterev",query);
+            return bean.solrClient().query("caterev", query);
         }
         return null;
     }
 
     /**
-     *  展示类目二级类目所有数据
+     * 展示类目二级类目所有数据
+     *
      * @param category fq=id:57+OR+id:29+OR+id:29+OR+id:54+OR+id:165+OR+id:185
      * @param query
      * @return
      * @throws IOException
      * @throws SolrServerException
      */
-    public List<SeoCateGory> twoCategories(String category,SolrQuery query) throws IOException, SolrServerException {
+    public List<SeoCateGory> twoCategories(String category, SolrQuery query) throws IOException, SolrServerException {
 
         return twoCategories(twoCategories(query));
     }
 
-    public List<SeoCateGory> twoCategories(QueryResponse response)
-    {
+    public List<SeoCateGory> twoCategories(QueryResponse response) {
         List<SeoCateGory> lists = Lists.newLinkedList();
-
         response.getResults().forEach(document -> lists.add(
-                new SeoCateGory(StringUtil.StringConvert(document.get(this.ID)),StringUtil.StringConvert(document.get(this.REVNAME)))));
+                new SeoCateGory(StringUtil.StringConvert(document.get(this.ID)), StringUtil.StringConvert(document.get(this.REVNAME)))));
         return lists;
     }
 
     public QueryResponse twoCategories(SolrQuery query) throws IOException, SolrServerException {
-
         query.clear();
         query.setQuery(Constants.COLON_ASTERISK);
         query.setFilterQueries(this.REVLEVEL_1);
         query.setRows(1024);
-
         LOGGER.warn("[ 展示类目二级类目搜索 Query 指令：{} ]", query.toQueryString());
-
-        return bean.solrClient().query(this.SORL_HOME_CATEGORYS,query);
+        return bean.solrClient().query(this.SORL_HOME_CATEGORYS, query);
     }
 
 
-    public List<Object> category(List<String> ids,SolrQuery query) throws IOException, SolrServerException {
-
+    public List<Object> category(List<String> ids, SolrQuery query) throws IOException, SolrServerException {
         query.clear();
         query.setQuery(Constants.COLON_ASTERISK);
-        query.setFields(this.CAT_NAME,this.CAT_ID);
-        category(ids,query,this.CAT_ID);
-
+        query.setFields(this.CAT_NAME, this.CAT_ID);
+        category(ids, query, this.CAT_ID);
         LOGGER.warn("[ 类目搜索 Query 指令：{} ]", query.toQueryString());
-        return category(bean.solrClient().query(this.CAT_ID,query).getResults());
+        return category(bean.solrClient().query(this.CAT_ID, query).getResults());
     }
 
     /**
-     *  刷选 分类
-     * @param twoCategories  展示类目二级分类
+     * 刷选 分类
+     *
+     * @param twoCategories   展示类目二级分类
      * @param threeCategories 展示类目三级分类
-     * @return  展示类目结构
+     * @return 展示类目结构
      */
     public Set<SeoCateGory> getSeoCateGories(List<SeoCateGory> twoCategories, SolrDocumentList threeCategories) {
         Set<SeoCateGory> set = Sets.newLinkedHashSet();
-        for (SeoCateGory cateGory : twoCategories)
-        {
+        for (SeoCateGory cateGory : twoCategories) {
             boolean flag = false;
             SeoCateGory seoCateGory = new SeoCateGory();
             LinkedList<SeoCateGory> childs = Lists.newLinkedList();
@@ -147,14 +135,12 @@ public class CategoryRepository {
                 String id = StringUtil.StringConvert(doc.get(this.PARENTID)),
                         key = StringUtil.StringConvert(doc.get(this.ID)),
                         val = StringUtil.StringConvert(doc.get(this.REVNAME));
-                if (cateGory.getKey().equals(id))
-                {
-                    childs.add(new SeoCateGory(id,key,val));
+                if (cateGory.getKey().equals(id)) {
+                    childs.add(new SeoCateGory(id, key, val));
                     flag = true;
                 }
             }
-            if (flag)
-            {
+            if (flag) {
                 seoCateGory.setKey(cateGory.getKey());
                 seoCateGory.setValue(cateGory.getValue());
                 seoCateGory.setChilds(childs);
@@ -168,29 +154,26 @@ public class CategoryRepository {
     public List<Object> category(SolrDocumentList documents) {
         List<Object> lists = Lists.newLinkedList();
         boolean flag = true;
-        for (SolrDocument doc : documents)
-        {
-            Map<String,String> map = Maps.newTreeMap();
+        for (SolrDocument doc : documents) {
+            Map<String, String> map = Maps.newTreeMap();
             String name = StringUtil.StringConvert(doc.get(this.CAT_NAME));
             String id = StringUtil.StringConvert(doc.get(this.CAT_ID));
-            for (int i =0 ; i < lists.size(); i ++)
-            {
-                Map<String,String> val = (Map<String, String>) lists.get(i);
+            for (int i = 0; i < lists.size(); i++) {
+                Map<String, String> val = (Map<String, String>) lists.get(i);
                 String key = val.get(this.NAME);
-                if (key.equals(name))
-                {
+                if (key.equals(name)) {
                     flag = false;
                     String k = val.get(this.ID).concat(",").concat(id);
-                    map.put(this.ID,name);
-                    map.put(this.NAME,k);
+                    map.put(this.ID, name);
+                    map.put(this.NAME, k);
                     lists.add(map);
                     lists.remove(lists.get(i));
                     break;
                 }
             }
-            if (flag){
-                map.put(this.ID,id);
-                map.put(this.NAME,name);
+            if (flag) {
+                map.put(this.ID, id);
+                map.put(this.NAME, name);
                 lists.add(map);
             }
         }
@@ -230,14 +213,12 @@ public class CategoryRepository {
     public void setSolrQuery(List catList, Object object, String category) {
         boolean flag = true;
         Map<String, String[]> params = Maps.newConcurrentMap();
-        if (object instanceof Map)
-        {
+        if (object instanceof Map) {
             params = (Map<String, String[]>) object;
             flag = true;
         }
         SolrQuery query = new SolrQuery();
-        if (object instanceof SolrQuery)
-        {
+        if (object instanceof SolrQuery) {
             query = (SolrQuery) object;
             flag = false;
         }
