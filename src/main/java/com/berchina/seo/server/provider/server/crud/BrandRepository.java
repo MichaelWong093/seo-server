@@ -51,10 +51,13 @@ public class BrandRepository {
         {
             query.clear();
             query.setQuery(Constants.COLON_ASTERISK);
-            query.addFilterQuery(filterQuery);
+            if (StringUtil.notNull(filterQuery))
+            {
+                query.addFilterQuery(filterQuery);
+            }
             query.setFields(this.BRAND_ID,this.CHINESE_NAME,this.BRAND_LOGE);
 
-            LOGGER.warn("[ 品牌搜索 Query 指令：{} ]", query.toQueryString());
+            LOGGER.warn("[ 品牌搜索 Query 指令：{} ]", query);
             return bean.solrClient().query(this.BRAND,query);
         }
        return new QueryResponse();

@@ -57,7 +57,7 @@ public class SplitterController {
 
         server.deleteStop(key);
         return new ResponseEntity(
-                new Response<String>(new Date().toString(), HttpStatus.OK.value(),
+                new Response<String>(new Date().toString(), "200",
                         "ok", SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
@@ -89,7 +89,7 @@ public class SplitterController {
         server.deleteCustom(key);
 
         return new ResponseEntity(
-                new Response<String>(new Date().toString(), HttpStatus.OK.value(),
+                new Response<String>(new Date().toString(), "200",
                         "ok", SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
@@ -124,7 +124,7 @@ public class SplitterController {
         server.addStop(key, value);
 
         return new ResponseEntity(
-                new Response<String>(new Date().toString(), HttpStatus.OK.value(),
+                new Response<String>(new Date().toString(), "200",
                         new String().concat(key).concat(" : ").concat(value), SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
@@ -160,7 +160,7 @@ public class SplitterController {
         server.addCustom(key, value);
 
         return new ResponseEntity(
-                new Response<String>(new Date().toString(), HttpStatus.OK.value(),
+                new Response<String>(new Date().toString(), "200",
                         new String().concat(key).concat(" : ").concat(value), SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 
@@ -230,7 +230,7 @@ public class SplitterController {
     public ResponseEntity<Map<String, String>> put(@PathVariable String keys, @PathVariable String key) {
 
         return new ResponseEntity(
-                new Response<String>(new Date().toString(), HttpStatus.OK.value(),
+                new Response<String>(new Date().toString(), "200",
                         JSON.toJSONString(server.put(keys, key)), SerialNumber.getInstance().generaterNextNumber()), HttpStatus.OK);
     }
 }

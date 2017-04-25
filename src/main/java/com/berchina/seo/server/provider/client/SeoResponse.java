@@ -3,7 +3,6 @@ package com.berchina.seo.server.provider.client;
 import com.berchina.seo.server.provider.client.base.Response;
 import com.berchina.seo.server.provider.model.SeoHotWords;
 import com.google.common.collect.Maps;
-import org.apache.http.HttpStatus;
 
 import java.io.Serializable;
 import java.util.List;
@@ -35,7 +34,7 @@ public class SeoResponse extends Response implements Serializable {
     public SeoResponse(Map<String, Object> seoCateMap, SeoRequest seoRequest)
     {
         super.setTime(seoRequest.getTime());
-        super.setCode(HttpStatus.SC_OK);
+        super.setCode("0000");
         super.setMessage("成功");
         if (null != seoRequest)
         {

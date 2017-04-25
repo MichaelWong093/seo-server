@@ -43,9 +43,10 @@ public class CategoryServer {
      * 结果页全部分类
      *
      * @param category
+     * @param brand
      * @return
      */
-    public List<Object> change(String category) throws IOException, SolrServerException {
+    public List<Object> change(String category,String brand) throws IOException, SolrServerException {
 
         List<Object> list = Lists.newLinkedList();
 
@@ -67,7 +68,6 @@ public class CategoryServer {
         );
 
         list.add(map_shop);
-
 
         /**
          *  价格区间
@@ -112,45 +112,56 @@ public class CategoryServer {
          */
         map_category.put("category_key", "全部分类");
 
-        map_category.put("category_val","1111");
+//        map_category.put("category_val","1111");
 
         list.add(map_category);
 
-        /**
-         * 商品分类
-         */
-        Map<String, Object> map_cate = Maps.newConcurrentMap();
-        /**
-         * 分类键
-         */
-        map_cate.put("cate_key", "分类");
+        if (StringUtil.notNull(category))
+        {
+            /**
+             * 商品分类
+             */
+            Map<String, Object> map_cate = Maps.newConcurrentMap();
+            /**
+             * 分类键
+             */
+            map_cate.put("cate_key", "分类");
 
-        categoryRepository.category(
-                Splitter.on(",").trimResults().omitEmptyStrings().splitToList(category), query, "category");
+            categoryRepository.category(
+                    Splitter.on(",").trimResults().omitEmptyStrings().splitToList(category), query, "category");
+            /**
+             * 分类值
+             */
+            map_cate.put("cate_val", categoryRepository.changeCategory(categoryRepository.getCategoryRev(query.get(CommonParams.FQ), query), query, "category"));
 
-        /**
-         * 分类值
-         */
-        map_cate.put("cate_val", categoryRepository.changeCategory(categoryRepository.getCategoryRev(query.get(CommonParams.FQ), query), query, "category"));
-
-        list.add(map_cate);
+            list.add(map_cate);
+        }
 
 
-        /**
-         * 商品品牌
-         */
-        Map<String, Object> map_brand = Maps.newConcurrentMap();
-        /**
-         * 商品品牌 key
-         */
-        map_brand.put("brand_key", "品牌");
 
-        /**
-         * 商品品牌 value
-         */
-        map_brand.put("brand_val", "4，5，6");
+        if (StringUtil.notNull(brand))
+        {
+            /**
+             * 商品品牌
+             */
+            Map<String, Object> map_brand = Maps.newConcurrentMap();
+            /**
+             * 商品品牌 key
+             */
+            map_brand.put("brand_key", "品牌");
 
-        list.add(map_brand);
+            query.clear();
+
+            categoryRepository.category(
+                    Splitter.on(",").trimResults().omitEmptyStrings().splitToList(brand), query, "id");
+            /**
+             * 商品品牌 value
+             */
+            map_brand.put("brand_val", new Brand().brand(brandRepository.brand(query.get(CommonParams.FQ), query).getResults()));
+
+            list.add(map_brand);
+        }
+
 
 
         /**
@@ -180,12 +191,26 @@ public class CategoryServer {
 
             maps.put("category", categoryRepository.category(facet, query));
 
-            maps.put("categories", facet);
-
             maps.put("logistic", CateUtils.setLogistics(CateUtils.setfacet(response.getFacetFields().get(1).getValues())));
 
-            maps.put("brand", new Brand().brand(brandRepository.brand(brandRepository.brand(query), query).getResults()));
+            List<Brand> brand = new Brand().brand(brandRepository.brand(brandRepository.brand(query), query).getResults());
 
+            maps.put("brand", brand);
+
+            if (StringUtil.notNull(brand))
+            {
+                List<Object> list = Lists.newLinkedList();
+
+                Map<String,Object> map = Maps.newConcurrentMap();
+
+                map.put("category", facet);
+
+                brand.forEach( b -> list.add(b.getId()));
+
+                map.put("brand",list);
+
+                maps.put("change", map);
+            }
         }
         return maps;
     }

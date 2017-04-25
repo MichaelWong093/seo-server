@@ -20,7 +20,7 @@ public class Response<T> implements Serializable {
     /**
      * 响应状态
      */
-    private Integer code;
+    private String code;
 
     /**
      * 响应信息
@@ -35,7 +35,7 @@ public class Response<T> implements Serializable {
     public Response() {
     }
 
-    public Response(String time,  Integer code, String message, String serialNum) {
+    public Response(String time,  String code, String message, String serialNum) {
         this.time = time;
         this.code = code;
         this.message = message;
@@ -50,11 +50,11 @@ public class Response<T> implements Serializable {
         this.time = time;
     }
 
-    public Integer getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

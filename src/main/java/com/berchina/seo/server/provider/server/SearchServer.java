@@ -43,11 +43,11 @@ public class SearchServer {
      * @throws IOException
      * @throws SolrServerException
      */
-    public List<Object> change(String category) throws IOException, SolrServerException {
+    public List<Object> change(String category,String brand) throws IOException, SolrServerException {
 
-        if (StringUtil.notNull(category))
+        if (StringUtil.notNull(category) || StringUtil.notNull(brand))
         {
-            return categoryServer.change(category);
+            return categoryServer.change(category,brand);
         }
         throw new NullPointerException("category is not empty, data structure eg：1,2,3,5");
     }

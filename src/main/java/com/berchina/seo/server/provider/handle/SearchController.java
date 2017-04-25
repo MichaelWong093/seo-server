@@ -34,8 +34,8 @@ public class SearchController {
     }
 
     @RequestMapping(value = "/search/change/v2")
-    ResponseEntity change(@RequestParam String category) throws IOException, SolrServerException {
+    ResponseEntity change(@RequestParam String category, @RequestParam String brand) throws IOException, SolrServerException {
 
-        return new ResponseEntity(search.change(category),HttpStatus.OK);
+        return new ResponseEntity(search.change(category, brand), HttpStatus.OK);
     }
 }
