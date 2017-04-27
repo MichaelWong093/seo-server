@@ -1,6 +1,5 @@
 package com.seo.test.java8;
 
-import com.google.common.collect.Maps;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -8,7 +7,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.*;
 
@@ -21,16 +19,73 @@ import java.util.concurrent.*;
  */
 public class CompletableFutureTest {
 
+    public class Shop {
 
+        private String name;
 
-    @Test
-    public void future() throws ExecutionException, InterruptedException, IOException {
+        private Random random = new Random();
 
+        public Double getPricesByName(String name) {
+            delay();
+            return random.nextDouble() * name.charAt(0) + name.charAt(1);
+        }
 
+        public void delay() {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public Future<Double> getPriceAsync(String name) {
+            CompletableFuture<Double> future = new CompletableFuture<>();
+            new Thread(() -> {
+                Double price = getPricesByName(name);
+                future.complete(price);
+            }).start();
+            return future;
+        }
+
+        public void doSomethingElse() {
+
+            System.out.println("做其他的事情");
+        }
     }
 
+    @Test
+    public void future() throws ExecutionException, InterruptedException, IOException, TimeoutException {
+
+        Shop shop = new Shop();
+        long start = System.currentTimeMillis();
+        Future<Double> future = shop.getPriceAsync("苹果");
+        long invocationTime = System.currentTimeMillis() - start;
+        System.out.println("调用接口时间：" + invocationTime + "毫秒");
+        shop.doSomethingElse();
+        try {
+            Double prices = future.get();
+            System.out.printf("" + prices);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        long retrievalTime = System.currentTimeMillis() - start;
+        System.out.printf(" 时间： " + retrievalTime);
+    }
+
+    public void futures() throws InterruptedException, ExecutionException, TimeoutException {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+
+        Future future = executorService.submit((Callable<Object>) () -> new Double(1.00));
+
+        Double result = (Double) future.get(1, TimeUnit.SECONDS);
+
+        System.out.println("result : " + result);
+
+        System.out.printf("hello! what you name?");
+    }
 
     private static Random random = new Random();
+
     private static long t = System.currentTimeMillis();
 
     static String hello() {
@@ -138,7 +193,6 @@ public class CompletableFutureTest {
         System.out.println(f.get());
 //        System.in.read();
     }
-
 
     public static CompletableFuture<Integer> compute() {
         final CompletableFuture<Integer> future = new CompletableFuture<>();

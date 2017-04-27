@@ -43,7 +43,6 @@ public class SearchRepository {
     public QueryResponse search(SeoRequest request) throws IOException, SolrServerException {
 
 //        df=hotwords&fl=hotwords&indent=on&q=苹果手机&wt=json&defType=synonym_edismax&synonyms=true&rows=20
-
         query.clear();
         params.clear();
 

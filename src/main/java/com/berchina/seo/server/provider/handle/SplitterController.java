@@ -8,6 +8,7 @@ import com.hankcs.hanlp.seg.common.Term;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +53,7 @@ public class SplitterController {
                     @ApiResponse(code = 403, message = "服务器接受请求，但是被拒绝处理"),
             }
     )
-    @RequestMapping(value = "/splitter/v2/stop", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/splitter/v2/stop", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Response<String>> deleteStop(@RequestParam(value = "key") String key) {
 
         server.deleteStop(key);
@@ -83,7 +84,7 @@ public class SplitterController {
                     @ApiResponse(code = 403, message = "服务器接受请求，但是被拒绝处理"),
             }
     )
-    @RequestMapping(value = "/splitter/v2/custom", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/splitter/v2/custom", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<String> deleteCustom(@RequestParam(value = "key") String key) {
 
         server.deleteCustom(key);
@@ -118,7 +119,7 @@ public class SplitterController {
                     @ApiResponse(code = 404, message = "请求服务器资源不存在"),
             }
     )
-    @RequestMapping(value = "/splitter/v2/stop", method = RequestMethod.PUT)
+    @RequestMapping(value = "/splitter/v2/stop", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Response<String>> addStop(@RequestParam(value = "key") String key, @RequestParam(value = "value") String value) {
 
         server.addStop(key, value);
@@ -154,7 +155,7 @@ public class SplitterController {
                     @ApiResponse(code = 404, message = "请求服务器资源不存在"),
             }
     )
-    @RequestMapping(value = "/splitter/v2/custom", method = RequestMethod.PUT)
+    @RequestMapping(value = "/splitter/v2/custom", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<StringBuilder> addCustom(@RequestParam(value = "key") String key, @RequestParam(value = "value") String value) {
 
         server.addCustom(key, value);
@@ -189,7 +190,7 @@ public class SplitterController {
                     @ApiResponse(code = 500, message = "服务器不能完成请求")
             }
     )
-    @RequestMapping(value = "/splitter/v2/", method = RequestMethod.POST)
+    @RequestMapping(value = "/splitter/v2/", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<Term> splitter(@RequestParam String keywords) {
 
         Assert.notNull(keywords, " keywords is not empty");
@@ -226,7 +227,7 @@ public class SplitterController {
                     @ApiResponse(code = 500, message = "服务器不能完成请求")
             }
     )
-    @RequestMapping(value = "/splitter/v2/{keys}/{key}", method = RequestMethod.GET)
+    @RequestMapping(value = "/splitter/v2/{keys}/{key}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Map<String, String>> put(@PathVariable String keys, @PathVariable String key) {
 
         return new ResponseEntity(

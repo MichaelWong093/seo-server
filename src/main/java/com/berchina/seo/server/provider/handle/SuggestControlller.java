@@ -4,6 +4,7 @@ import com.berchina.seo.server.provider.server.SuggestServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,31 +28,31 @@ public class SuggestControlller {
     @Autowired
     private SuggestServer suggestServer;
 
-    @RequestMapping(value = "/suggest/search/v2/{start}/{rows}", method = RequestMethod.GET)
+    @RequestMapping(value = "/suggest/search/v2/{start}/{rows}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity search(@PathVariable int start, @PathVariable int rows) throws IOException, SolrServerException {
 
         return new ResponseEntity(suggestServer.search(start, rows), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/suggest/search/v2", method = RequestMethod.GET)
+    @RequestMapping(value = "/suggest/search/v2", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity search(@RequestParam String keyword) throws IOException, SolrServerException {
 
         return new ResponseEntity(suggestServer.search(keyword), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/suggest/post/v2", method = RequestMethod.POST)
+    @RequestMapping(value = "/suggest/post/v2", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity add(@RequestParam String keyword, @RequestParam String correlation) throws IOException, SolrServerException {
 
         return new ResponseEntity(suggestServer.add(keyword, correlation), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/suggest/del/v2/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/suggest/del/v2/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity delete(@PathVariable String id) throws IOException, SolrServerException {
 
         return new ResponseEntity(suggestServer.delete(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/suggest/put/v2", method = RequestMethod.PUT)
+    @RequestMapping(value = "/suggest/put/v2", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity update(@RequestParam String id, @RequestParam String keyword, @RequestParam String correlation) throws IOException, SolrServerException {
 
         return new ResponseEntity(suggestServer.update(id, keyword, correlation), HttpStatus.OK);

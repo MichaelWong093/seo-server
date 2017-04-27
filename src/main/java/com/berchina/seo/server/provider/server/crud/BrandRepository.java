@@ -33,16 +33,17 @@ public class BrandRepository {
 
     public String brand(SolrQuery query) throws IOException, SolrServerException {
         String fq = query.get(CommonParams.FQ);
-
-        query.remove(CommonParams.FQ);
-        query.setFields(this.BRAND);
-        query.setStart(0);
-        query.setRows(1024);
-        query.addFilterQuery("{!join fromIndex=category from=category to=category}".concat(fq));
-
-        LOGGER.warn("[ 后台类目关联品牌关系 Query 指令：{} ]", query.toQueryString());
-
-       return SolrUtils.setBrandQuery(bean.solrClient().query(this.BRAND_REV,query).getResults(), BRAND_ID, BRAND);
+        if (StringUtil.notNull(fq))
+        {
+            query.remove(CommonParams.FQ);
+            query.setFields(this.BRAND);
+            query.setStart(0);
+            query.setRows(1024);
+            query.addFilterQuery("{!join fromIndex=category from=category to=category}".concat(fq));
+            LOGGER.warn("[ 后台类目关联品牌关系 Query 指令：{} ]", query.toQueryString());
+            return SolrUtils.setBrandQuery(bean.solrClient().query(this.BRAND_REV,query).getResults(), BRAND_ID, BRAND);
+        }
+        return null;
     }
 
     public QueryResponse brand(String filterQuery, SolrQuery query) throws IOException, SolrServerException
