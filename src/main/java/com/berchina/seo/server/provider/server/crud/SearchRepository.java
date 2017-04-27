@@ -65,7 +65,7 @@ public class SearchRepository {
 
         params.add(query);
 
-        LOGGER.warn("[ 商品搜索 Query 指令：{} ]", query.toQueryString());
+        LOGGER.warn("[ 商品搜索 Query 指令：{} ]", query);
         return  search(request.getType());
     }
 

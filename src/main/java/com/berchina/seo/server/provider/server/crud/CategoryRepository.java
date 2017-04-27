@@ -98,7 +98,7 @@ public class CategoryRepository {
         query.setRows(1024);
         alias = StringUtil.notNull(alias) ? alias : this.CATEGORY;
         category(list, query, alias);
-        LOGGER.warn("[ 展示类目 Query 指令：{} ]", query.toQueryString());
+        LOGGER.warn("[ 展示类目 Query 指令：{} ]", query);
         return response("categorys", query).getResults();
     }
 
@@ -119,13 +119,13 @@ public class CategoryRepository {
         query.setQuery(Constants.COLON_ASTERISK);
         query.setFilterQueries(this.REVLEVEL_1);
         query.setRows(1024);
-        LOGGER.warn("[ 展示类目二级类目搜索 Query 指令：{} ]", query.toQueryString());
+        LOGGER.warn("[ 展示类目二级类目搜索 Query 指令：{} ]", query);
         return response(this.SORL_HOME_CATEGORYS, query);
     }
 
 
     /**
-     * 系统展示类目在结果页展示分类区域 @ 与 筛选类目无关
+     * 系统类目在结果页展示分类区域 @ 与 筛选类目无关
      *
      * @param ids
      * @param query
@@ -134,12 +134,16 @@ public class CategoryRepository {
      * @throws SolrServerException
      */
     public List<Object> category(List<String> ids, SolrQuery query) throws IOException, SolrServerException {
-        query.clear();
-        query.setQuery(Constants.COLON_ASTERISK);
-        query.setFields(this.CAT_NAME, this.CAT_ID);
-        category(ids, query, this.CAT_ID);
-        LOGGER.warn("[ 类目搜索 Query 指令：{} ]", query.toQueryString());
-        return category(response(this.CAT_ID, query).getResults());
+        if (StringUtil.notNull(ids))
+        {
+            query.clear();
+            query.setQuery(Constants.COLON_ASTERISK);
+            query.setFields(this.CAT_NAME, this.CAT_ID);
+            category(ids, query, this.CAT_ID);
+            LOGGER.warn("[ 类目搜索 Query 指令：{} ]", query);
+            return category(response(this.CAT_ID, query).getResults());
+        }
+        return Lists.newArrayList();
     }
 
     /**
