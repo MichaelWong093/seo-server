@@ -28,7 +28,7 @@ public class Swagger2Configuration {
     @Bean
     public Docket splitterApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("seo-splitter-api")
+                .groupName("search")
                 .genericModelSubstitutes(ResponseEntity.class)
                 .useDefaultResponseMessages(true)
                 .forCodeGeneration(false)
@@ -39,8 +39,7 @@ public class Swagger2Configuration {
     }
 
     private Predicate<String> splitterPaths() {
-        return or(
-                regex("/seo/splitter.*")
+        return or(regex("/seo/search/.*"), regex("/seo/splitter/.*"),regex("/seo/suggest/.*")
         );
     }
 

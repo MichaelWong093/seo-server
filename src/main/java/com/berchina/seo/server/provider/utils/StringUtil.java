@@ -180,6 +180,13 @@ public class StringUtil {
         return String.valueOf(var);
     }
 
+    public static Integer IntegerConvert(Object var) {
+        if (StringUtils.isEmpty(var)) {
+            return 0;
+        }
+        return Integer.valueOf(StringConvert(var));
+    }
+
     public static Integer StringConvert(String var) {
         if (StringUtils.isEmpty(var)) {
             return null;

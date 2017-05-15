@@ -24,7 +24,7 @@ import java.util.Map;
  * @Date 2017 下午10:33
  * @Version V1.0
  */
-@Api(value = "Seo - Splitter", description = "搜索分词控制器详情")
+@Api(value = "seo - splitter", description = "搜索分词控制器详情")
 @RestController
 @RequestMapping("/seo")
 public class SplitterController {
