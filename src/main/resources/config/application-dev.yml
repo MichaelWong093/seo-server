@@ -11,7 +11,7 @@ spring:
     port: 6379
 seo:
   task:
-    syn: on
+    syn: off
     app: solr
     port: 8983
     server: 127.0.0.1

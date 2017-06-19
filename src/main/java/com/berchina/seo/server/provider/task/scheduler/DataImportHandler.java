@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -58,7 +59,7 @@ public class DataImportHandler {
      * "0 15 10 ? * 6#3" 每月的第三个星期五上午10:15触发
      */
 //    @Scheduled(cron = "0 50 09 * * ?")
-//    @Scheduled(fixedDelay = 100000)
+    @Scheduled(fixedDelay = 100000)
     public void dataImport() {
         if (this.synSolr(environment)) {
             try {
